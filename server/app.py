@@ -1,9 +1,9 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, make_response
 from flask_migrate import Migrate
 from flask_cors import CORS
-from flask_restful import Api
+from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager
-from models import db, bcrypt
+from models import db, bcrypt, Book
 from datetime import timedelta
 import os
 
@@ -22,6 +22,22 @@ bcrypt.init_app(app)
 api = Api(app)
 CORS(app, resources={r"*": {"origins": "*"}})
 jwt = JWTManager(app)
+
+class Home(Resource):
+    def get(self):
+        response_dict = {"message": "Book Club API"}
+        response = make_response(jsonify(response_dict), 200)
+        return response
+
+api.add_resource(Home, '/')
+
+class Books(Resource):
+    def get(self):
+        response_dict_list = [book.to_dict() for book in Book.query.all()]
+        response = make_response(jsonify(response_dict_list), 200)
+        return response
+
+api.add_resource(Books, '/books')
 
 if __name__ == "__main__":
     app.run(debug=True)
