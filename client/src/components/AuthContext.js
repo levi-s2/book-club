@@ -1,16 +1,17 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from './axiosConfig';
 import { jwtDecode } from 'jwt-decode';
+import { useHistory } from 'react-router-dom';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const history = useHistory();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      console.log('Stored token:', token);
       try {
         const decodedUser = jwtDecode(token);
         setUser(decodedUser);
@@ -23,11 +24,12 @@ const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await axios.post('/login', { email, password });
+      console.log('Login response:', response);
       const { access_token } = response.data;
-      console.log('Received access token:', access_token);
       localStorage.setItem('token', access_token);
       const decodedUser = jwtDecode(access_token);
       setUser(decodedUser);
+      history.push('/book-clubs'); 
     } catch (error) {
       console.error('Login error', error);
       throw error;

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import './login.css';
 import { AuthContext } from './AuthContext';
 
 const Login = () => {
@@ -25,7 +26,7 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
       await login(values.email, values.password);
-      history.push('/');
+      history.push('/book-clubs');
     } catch (error) {
       setErrors({ general: 'Login failed: ' + error.message });
     } finally {
