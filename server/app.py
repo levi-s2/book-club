@@ -1,11 +1,12 @@
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, request, make_response
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api, Resource
-from flask_jwt_extended import JWTManager
-from models import db, bcrypt, Book
+from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity
+from models import db, bcrypt, User, Book
 from datetime import timedelta
 import os
+import traceback
 
 app = Flask(__name__)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -38,6 +39,71 @@ class Books(Resource):
         return response
 
 api.add_resource(Books, '/books')
+
+class Register(Resource):
+    def post(self):
+        try:
+            data = request.get_json()
+            username = data.get('username')
+            email = data.get('email')
+            password = data.get('password')
+
+            if not username or not email or not password:
+                return {"message": "Username, email, and password are required"}, 400
+
+            existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+            if existing_user:
+                return {"message": "User with provided username or email already exists"}, 400
+
+            new_user = User(username=username, email=email)
+            new_user.password_hash = password
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            return {"message": "User created successfully"}, 201
+        except Exception as e:
+            print(f"Error during registration: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+class Login(Resource):
+    def post(self):
+        try:
+            data = request.get_json()
+            email = data.get('email')
+            password = data.get('password')
+
+            user = User.query.filter_by(email=email).first()
+            if not user or not user.authenticate(password):
+                return {"message": "Invalid email or password"}, 401
+
+            access_token = create_access_token(identity=user.id)
+            refresh_token = create_refresh_token(identity=user.id)
+            return {"access_token": access_token, "refresh_token": refresh_token}, 200
+        except Exception as e:
+            print(f"Error during login: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+class TokenRefresh(Resource):
+    @jwt_required(refresh=True)
+    def post(self):
+        current_user_id = get_jwt_identity()
+        new_access_token = create_access_token(identity=current_user_id)
+        return {"access_token": new_access_token}, 200
+
+class Protected(Resource):
+    @jwt_required()
+    def get(self):
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        return {"username": user.username, "email": user.email}, 200
+
+api.add_resource(Register, '/register', endpoint='register_endpoint')
+api.add_resource(Login, '/login', endpoint='login_endpoint')
+api.add_resource(TokenRefresh, '/refresh', endpoint='refresh_endpoint')
+api.add_resource(Protected, '/protected', endpoint='protected_endpoint')
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from './axiosConfig';
 
 function Books() {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    axios.get('/books')
-      .then(response => {
+    const fetchBooks = async () => {
+      try {
+        const response = await axios.get('/books'); 
         setBooks(response.data);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('There was an error fetching the books!', error);
-      });
+      }
+    };
+
+    fetchBooks();
   }, []);
 
   return (
