@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from models import db, bcrypt, User, Book, BookClub
+from models import db, bcrypt, User, Book, BookClub, Genre
 from datetime import timedelta
 import os
 import traceback
@@ -38,7 +38,22 @@ class Books(Resource):
         response = make_response(jsonify(response_dict_list), 200)
         return response
 
+class Genres(Resource):
+    def get(self):
+        response_dict_list = [genre.to_dict() for genre in Genre.query.all()]
+        response = make_response(jsonify(response_dict_list), 200)
+        return response
+
+class Authors(Resource):
+    def get(self):
+        authors = db.session.query(Book.author).distinct().all()
+        author_list = [author[0] for author in authors]
+        response = make_response(jsonify(author_list), 200)
+        return response
+
 api.add_resource(Books, '/books')
+api.add_resource(Genres, '/genres')
+api.add_resource(Authors, '/authors')
 
 class Register(Resource):
     def post(self):

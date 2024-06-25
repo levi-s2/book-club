@@ -1,0 +1,32 @@
+.book-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px;
+    width: 200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+  
+  .book-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .book-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .book-info {
+    margin-top: 8px;
+  }
+  
+  .book-info h3 {
+    margin: 8px 0;
+  }
+  
+  .book-info p {
+    margin: 4px 0;
+  }
+  

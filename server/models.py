@@ -116,7 +116,7 @@ class Book(db.Model):
             'title': self.title,
             'author': self.author,
             'image_url': self.image_url,
-            'genre_id': self.genre_id
+            'genre': self.genre.to_dict() if self.genre else None
         }
 
     def __repr__(self):

@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import LandingPage from './LandingPage';
 import Books from './Books';
 import BooksClub from './BooksClub';
+import MyClubs from './MyClubs'; 
+import CreateClub from './CreateClub'; 
 import { AuthProvider, AuthContext } from './context/AuthContext';
-import { BookClubsProvider, BookClubsContext } from './context/BookClubsContext'; // Correct import
+import { BookClubsProvider, BookClubsContext } from './context/BookClubsContext';
 import ProtectedRoute from './ProtectedRoute';
 import axios from './axiosConfig';
 
@@ -22,7 +24,7 @@ const App = () => {
 
 const Main = () => {
   const { user, loading } = useContext(AuthContext);
-  const { setBookClubs } = useContext(BookClubsContext); // Ensure BookClubsContext is imported
+  const { setBookClubs } = useContext(BookClubsContext);
 
   useEffect(() => {
     const fetchBookClubs = async () => {
@@ -46,7 +48,7 @@ const Main = () => {
   }, [user, setBookClubs]);
 
   if (loading) {
-    return <div>Loading...</div>; // Render a loading state while checking the token
+    return <div>Loading...</div>; 
   }
 
   return (
@@ -54,7 +56,9 @@ const Main = () => {
       <Route path="/" exact component={LandingPage} />
       <ProtectedRoute path="/books" component={Books} />
       <ProtectedRoute path="/book-clubs" component={BooksClub} />
-      <Redirect to="/" /> {/* Redirect any unknown routes to the landing page */}
+      <ProtectedRoute path="/my-clubs" component={MyClubs} /> 
+      <ProtectedRoute path="/new-club" component={CreateClub} />
+      <Redirect to="/" /> 
     </Switch>
   );
 };
