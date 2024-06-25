@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { AuthContext } from './AuthContext';
+import { AuthContext } from './context/AuthContext';
 
 const Register = () => {
   const history = useHistory();

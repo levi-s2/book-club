@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './components/App';
-import { AuthProvider } from './components/AuthContext';
-import { BookClubsProvider } from './components/BookClubsContext';
+import { AuthProvider } from './components/context/AuthContext';
+import { BookClubsProvider } from './components/context/BookClubsContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
