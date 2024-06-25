@@ -11,6 +11,7 @@ function Navbar() {
         <li><Link to="/">Home</Link></li>
         <li><Link to="/books">Books</Link></li>
         <li><Link to="/book-clubs">Book Clubs</Link></li>
+        <li><Link to="/my-clubs">My Clubs</Link></li>
         {user ? (
           <>
             <li><button onClick={logout}>Logout</button></li>

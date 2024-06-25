@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { BookClubsContext } from './BookClubsContext';
+import NavBar from './NavBar'
 
-function BookClubs() {
+const BooksClub = () => {
+  const { bookClubs } = useContext(BookClubsContext);
+
+  console.log('Rendering book clubs:', bookClubs);
+
   return (
     <div>
+      <NavBar />
       <h1>Book Clubs</h1>
-      {/* Add content for Book Clubs here */}
+      <ul>
+        {bookClubs.map((club) => (
+          <li key={club.id}>
+            <h2>{club.name}</h2>
+            <p>{club.description}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
+};
 
-export default BookClubs;
+export default BooksClub;
