@@ -24,7 +24,6 @@ const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await axios.post('/login', { email, password });
-      console.log('Login response:', response);
       const { access_token } = response.data;
       localStorage.setItem('token', access_token);
       const decodedUser = jwtDecode(access_token);

@@ -30,7 +30,7 @@ const Register = () => {
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
       await register(values.username, values.email, values.password);
-      history.push('/login');
+      history.push('/');
     } catch (error) {
       setErrors({ general: 'Registration failed: ' + error.message });
     } finally {

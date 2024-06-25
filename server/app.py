@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from models import db, bcrypt, User, Book
+from models import db, bcrypt, User, Book, BookClub
 from datetime import timedelta
 import os
 import traceback
@@ -104,6 +104,22 @@ api.add_resource(Register, '/register', endpoint='register_endpoint')
 api.add_resource(Login, '/login', endpoint='login_endpoint')
 api.add_resource(TokenRefresh, '/refresh', endpoint='refresh_endpoint')
 api.add_resource(Protected, '/protected', endpoint='protected_endpoint')
+
+
+class BookClubs(Resource):
+    @jwt_required()
+    def get(self):
+        try:
+            book_clubs = BookClub.query.all()
+            response_dict_list = [book_club.to_dict() for book_club in book_clubs]
+            return make_response(jsonify(response_dict_list), 200)
+        except Exception as e:
+            print(f"Error fetching book clubs: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+api.add_resource(BookClubs, '/book-clubs', endpoint='book_clubs_endpoint')
+
 
 if __name__ == "__main__":
     app.run(debug=True)
