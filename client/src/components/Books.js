@@ -9,6 +9,8 @@ const Books = () => {
   const [authors, setAuthors] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedGenre, setSelectedGenre] = useState(null);
+  const [selectedAuthor, setSelectedAuthor] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,22 +35,38 @@ const Books = () => {
     fetchData();
   }, []);
 
-  const filterByGenre = (genreId) => {
-    console.log('Filtering by genre ID:', genreId);
-    const filtered = books.filter(book => book.genre && book.genre.id === genreId);
-    console.log('Filtered books:', filtered);
-    setFilteredBooks(filtered);
-  };
+  const filterBooks = (query, genre, author) => {
+    let filtered = books;
 
-  const filterByAuthor = (author) => {
-    setFilteredBooks(books.filter(book => book.author === author));
+    if (genre) {
+      filtered = filtered.filter(book => book.genre && book.genre.id === genre);
+    }
+
+    if (author) {
+      filtered = filtered.filter(book => book.author === author);
+    }
+
+    if (query) {
+      filtered = filtered.filter(book => book.title.toLowerCase().includes(query.toLowerCase()));
+    }
+
+    setFilteredBooks(filtered);
   };
 
   const handleSearch = (event) => {
-    const query = event.target.value.toLowerCase();
+    const query = event.target.value;
     setSearchQuery(query);
-    const filtered = books.filter(book => book.title.toLowerCase().includes(query));
-    setFilteredBooks(filtered);
+    filterBooks(query, selectedGenre, selectedAuthor);
+  };
+
+  const handleGenreClick = (genreId) => {
+    setSelectedGenre(genreId);
+    filterBooks(searchQuery, genreId, selectedAuthor);
+  };
+
+  const handleAuthorClick = (author) => {
+    setSelectedAuthor(author);
+    filterBooks(searchQuery, selectedGenre, author);
   };
 
   return (
@@ -57,7 +75,7 @@ const Books = () => {
         <h2>Genres</h2>
         <ul>
           {genres.map((genre) => (
-            <li key={genre.id} onClick={() => filterByGenre(genre.id)}>
+            <li key={genre.id} onClick={() => handleGenreClick(genre.id)}>
               {genre.name}
             </li>
           ))}
@@ -65,7 +83,7 @@ const Books = () => {
         <h2>Authors</h2>
         <ul>
           {authors.map((author) => (
-            <li key={author} onClick={() => filterByAuthor(author)}>
+            <li key={author} onClick={() => handleAuthorClick(author)}>
               {author}
             </li>
           ))}

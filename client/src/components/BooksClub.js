@@ -1,25 +1,28 @@
 import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { BookClubsContext } from './context/BookClubsContext';
 import NavBar from './NavBar'
+import './css/BookClubs.css';
 
 const BooksClub = () => {
   const { bookClubs } = useContext(BookClubsContext);
 
-  console.log('Rendering book clubs:', bookClubs);
-
   return (
-    <div>
-      <NavBar />
-      <h1>Book Clubs</h1>
-      <ul>
-        {bookClubs.map((club) => (
-          <li key={club.id}>
-            <h2>{club.name}</h2>
+   <div>
+    <NavBar />
+    <div className="book-clubs-container">
+      {bookClubs.map((club) => (
+        <div key={club.id} className="book-club-card">
+          <div className="book-club-info">
+            <h3>{club.name}</h3>
             <p>{club.description}</p>
-          </li>
-        ))}
-      </ul>
+            <p>Current Book: {club.current_book ? club.current_book.title : 'None'}</p>
+            <Link to={`/book-clubs/${club.id}`} className="view-details-button">View Details</Link>
+          </div>
+        </div>
+      ))}
     </div>
+    </div> 
   );
 };
 

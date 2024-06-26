@@ -3,8 +3,9 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import LandingPage from './LandingPage';
 import Books from './Books';
 import BooksClub from './BooksClub';
-import MyClubs from './MyClubs'; 
-import CreateClub from './CreateClub'; 
+import MyClubs from './MyClubs';
+import CreateClub from './CreateClub';
+import BookClubDetails from './BookClubDetails';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { BookClubsProvider, BookClubsContext } from './context/BookClubsContext';
 import ProtectedRoute from './ProtectedRoute';
@@ -55,8 +56,9 @@ const Main = () => {
     <Switch>
       <Route path="/" exact component={LandingPage} />
       <ProtectedRoute path="/books" component={Books} />
-      <ProtectedRoute path="/book-clubs" component={BooksClub} />
-      <ProtectedRoute path="/my-clubs" component={MyClubs} /> 
+      <ProtectedRoute path="/book-clubs" exact component={BooksClub} />
+      <ProtectedRoute path="/book-clubs/:id" component={BookClubDetails} /> 
+      <ProtectedRoute path="/my-clubs" component={MyClubs} />
       <ProtectedRoute path="/new-club" component={CreateClub} />
       <Redirect to="/" /> 
     </Switch>
