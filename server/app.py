@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from models import db, bcrypt, User, Book, BookClub, Genre
+from models import db, bcrypt, User, Book, BookClub, Genre, Membership
 from datetime import timedelta
 import os
 import traceback
@@ -134,6 +134,29 @@ class BookClubs(Resource):
             return {"message": "Internal Server Error"}, 500
 
 api.add_resource(BookClubs, '/book-clubs', endpoint='book_clubs_endpoint')
+
+
+class BookClubDetails(Resource):
+    @jwt_required()
+    def get(self, club_id):
+        book_club = BookClub.query.get_or_404(club_id)
+        response_dict = book_club.to_dict()
+        response = make_response(jsonify(response_dict), 200)
+        return response
+
+    @jwt_required()
+    def post(self, club_id):
+        user_id = get_jwt_identity()
+        book_club = BookClub.query.get_or_404(club_id)
+        if not Membership.query.filter_by(user_id=user_id, book_club_id=club_id).first():
+            membership = Membership(user_id=user_id, book_club_id=club_id)
+            db.session.add(membership)
+            db.session.commit()
+        response_dict = book_club.to_dict()
+        response = make_response(jsonify(response_dict), 200)
+        return response
+
+api.add_resource(BookClubDetails, '/book-clubs/<int:club_id>')
 
 
 if __name__ == "__main__":

@@ -80,11 +80,15 @@ class BookClub(db.Model):
             'name': self.name,
             'description': self.description,
             'created_by': self.created_by,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at,
+            'members': [member.user.to_dict() for member in self.members],
+            'current_book': self.current_reading.book.to_dict() if self.current_reading else None,
+            'is_member': False 
         }
 
     def __repr__(self):
         return f'<BookClub {self.id}. {self.name}>'
+
 
 
 class Book(db.Model):
@@ -160,11 +164,13 @@ class Membership(db.Model):
         return {
             'id': self.id,
             'user_id': self.user_id,
-            'book_club_id': self.book_club_id
+            'book_club_id': self.book_club_id,
+            'user': self.user.to_dict()  
         }
 
     def __repr__(self):
         return f'<Membership {self.id}. User: {self.user_id}, BookClub: {self.book_club_id}>'
+
 
 
 class CurrentReading(db.Model):
@@ -183,11 +189,13 @@ class CurrentReading(db.Model):
             'id': self.id,
             'book_club_id': self.book_club_id,
             'book_id': self.book_id,
-            'started_at': self.started_at.isoformat()
+            'started_at': self.started_at.isoformat(),
+            'book': self.book.to_dict() 
         }
 
     def __repr__(self):
         return f'<CurrentReading {self.id}. BookClub: {self.book_club_id}, Book: {self.book_id}>'
+
 
 
 class Review(db.Model):

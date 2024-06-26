@@ -1,0 +1,48 @@
+.book-clubs-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+  }
+  
+  .book-club-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px;
+    width: 250px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+  
+  .book-club-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .book-club-info {
+    margin-top: 8px;
+  }
+  
+  .book-club-info h3 {
+    margin: 8px 0;
+  }
+  
+  .book-club-info p {
+    margin: 4px 0;
+  }
+  
+  .view-details-button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .view-details-button:hover {
+    background-color: #0056b3;
+  }
+  

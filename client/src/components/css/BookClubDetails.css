@@ -1,0 +1,60 @@
+.book-club-details {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+.book-club-details img {
+  max-width: 100px;
+  margin: 10px 0;
+}
+
+.club-header {
+  margin-bottom: 20px;
+}
+
+.club-header h2 {
+  margin-bottom: 10px;
+}
+
+.club-members, .club-current-reading {
+  margin-bottom: 20px;
+}
+
+.club-members ul, .club-current-reading div {
+  list-style: none;
+  padding: 0;
+}
+
+.club-members li, .club-current-reading p {
+  background-color: #fff;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.join-club-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.join-club-button:hover {
+  background-color: #218838;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
