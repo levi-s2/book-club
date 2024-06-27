@@ -1,50 +1,57 @@
-import React, { useState, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
 import axios from './axiosConfig';
-import { AuthContext } from './context/AuthContext';
-import NavBar from './NavBar'
+import './css/CreateClub.css';
 
 const CreateClub = () => {
-  const { user } = useContext(AuthContext);
-  const history = useHistory();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setMessage('');
+    setError('');
+
     try {
-      await axios.post('/book-clubs', {
-        name,
-        description,
-        created_by: user.id,
-      }, {
+      const response = await axios.post('/create-club', { name, description }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      history.push('/book-clubs');
+      setMessage(response.data.message);
+      setName('');
+      setDescription('');
     } catch (error) {
-      setError('Error creating club. Please try again.');
-      console.error('Error creating club:', error);
+      setError('Error creating book club.');
     }
   };
 
   return (
-    <div className="create-club">
-      <NavBar />
-      <h1>Create a New Club</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="create-club-container">
+      <h2>Create a New Book Club</h2>
+      <form onSubmit={handleSubmit} className="create-club-form">
         <div className="form-group">
-          <label>Name:</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+          <label htmlFor="name">Club Name:</label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
         </div>
         <div className="form-group">
-          <label>Description:</label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} required></textarea>
+          <label htmlFor="description">Description:</label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
         </div>
-        <button type="submit">Create Club</button>
-        {error && <p className="error">{error}</p>}
+        <button type="submit" className="create-club-button">Create Club</button>
+        {message && <p className="success-message">{message}</p>}
+        {error && <p className="error-message">{error}</p>}
       </form>
     </div>
   );

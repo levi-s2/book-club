@@ -139,8 +139,9 @@ api.add_resource(BookClubs, '/book-clubs', endpoint='book_clubs_endpoint')
 class BookClubDetails(Resource):
     @jwt_required()
     def get(self, club_id):
+        user_id = get_jwt_identity()
         book_club = BookClub.query.get_or_404(club_id)
-        response_dict = book_club.to_dict()
+        response_dict = book_club.to_dict(user_id=user_id)
         response = make_response(jsonify(response_dict), 200)
         return response
 
@@ -152,11 +153,61 @@ class BookClubDetails(Resource):
             membership = Membership(user_id=user_id, book_club_id=club_id)
             db.session.add(membership)
             db.session.commit()
-        response_dict = book_club.to_dict()
+        response_dict = book_club.to_dict(user_id=user_id)
+        response = make_response(jsonify(response_dict), 200)
+        return response
+
+    @jwt_required()
+    def delete(self, club_id):
+        user_id = get_jwt_identity()
+        membership = Membership.query.filter_by(user_id=user_id, book_club_id=club_id).first()
+        if membership:
+            db.session.delete(membership)
+            db.session.commit()
+        book_club = BookClub.query.get_or_404(club_id)
+        response_dict = book_club.to_dict(user_id=user_id)
         response = make_response(jsonify(response_dict), 200)
         return response
 
 api.add_resource(BookClubDetails, '/book-clubs/<int:club_id>')
+
+
+class MyClubs(Resource):
+    @jwt_required()
+    def get(self):
+        user_id = get_jwt_identity()
+        memberships = Membership.query.filter_by(user_id=user_id).all()
+        book_clubs = [membership.book_club.to_dict() for membership in memberships]
+        response = make_response(jsonify(book_clubs), 200)
+        return response
+
+api.add_resource(MyClubs, '/my-clubs')
+
+
+class CreateBookClub(Resource):
+    @jwt_required()
+    def post(self):
+        try:
+            user_id = get_jwt_identity()
+            data = request.get_json()
+            name = data.get('name')
+            description = data.get('description')
+
+            if not name:
+                return {"message": "Name is required"}, 400
+
+            new_club = BookClub(name=name, description=description, created_by=user_id)
+            db.session.add(new_club)
+            db.session.commit()
+
+            return {"message": "Book club created successfully", "club": new_club.to_dict(user_id=user_id)}, 201
+        except Exception as e:
+            print(f"Error during book club creation: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+api.add_resource(CreateBookClub, '/create-club')
+
 
 
 if __name__ == "__main__":

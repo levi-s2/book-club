@@ -74,17 +74,22 @@ class BookClub(db.Model):
         assert name is not None and len(name) > 0
         return name
 
-    def to_dict(self):
+    def to_dict(self, user_id=None):
+        is_member = False
+        if user_id:
+            is_member = any(member.user_id == user_id for member in self.members)
+
         return {
             'id': self.id,
             'name': self.name,
             'description': self.description,
             'created_by': self.created_by,
-            'created_at': self.created_at,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
             'members': [member.user.to_dict() for member in self.members],
             'current_book': self.current_reading.book.to_dict() if self.current_reading else None,
-            'is_member': False 
+            'is_member': is_member,
         }
+
 
     def __repr__(self):
         return f'<BookClub {self.id}. {self.name}>'
