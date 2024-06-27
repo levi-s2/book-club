@@ -39,7 +39,7 @@
   border-radius: 4px;
 }
 
-.join-club-button {
+.join-club-button, .leave-club-button {
   margin-top: 20px;
   padding: 10px 20px;
   background-color: #28a745;
@@ -50,8 +50,16 @@
   transition: background-color 0.2s;
 }
 
-.join-club-button:hover {
+.leave-club-button {
+  background-color: #dc3545;
+}
+
+.join-club-button:hover, .leave-club-button:hover {
   background-color: #218838;
+}
+
+.leave-club-button:hover {
+  background-color: #c82333;
 }
 
 .error-message {

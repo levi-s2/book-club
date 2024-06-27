@@ -11,7 +11,11 @@ const BookClubDetails = () => {
   useEffect(() => {
     const fetchClubDetails = async () => {
       try {
-        const response = await axios.get(`/book-clubs/${id}`);
+        const response = await axios.get(`/book-clubs/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
         setClubDetails(response.data);
       } catch (error) {
         setError('Error fetching club details.');
@@ -23,14 +27,27 @@ const BookClubDetails = () => {
 
   const handleJoinClub = async () => {
     try {
-      await axios.post(`/book-clubs/${id}/join`, {}, {
+      const response = await axios.post(`/book-clubs/${id}`, {}, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setClubDetails({ ...clubDetails, is_member: true });
+      setClubDetails(response.data); // Update the club details with the new data after joining
     } catch (error) {
       setError('Error joining club.');
+    }
+  };
+
+  const handleLeaveClub = async () => {
+    try {
+      const response = await axios.delete(`/book-clubs/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setClubDetails(response.data); // Update the club details with the new data after leaving
+    } catch (error) {
+      setError('Error leaving club.');
     }
   };
 
@@ -67,8 +84,10 @@ const BookClubDetails = () => {
           <p>No current book.</p>
         )}
       </div>
-      {!clubDetails.is_member && (
+      {!clubDetails.is_member ? (
         <button onClick={handleJoinClub} className="join-club-button">Join Club</button>
+      ) : (
+        <button onClick={handleLeaveClub} className="leave-club-button">Leave Club</button>
       )}
       {error && <p className="error-message">{error}</p>}
     </div>
