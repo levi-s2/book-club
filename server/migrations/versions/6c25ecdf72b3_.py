@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 3be1792547ba
+Revision ID: 6c25ecdf72b3
 Revises: 
-Create Date: 2024-06-20 18:13:27.692318
+Create Date: 2024-06-29 17:33:12.651560
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3be1792547ba'
+revision = '6c25ecdf72b3'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -51,6 +51,13 @@ def upgrade():
     sa.ForeignKeyConstraint(['genre_id'], ['genres.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('book_club_genres',
+    sa.Column('book_club_id', sa.Integer(), nullable=False),
+    sa.Column('genre_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['book_club_id'], ['book_clubs.id'], ),
+    sa.ForeignKeyConstraint(['genre_id'], ['genres.id'], ),
+    sa.PrimaryKeyConstraint('book_club_id', 'genre_id')
+    )
     op.create_table('current_readings',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('book_club_id', sa.Integer(), nullable=False),
@@ -90,6 +97,7 @@ def downgrade():
     op.drop_table('reviews')
     op.drop_table('memberships')
     op.drop_table('current_readings')
+    op.drop_table('book_club_genres')
     op.drop_table('books')
     op.drop_table('book_clubs')
     op.drop_table('users')

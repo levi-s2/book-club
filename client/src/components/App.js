@@ -5,6 +5,7 @@ import Books from './Books';
 import BooksClub from './BooksClub';
 import MyClubs from './MyClubs';
 import CreateClub from './CreateClub';
+import ManageClub from './ManageClub'
 import BookClubDetails from './BookClubDetails';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { BookClubsProvider, BookClubsContext } from './context/BookClubsContext';
@@ -60,7 +61,8 @@ const Main = () => {
       <ProtectedRoute path="/book-clubs/:id" component={BookClubDetails} /> 
       <ProtectedRoute path="/my-clubs" component={MyClubs} />
       <ProtectedRoute path="/new-club" component={CreateClub} />
-      <Redirect to="/" /> 
+      <ProtectedRoute path="/manage-club" component={ManageClub} />
+      <Redirect to="/" />
     </Switch>
   );
 };

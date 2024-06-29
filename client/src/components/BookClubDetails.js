@@ -32,7 +32,7 @@ const BookClubDetails = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setClubDetails(response.data); // Update the club details with the new data after joining
+      setClubDetails(response.data); 
     } catch (error) {
       setError('Error joining club.');
     }
@@ -45,7 +45,7 @@ const BookClubDetails = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setClubDetails(response.data); // Update the club details with the new data after leaving
+      setClubDetails(response.data); 
     } catch (error) {
       setError('Error leaving club.');
     }
@@ -82,6 +82,18 @@ const BookClubDetails = () => {
           </div>
         ) : (
           <p>No current book.</p>
+        )}
+      </div>
+      <div className="club-genres">
+        <h3>Genres</h3>
+        {clubDetails.genres && clubDetails.genres.length > 0 ? (
+          <ul>
+            {clubDetails.genres.map((genre) => (
+              <li key={genre.id}>{genre.name}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No genres selected.</p>
         )}
       </div>
       {!clubDetails.is_member ? (
