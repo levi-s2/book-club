@@ -1,12 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from './axiosConfig';
 import './css/CreateClub.css';
 
 const CreateClub = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [genres, setGenres] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get('/genres', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        setGenres(response.data);
+      } catch (error) {
+        console.error('Error fetching genres:', error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
+
+  const handleGenreChange = (genreId) => {
+    if (selectedGenres.includes(genreId)) {
+      setSelectedGenres(selectedGenres.filter(id => id !== genreId));
+    } else if (selectedGenres.length < 3) {
+      setSelectedGenres([...selectedGenres, genreId]);
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -14,7 +41,7 @@ const CreateClub = () => {
     setError('');
 
     try {
-      const response = await axios.post('/create-club', { name, description }, {
+      const response = await axios.post('/create-club', { name, description, genre_ids: selectedGenres }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -22,6 +49,7 @@ const CreateClub = () => {
       setMessage(response.data.message);
       setName('');
       setDescription('');
+      setSelectedGenres([]);
     } catch (error) {
       setError('Error creating book club.');
     }
@@ -48,6 +76,23 @@ const CreateClub = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+        </div>
+        <div className="form-group">
+          <label>Genres (select up to 3):</label>
+          <div className="genre-list">
+            {genres.map((genre) => (
+              <div key={genre.id} className="genre-item">
+                <input
+                  type="checkbox"
+                  id={`genre-${genre.id}`}
+                  value={genre.id}
+                  checked={selectedGenres.includes(genre.id)}
+                  onChange={() => handleGenreChange(genre.id)}
+                />
+                <label htmlFor={`genre-${genre.id}`}>{genre.name}</label>
+              </div>
+            ))}
+          </div>
         </div>
         <button type="submit" className="create-club-button">Create Club</button>
         {message && <p className="success-message">{message}</p>}

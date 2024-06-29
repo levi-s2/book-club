@@ -8,20 +8,23 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-        <Link to="/book-clubs">Book Clubs</Link>
-        <Link to="/my-clubs">My Clubs</Link>
-        <Link to="new-club">Create a Club</Link>
-        <Link to="/books">Library</Link>
-        {user ? (
-          <>
-            <button onClick={logout}>Logout</button>
-          </>
-        ) : (
-          <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
-          </>
-        )}
+      <Link to="/book-clubs">Book Clubs</Link>
+      <Link to="/my-clubs">My Clubs</Link>
+      <Link to="/new-club">Create a Club</Link>
+      <Link to="/books">Library</Link>
+      {user ? (
+        <>
+          {user.created_clubs && user.created_clubs.length > 0 && (
+            <Link to="/manage-club">Manage My Club</Link>
+          )}
+          <button onClick={logout}>Logout</button>
+        </>
+      ) : (
+        <>
+          <Link to="/login">Login</Link>
+          <Link to="/register">Register</Link>
+        </>
+      )}
     </nav>
   );
 }

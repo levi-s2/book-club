@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from models import db, bcrypt, User, Book, BookClub, Genre, Membership
+from models import db, bcrypt, User, Book, BookClub, Genre, Membership, CurrentReading
 from datetime import timedelta
 import os
 import traceback
@@ -55,6 +55,7 @@ api.add_resource(Books, '/books')
 api.add_resource(Genres, '/genres')
 api.add_resource(Authors, '/authors')
 
+
 class Register(Resource):
     def post(self):
         try:
@@ -95,7 +96,11 @@ class Login(Resource):
 
             access_token = create_access_token(identity=user.id)
             refresh_token = create_refresh_token(identity=user.id)
-            return {"access_token": access_token, "refresh_token": refresh_token}, 200
+            return {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "user": user.to_dict()
+            }, 200
         except Exception as e:
             print(f"Error during login: {e}")
             traceback.print_exc()
@@ -192,11 +197,16 @@ class CreateBookClub(Resource):
             data = request.get_json()
             name = data.get('name')
             description = data.get('description')
+            genre_ids = data.get('genre_ids', [])
 
             if not name:
                 return {"message": "Name is required"}, 400
 
-            new_club = BookClub(name=name, description=description, created_by=user_id)
+            genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
+            if len(genres) != len(genre_ids):
+                return {"message": "Some genres not found"}, 400
+
+            new_club = BookClub(name=name, description=description, created_by=user_id, genres=genres)
             db.session.add(new_club)
             db.session.commit()
 
@@ -207,6 +217,54 @@ class CreateBookClub(Resource):
             return {"message": "Internal Server Error"}, 500
 
 api.add_resource(CreateBookClub, '/create-club')
+
+
+class ManageClub(Resource):
+    @jwt_required()
+    def get(self, club_id):
+        book_club = BookClub.query.get_or_404(club_id)
+        response_dict = book_club.to_dict()
+        response = make_response(jsonify(response_dict), 200)
+        return response
+
+    @jwt_required()
+    def patch(self, club_id):
+        data = request.get_json()
+        book_club = BookClub.query.get_or_404(club_id)
+        action = data.get('action')
+        user_id = get_jwt_identity()
+
+        if action == 'update_current_reading':
+            book_id = data.get('book_id')
+            current_reading = CurrentReading.query.filter_by(book_club_id=club_id).first()
+            if current_reading:
+                current_reading.book_id = book_id
+            else:
+                new_current_reading = CurrentReading(book_club_id=club_id, book_id=book_id)
+                db.session.add(new_current_reading)
+            db.session.commit()
+            return make_response(jsonify({"message": "Current reading updated"}), 200)
+
+        elif action == 'remove_member':
+            member_id = data.get('member_id')
+            membership = Membership.query.filter_by(user_id=member_id, book_club_id=club_id).first()
+            if membership:
+                db.session.delete(membership)
+                db.session.commit()
+                return make_response(jsonify({"message": "Member removed"}), 200)
+            else:
+                return make_response(jsonify({"message": "Member not found"}), 404)
+
+        elif action == 'update_genres':
+            genre_ids = data.get('genre_ids', [])
+            book_club.genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
+            db.session.commit()
+            return make_response(jsonify({"message": "Genres updated"}), 200)
+
+        return make_response(jsonify({"message": "Invalid action"}), 400)
+
+api.add_resource(ManageClub, '/manage-club/<int:club_id>')
+
 
 
 

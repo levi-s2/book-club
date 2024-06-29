@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import axios from '../axiosConfig';
-import { jwtDecode } from 'jwt-decode'; // Correct import
+import { jwtDecode } from 'jwt-decode';
 import { useHistory } from 'react-router-dom';
 
 const AuthContext = createContext();
@@ -14,15 +14,22 @@ const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const decodedUser = jwtDecode(token);
-        setUser(decodedUser);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        const decoded = jwtDecode(token);
+        axios.get(`/users/${decoded.identity}`)
+          .then(response => {
+            setUser(response.data);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          })
+          .catch(error => {
+            console.error('Error fetching user:', error);
+            localStorage.removeItem('token');
+          });
       } catch (error) {
         console.error('Invalid token at startup:', error);
         localStorage.removeItem('token');
       }
     }
-    setLoading(false); // Set loading to false after checking the token
+    setLoading(false);
   }, []);
 
   const logout = useCallback(() => {
@@ -42,9 +49,16 @@ const AuthProvider = ({ children }) => {
         });
         const { access_token } = response.data;
         localStorage.setItem('token', access_token);
-        const decodedUser = jwtDecode(access_token);
-        setUser(decodedUser);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+        const decoded = jwtDecode(access_token);
+        axios.get(`/users/${decoded.identity}`)
+          .then(response => {
+            setUser(response.data);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+          })
+          .catch(error => {
+            console.error('Error fetching user:', error);
+            logout();
+          });
       } catch (error) {
         console.error('Error refreshing token:', error);
         logout();
@@ -56,11 +70,11 @@ const AuthProvider = ({ children }) => {
       if (token) {
         const decodedToken = jwtDecode(token);
         const currentTime = Date.now() / 1000;
-        if (decodedToken.exp - currentTime < 300) { // refresh if token expires in less than 5 minutes
+        if (decodedToken.exp - currentTime < 300) {
           refreshToken();
         }
       }
-    }, 60000); // check every 1 minute
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [logout]);
@@ -68,12 +82,11 @@ const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await axios.post('/login', { email, password });
-      const { access_token } = response.data;
+      const { access_token, user } = response.data;
       localStorage.setItem('token', access_token);
-      const decodedUser = jwtDecode(access_token);
-      setUser(decodedUser);
+      setUser(user);
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      history.push('/book-clubs'); // Redirect to book clubs page after login
+      history.push('/book-clubs');
     } catch (error) {
       console.error('Login error', error);
       throw error;

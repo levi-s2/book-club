@@ -4,7 +4,6 @@ from sqlalchemy.orm import relationship, validates
 from flask_bcrypt import Bcrypt
 import datetime
 
-# Initialize the extensions
 metadata = MetaData()
 db = SQLAlchemy(metadata=metadata)
 bcrypt = Bcrypt()
@@ -48,11 +47,18 @@ class User(db.Model):
         return {
             'id': self.id,
             'username': self.username,
-            'email': self.email
+            'email': self.email,
+            'created_clubs': [club.id for club in self.book_clubs_created]
         }
 
     def __repr__(self):
         return f'<User {self.id}. {self.username}>'
+
+
+book_club_genres = db.Table('book_club_genres',
+    db.Column('book_club_id', db.Integer, db.ForeignKey('book_clubs.id'), primary_key=True),
+    db.Column('genre_id', db.Integer, db.ForeignKey('genres.id'), primary_key=True)
+)
 
 
 class BookClub(db.Model):
@@ -67,6 +73,7 @@ class BookClub(db.Model):
     creator = relationship('User', back_populates='book_clubs_created')
     members = relationship('Membership', back_populates='book_club')
     current_reading = relationship('CurrentReading', uselist=False, back_populates='book_club')
+    genres = db.relationship('Genre', secondary=book_club_genres, back_populates='book_clubs')
     reviews = relationship('Review', back_populates='book_club')
 
     @validates('name')
@@ -87,9 +94,9 @@ class BookClub(db.Model):
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'members': [member.user.to_dict() for member in self.members],
             'current_book': self.current_reading.book.to_dict() if self.current_reading else None,
+            'genres': [genre.to_dict() for genre in self.genres],
             'is_member': is_member,
         }
-
 
     def __repr__(self):
         return f'<BookClub {self.id}. {self.name}>'
@@ -139,6 +146,7 @@ class Genre(db.Model):
     name = db.Column(String, nullable=False, unique=True)
 
     books = relationship('Book', back_populates='genre')
+    book_clubs = db.relationship('BookClub', secondary=book_club_genres, back_populates='genres')
 
     @validates('name')
     def validate_name(self, key, name):
@@ -235,6 +243,7 @@ class Review(db.Model):
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
-
+    
     def __repr__(self):
         return f'<Review {self.id}. User: {self.user_id}, Book: {self.book_id}, Rating: {self.rating}>'
+    
