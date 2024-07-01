@@ -34,9 +34,15 @@ api.add_resource(Home, '/')
 
 class Books(Resource):
     def get(self):
-        response_dict_list = [book.to_dict() for book in Book.query.all()]
+        genre_ids = request.args.getlist('genre_ids')
+        if genre_ids:
+            books = Book.query.join(Book.genres).filter(Genre.id.in_(genre_ids)).all()
+        else:
+            books = Book.query.all()
+        response_dict_list = [book.to_dict() for book in books]
         response = make_response(jsonify(response_dict_list), 200)
         return response
+
 
 class Genres(Resource):
     def get(self):

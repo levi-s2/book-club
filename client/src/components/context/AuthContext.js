@@ -15,10 +15,10 @@ const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         axios.get(`/users/${decoded.identity}`)
           .then(response => {
             setUser(response.data);
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           })
           .catch(error => {
             console.error('Error fetching user:', error);
@@ -101,6 +101,13 @@ const AuthProvider = ({ children }) => {
       throw error;
     }
   };
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout, loading }}>

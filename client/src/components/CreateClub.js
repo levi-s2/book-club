@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from './axiosConfig';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import NavBar from './NavBar';
 import './css/CreateClub.css';
 
 const CreateClub = () => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
   const [genres, setGenres] = useState([]);
-  const [selectedGenres, setSelectedGenres] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -27,77 +27,85 @@ const CreateClub = () => {
     fetchGenres();
   }, []);
 
-  const handleGenreChange = (genreId) => {
-    if (selectedGenres.includes(genreId)) {
-      setSelectedGenres(selectedGenres.filter(id => id !== genreId));
-    } else if (selectedGenres.length < 3) {
-      setSelectedGenres([...selectedGenres, genreId]);
-    }
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (values, { setSubmitting }) => {
     setMessage('');
     setError('');
 
     try {
-      const response = await axios.post('/create-club', { name, description, genre_ids: selectedGenres }, {
+      const response = await axios.post('/create-club', values, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       setMessage(response.data.message);
-      setName('');
-      setDescription('');
-      setSelectedGenres([]);
+      setSubmitting(false);
+      window.location.href = '/book-clubs'; // Redirect after successful creation
     } catch (error) {
       setError('Error creating book club.');
+      setSubmitting(false);
     }
   };
 
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required('Club name is required'),
+    description: Yup.string(),
+    genre_ids: Yup.array().of(Yup.number()).min(1, 'At least one genre must be selected').max(3, 'You can select up to 3 genres'),
+  });
+
   return (
-    <div className="create-club-container">
+    <div>
+      <NavBar />
+      <div className="create-club-container">
       <h2>Create a New Book Club</h2>
-      <form onSubmit={handleSubmit} className="create-club-form">
-        <div className="form-group">
-          <label htmlFor="name">Club Name:</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="description">Description:</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label>Genres (select up to 3):</label>
-          <div className="genre-list">
-            {genres.map((genre) => (
-              <div key={genre.id} className="genre-item">
-                <input
-                  type="checkbox"
-                  id={`genre-${genre.id}`}
-                  value={genre.id}
-                  checked={selectedGenres.includes(genre.id)}
-                  onChange={() => handleGenreChange(genre.id)}
-                />
-                <label htmlFor={`genre-${genre.id}`}>{genre.name}</label>
+      <Formik
+        initialValues={{ name: '', description: '', genre_ids: [] }}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting, values, setFieldValue }) => (
+          <Form className="create-club-form">
+            <div className="form-group">
+              <label htmlFor="name">Club Name:</label>
+              <Field type="text" id="name" name="name" required />
+              <ErrorMessage name="name" component="div" className="error-message" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="description">Description:</label>
+              <Field as="textarea" id="description" name="description" />
+            </div>
+            <div className="form-group">
+              <label>Genres (select up to 3):</label>
+              <div className="genre-list">
+                {genres.map((genre) => (
+                  <div key={genre.id} className="genre-item">
+                    <Field
+                      type="checkbox"
+                      id={`genre-${genre.id}`}
+                      name="genre_ids"
+                      value={genre.id}
+                      checked={values.genre_ids.includes(genre.id)}
+                      onChange={() => {
+                        const newGenreIds = values.genre_ids.includes(genre.id)
+                          ? values.genre_ids.filter((id) => id !== genre.id)
+                          : [...values.genre_ids, genre.id].slice(0, 3);
+                        setFieldValue('genre_ids', newGenreIds);
+                      }}
+                    />
+                    <label htmlFor={`genre-${genre.id}`}>{genre.name}</label>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-        <button type="submit" className="create-club-button">Create Club</button>
-        {message && <p className="success-message">{message}</p>}
-        {error && <p className="error-message">{error}</p>}
-      </form>
+              <ErrorMessage name="genre_ids" component="div" className="error-message" />
+            </div>
+            <button type="submit" className="create-club-button" disabled={isSubmitting}>
+              Create Club
+            </button>
+            {message && <p className="success-message">{message}</p>}
+            {error && <p className="error-message">{error}</p>}
+          </Form>
+        )}
+      </Formik>
+    </div>
     </div>
   );
 };
