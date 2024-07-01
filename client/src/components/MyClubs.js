@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from './axiosConfig';
+import { Link } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
+import NavBar from './NavBar';
 import './css/MyClubs.css';
 
 const MyClubs = () => {
   const { user } = useContext(AuthContext);
   const [myClubs, setMyClubs] = useState([]);
-  const [error, setError] = useState('');
+  
 
   useEffect(() => {
     const fetchMyClubs = async () => {
@@ -19,7 +21,6 @@ const MyClubs = () => {
           });
           setMyClubs(response.data);
         } catch (error) {
-          setError('Error fetching your clubs.');
         }
       }
     };
@@ -32,9 +33,10 @@ const MyClubs = () => {
   }
 
   return (
-    <div className="my-clubs">
+    <div>
+      <NavBar />
+      <div className="my-clubs">
       <h2>My Book Clubs</h2>
-      {error && <p className="error-message">{error}</p>}
       <div className="club-list">
         {myClubs.length > 0 ? (
           myClubs.map((club) => (
@@ -42,15 +44,14 @@ const MyClubs = () => {
               <h3>{club.name}</h3>
               <p>{club.description}</p>
               <p>Current Book: {club.current_book ? club.current_book.title : 'None'}</p>
-              <button className="view-details-button">
-                <a href={`/book-clubs/${club.id}`}>View Details</a>
-              </button>
+              <Link to={`/book-clubs/${club.id}`} className="view-details-button">View Details</Link>
             </div>
           ))
         ) : (
           <p>You are not part of any clubs yet.</p>
         )}
       </div>
+    </div>
     </div>
   );
 };

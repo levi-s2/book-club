@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from './axiosConfig';
 import BookCard from './BookCard';
+import NavBar from './NavBar'
 import './css/Books.css';
 
 const Books = () => {
@@ -70,7 +71,9 @@ const Books = () => {
   };
 
   return (
-    <div className="books-page">
+    <div>
+      <NavBar />
+      <div className="books-page">
       <div className="sidebar">
         <h2>Genres</h2>
         <ul>
@@ -104,6 +107,7 @@ const Books = () => {
           ))}
         </div>
       </div>
+    </div>
     </div>
   );
 };
