@@ -10,27 +10,26 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const history = useHistory();
 
+  const fetchUser = useCallback(async (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      const response = await axios.get(`/users/${decoded.sub}`);
+      setUser(response.data);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      localStorage.removeItem('token');
+      setUser(null);
+    }
+  }, []);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        axios.get(`/users/${decoded.identity}`)
-          .then(response => {
-            setUser(response.data);
-          })
-          .catch(error => {
-            console.error('Error fetching user:', error);
-            localStorage.removeItem('token');
-          });
-      } catch (error) {
-        console.error('Invalid token at startup:', error);
-        localStorage.removeItem('token');
-      }
+      fetchUser(token);
     }
     setLoading(false);
-  }, []);
+  }, [fetchUser]);
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
@@ -49,16 +48,7 @@ const AuthProvider = ({ children }) => {
         });
         const { access_token } = response.data;
         localStorage.setItem('token', access_token);
-        const decoded = jwtDecode(access_token);
-        axios.get(`/users/${decoded.identity}`)
-          .then(response => {
-            setUser(response.data);
-            axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-          })
-          .catch(error => {
-            console.error('Error fetching user:', error);
-            logout();
-          });
+        fetchUser(access_token);
       } catch (error) {
         console.error('Error refreshing token:', error);
         logout();
@@ -77,7 +67,7 @@ const AuthProvider = ({ children }) => {
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [logout]);
+  }, [logout, fetchUser]);
 
   const login = async (email, password) => {
     try {
@@ -101,13 +91,6 @@ const AuthProvider = ({ children }) => {
       throw error;
     }
   };
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout, loading }}>

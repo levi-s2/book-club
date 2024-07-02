@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
 import NavBar from './NavBar';
+import { useHistory } from 'react-router-dom';
 import './css/ManageClub.css';
 
 const ManageClub = () => {
-  const { user } = useContext(AuthContext);
+  const { user, refreshUserData } = useContext(AuthContext);
   const [clubDetails, setClubDetails] = useState(null);
   const [genres, setGenres] = useState([]);
   const [members, setMembers] = useState([]);
@@ -14,22 +15,20 @@ const ManageClub = () => {
   const [books, setBooks] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const history = useHistory();
 
   useEffect(() => {
     const fetchClubDetails = async () => {
       try {
-        console.log('Fetching club details...');
         const response = await axios.get(`/manage-club/${user.created_clubs[0]}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        console.log('Club details fetched:', response.data);
         setClubDetails(response.data);
         setMembers(response.data.members);
         setSelectedGenres(response.data.genres.map((genre) => genre.id));
       } catch (error) {
-        console.error('Error fetching club details:', error);
         setError('Error fetching club details.');
       }
     };
@@ -132,6 +131,21 @@ const ManageClub = () => {
     }
   };
 
+  const handleDeleteClub = async () => {
+    try {
+      const response = await axios.delete(`/manage-club/${user.created_clubs[0]}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setMessage(response.data.message);
+      refreshUserData();
+      history.push('/book-clubs');
+    } catch (error) {
+      setError('Error deleting club.');
+    }
+  };
+
   if (!clubDetails) {
     return <div>Loading...</div>;
   }
@@ -188,6 +202,10 @@ const ManageClub = () => {
             ))}
           </div>
           <button onClick={handleUpdateGenres}>Update Genres</button>
+        </div>
+        <div className="manage-section">
+          <h3>Delete Club</h3>
+          <button onClick={handleDeleteClub} className="delete-club-button">Delete Club</button>
         </div>
         {message && <p className="success-message">{message}</p>}
         {error && <p className="error-message">{error}</p>}

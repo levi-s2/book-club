@@ -115,16 +115,29 @@ class Login(Resource):
 class TokenRefresh(Resource):
     @jwt_required(refresh=True)
     def post(self):
-        current_user_id = get_jwt_identity()
-        new_access_token = create_access_token(identity=current_user_id)
-        return {"access_token": new_access_token}, 200
+        try:
+            current_user_id = get_jwt_identity()
+            new_access_token = create_access_token(identity=current_user_id)
+
+            print(f"New Access Token: {new_access_token}")
+
+            return {"access_token": new_access_token}, 200
+        except Exception as e:
+            print(f"Error during token refresh: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
 
 class Protected(Resource):
     @jwt_required()
     def get(self):
-        current_user_id = get_jwt_identity()
-        user = User.query.get(current_user_id)
-        return {"username": user.username, "email": user.email}, 200
+        try:
+            current_user_id = get_jwt_identity()
+            user = User.query.get(current_user_id)
+            return {"username": user.username, "email": user.email}, 200
+        except Exception as e:
+            print(f"Error in protected resource: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
 
 api.add_resource(Register, '/register', endpoint='register_endpoint')
 api.add_resource(Login, '/login', endpoint='login_endpoint')
@@ -195,7 +208,7 @@ class MyClubs(Resource):
 api.add_resource(MyClubs, '/my-clubs')
 
 
-class CreateBookClub(Resource):
+class CreateClub(Resource):
     @jwt_required()
     def post(self):
         try:
@@ -203,42 +216,55 @@ class CreateBookClub(Resource):
             data = request.get_json()
             name = data.get('name')
             description = data.get('description')
-            genre_ids = data.get('genre_ids', [])
+            genre_ids = data.get('genre_ids')
 
-            if not name:
-                return {"message": "Name is required"}, 400
+            if not name or not genre_ids or len(genre_ids) == 0:
+                return {"message": "Name and at least one genre are required"}, 400
 
-            genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
-            if len(genres) != len(genre_ids):
-                return {"message": "Some genres not found"}, 400
+            existing_club = BookClub.query.filter_by(created_by=user_id).first()
+            if existing_club:
+                return {"message": "You have already created a book club"}, 400
 
-            new_club = BookClub(name=name, description=description, created_by=user_id, genres=genres)
+            new_club = BookClub(name=name, description=description, created_by=user_id)
             db.session.add(new_club)
             db.session.commit()
 
-            return {"message": "Book club created successfully", "club": new_club.to_dict(user_id=user_id)}, 201
+            for genre_id in genre_ids:
+                genre = Genre.query.get(genre_id)
+                if genre:
+                    new_club.genres.append(genre)
+            
+            db.session.commit()
+
+            return {"message": "Book club created successfully"}, 201
+
         except Exception as e:
             print(f"Error during book club creation: {e}")
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
 
-api.add_resource(CreateBookClub, '/create-club')
+api.add_resource(CreateClub, '/create-club', endpoint='create_club_endpoint')
+
 
 
 class ManageClub(Resource):
     @jwt_required()
     def get(self, club_id):
+        user_id = get_jwt_identity()
         book_club = BookClub.query.get_or_404(club_id)
-        response_dict = book_club.to_dict()
-        response = make_response(jsonify(response_dict), 200)
-        return response
+        if book_club.created_by != user_id:
+            return {"message": "Unauthorized"}, 403
+        return jsonify(book_club.to_dict(user_id=user_id))
 
     @jwt_required()
     def patch(self, club_id):
         data = request.get_json()
-        book_club = BookClub.query.get_or_404(club_id)
         action = data.get('action')
         user_id = get_jwt_identity()
+        book_club = BookClub.query.get_or_404(club_id)
+
+        if book_club.created_by != user_id:
+            return {"message": "You are not authorized to manage this club"}, 403
 
         if action == 'update_current_reading':
             book_id = data.get('book_id')
@@ -249,28 +275,37 @@ class ManageClub(Resource):
                 new_current_reading = CurrentReading(book_club_id=club_id, book_id=book_id)
                 db.session.add(new_current_reading)
             db.session.commit()
-            return make_response(jsonify({"message": "Current reading updated"}), 200)
+            return {"message": "Current reading updated successfully"}, 200
 
-        elif action == 'remove_member':
+        if action == 'remove_member':
             member_id = data.get('member_id')
             membership = Membership.query.filter_by(user_id=member_id, book_club_id=club_id).first()
             if membership:
                 db.session.delete(membership)
                 db.session.commit()
-                return make_response(jsonify({"message": "Member removed"}), 200)
-            else:
-                return make_response(jsonify({"message": "Member not found"}), 404)
+                return {"message": "Member removed successfully"}, 200
 
-        elif action == 'update_genres':
+        if action == 'update_genres':
             genre_ids = data.get('genre_ids', [])
-            book_club.genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
+            book_club.genres = [Genre.query.get(genre_id) for genre_id in genre_ids]
             db.session.commit()
-            return make_response(jsonify({"message": "Genres updated"}), 200)
+            return {"message": "Genres updated successfully"}, 200
 
-        return make_response(jsonify({"message": "Invalid action"}), 400)
+        return {"message": "Invalid action"}, 400
+
+    @jwt_required()
+    def delete(self, club_id):
+        try:
+            book_club = BookClub.query.get_or_404(club_id)
+            if book_club.current_reading:
+                db.session.delete(book_club.current_reading)
+            db.session.delete(book_club)
+            db.session.commit()
+            return {"message": "Book club deleted successfully"}, 200
+        except Exception as e:
+            print(f"Error deleting book club: {e}")
 
 api.add_resource(ManageClub, '/manage-club/<int:club_id>')
-
 
 
 
