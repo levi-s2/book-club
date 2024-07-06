@@ -6,8 +6,22 @@ import { useHistory } from 'react-router-dom';
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        return decoded;
+      } catch (error) {
+        console.error('Invalid token at startup:', error);
+        localStorage.removeItem('token');
+      }
+    }
+    return null;
+  });
+
+  const [loading, setLoading] = useState(!user);
   const history = useHistory();
 
   const fetchUser = useCallback(async (token) => {

@@ -21,7 +21,7 @@ migrate = Migrate(app, db)
 db.init_app(app)
 bcrypt.init_app(app)
 api = Api(app)
-CORS(app, resources={r"*": {"origins": "*"}})
+CORS(app, resources={r"*": {"origins": "*"}}, supports_credentials=True)
 jwt = JWTManager(app)
 
 class Home(Resource):
@@ -88,6 +88,24 @@ class Register(Resource):
             print(f"Error during registration: {e}")
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
+        
+
+class UserDetail(Resource):
+    @jwt_required()
+    def get(self, user_id):
+        try:
+            user = User.query.get(user_id)
+            if not user:
+                return {"message": "User not found"}, 404
+            return user.to_dict(), 200
+        except Exception as e:
+            print(f"Error fetching user: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+api.add_resource(UserDetail, '/users/<int:user_id>', endpoint='user_detail_endpoint')
+
+
 
 class Login(Resource):
     def post(self):
@@ -115,17 +133,9 @@ class Login(Resource):
 class TokenRefresh(Resource):
     @jwt_required(refresh=True)
     def post(self):
-        try:
-            current_user_id = get_jwt_identity()
-            new_access_token = create_access_token(identity=current_user_id)
-
-            print(f"New Access Token: {new_access_token}")
-
-            return {"access_token": new_access_token}, 200
-        except Exception as e:
-            print(f"Error during token refresh: {e}")
-            traceback.print_exc()
-            return {"message": "Internal Server Error"}, 500
+        current_user_id = get_jwt_identity()
+        new_access_token = create_access_token(identity=current_user_id)
+        return {"access_token": new_access_token}, 200
 
 class Protected(Resource):
     @jwt_required()

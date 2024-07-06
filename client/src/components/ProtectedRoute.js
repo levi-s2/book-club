@@ -3,13 +3,21 @@ import { Route, Redirect } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return <div>Loading...</div>; // Add a loading state if necessary
+  }
 
   return (
     <Route
       {...rest}
-      render={props => 
-        user ? <Component {...props} /> : <Redirect to="/" />
+      render={(props) =>
+        user ? (
+          <Component {...props} />
+        ) : (
+          <Redirect to={{ pathname: '/', state: { from: props.location } }} />
+        )
       }
     />
   );

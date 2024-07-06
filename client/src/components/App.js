@@ -32,13 +32,11 @@ const Main = () => {
     const fetchBookClubs = async () => {
       if (user) {
         try {
-          console.log('Fetching book clubs...');
           const response = await axios.get('/book-clubs', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           });
-          console.log('Book clubs fetched:', response.data);
           setBookClubs(response.data);
         } catch (error) {
           console.error('Error fetching book clubs:', error);
@@ -50,7 +48,7 @@ const Main = () => {
   }, [user, setBookClubs]);
 
   if (loading) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
@@ -58,7 +56,7 @@ const Main = () => {
       <Route path="/" exact component={LandingPage} />
       <ProtectedRoute path="/books" component={Books} />
       <ProtectedRoute path="/book-clubs" exact component={BooksClub} />
-      <ProtectedRoute path="/book-clubs/:id" component={BookClubDetails} /> 
+      <ProtectedRoute path="/book-clubs/:id" component={BookClubDetails} />
       <ProtectedRoute path="/my-clubs" component={MyClubs} />
       <ProtectedRoute path="/new-club" component={CreateClub} />
       <ProtectedRoute path="/manage-club" component={ManageClub} />
