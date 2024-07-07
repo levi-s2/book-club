@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
-import NavBar from './NavBar';
+import { BookClubsContext } from './context/BookClubsContext';
 import { useHistory } from 'react-router-dom';
+import NavBar from './NavBar';
 import './css/ManageClub.css';
 
 const ManageClub = () => {
-  const { user, refreshUserData } = useContext(AuthContext);
+  const { user, updateUserCreatedClubs } = useContext(AuthContext);
+  const { updateBookClub } = useContext(BookClubsContext);
   const [clubDetails, setClubDetails] = useState(null);
   const [genres, setGenres] = useState([]);
   const [members, setMembers] = useState([]);
@@ -15,6 +17,7 @@ const ManageClub = () => {
   const [books, setBooks] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
   const history = useHistory();
 
   useEffect(() => {
@@ -29,6 +32,7 @@ const ManageClub = () => {
         setMembers(response.data.members);
         setSelectedGenres(response.data.genres.map((genre) => genre.id));
       } catch (error) {
+        console.error('Error fetching club details:', error);
         setError('Error fetching club details.');
       }
     };
@@ -85,6 +89,9 @@ const ManageClub = () => {
         },
       });
       setMessage(response.data.message);
+      const updatedClub = { ...clubDetails, current_book: books.find((book) => book.id === selectedBookId) };
+      setClubDetails(updatedClub);
+      updateBookClub(updatedClub);
     } catch (error) {
       setError('Error updating current reading.');
     }
@@ -101,7 +108,11 @@ const ManageClub = () => {
         },
       });
       setMessage(response.data.message);
-      setMembers(members.filter((member) => member.id !== memberId));
+      const updatedMembers = members.filter((member) => member.id !== memberId);
+      setMembers(updatedMembers);
+      const updatedClub = { ...clubDetails, members: updatedMembers };
+      setClubDetails(updatedClub);
+      updateBookClub(updatedClub);
     } catch (error) {
       setError('Error removing member.');
     }
@@ -118,6 +129,10 @@ const ManageClub = () => {
         },
       });
       setMessage(response.data.message);
+      const updatedGenres = genres.filter((genre) => selectedGenres.includes(genre.id));
+      const updatedClub = { ...clubDetails, genres: updatedGenres };
+      setClubDetails(updatedClub);
+      updateBookClub(updatedClub);
     } catch (error) {
       setError('Error updating genres.');
     }
@@ -139,10 +154,11 @@ const ManageClub = () => {
         },
       });
       setMessage(response.data.message);
-      refreshUserData();
+      // Update the user context to reflect that the user no longer has any created clubs
+      updateUserCreatedClubs([]);
       history.push('/book-clubs');
     } catch (error) {
-      setError('Error deleting club.');
+      setError('Error deleting book club.');
     }
   };
 
@@ -202,10 +218,7 @@ const ManageClub = () => {
             ))}
           </div>
           <button onClick={handleUpdateGenres}>Update Genres</button>
-        </div>
-        <div className="manage-section">
-          <h3>Delete Club</h3>
-          <button onClick={handleDeleteClub} className="delete-club-button">Delete Club</button>
+          <button onClick={handleDeleteClub} className="delete-button">Delete Club</button>
         </div>
         {message && <p className="success-message">{message}</p>}
         {error && <p className="error-message">{error}</p>}

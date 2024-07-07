@@ -4,10 +4,12 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import NavBar from './NavBar';
 import { AuthContext } from './context/AuthContext';
+import { BookClubsContext } from './context/BookClubsContext';
 import './css/CreateClub.css';
 
 const CreateClub = () => {
   const { user } = useContext(AuthContext);
+  const { setBookClubs } = useContext(BookClubsContext);
   const [genres, setGenres] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -41,6 +43,8 @@ const CreateClub = () => {
       });
       setMessage(response.data.message);
       setSubmitting(false);
+      // Update the book clubs context with the newly created club
+      setBookClubs((prevClubs) => [...prevClubs, response.data.club]);
       window.location.href = '/book-clubs'; 
     } catch (error) {
       setError('Error creating book club.');

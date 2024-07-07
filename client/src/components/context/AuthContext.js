@@ -106,8 +106,15 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUserCreatedClubs = (createdClubs) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      created_clubs: createdClubs,
+    }));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading, updateUserCreatedClubs }}>
       {children}
     </AuthContext.Provider>
   );

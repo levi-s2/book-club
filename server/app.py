@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from models import db, bcrypt, User, Book, BookClub, Genre, Membership, CurrentReading
+from models import db, bcrypt, User, Book, BookClub, Genre, Membership, CurrentReading, Review
 from datetime import timedelta
 import os
 import traceback
@@ -302,20 +302,28 @@ class ManageClub(Resource):
             return {"message": "Genres updated successfully"}, 200
 
         return {"message": "Invalid action"}, 400
-
+    
     @jwt_required()
     def delete(self, club_id):
         try:
             book_club = BookClub.query.get_or_404(club_id)
+        
             if book_club.current_reading:
                 db.session.delete(book_club.current_reading)
+
+            Membership.query.filter_by(book_club_id=club_id).delete()
+            Review.query.filter_by(book_club_id=club_id).delete()
+            book_club.genres.clear()
             db.session.delete(book_club)
             db.session.commit()
             return {"message": "Book club deleted successfully"}, 200
+        
         except Exception as e:
             print(f"Error deleting book club: {e}")
+            return {"message": "Error deleting book club"}, 500
 
 api.add_resource(ManageClub, '/manage-club/<int:club_id>')
+
 
 
 
