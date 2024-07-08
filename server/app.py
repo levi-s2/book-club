@@ -206,6 +206,7 @@ class BookClubDetails(Resource):
 api.add_resource(BookClubDetails, '/book-clubs/<int:club_id>')
 
 
+
 class MyClubs(Resource):
     @jwt_required()
     def get(self):

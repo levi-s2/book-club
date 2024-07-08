@@ -27,8 +27,16 @@ const BookClubsProvider = ({ children }) => {
     fetchBookClubs();
   }, [user]);
 
+  const updateBookClub = (updatedClub) => {
+    if (updatedClub.deleted) {
+      setBookClubs((prevClubs) => prevClubs.filter(club => club.id !== updatedClub.id));
+    } else {
+      setBookClubs((prevClubs) => prevClubs.map(club => club.id === updatedClub.id ? updatedClub : club));
+    }
+  };
+
   return (
-    <BookClubsContext.Provider value={{ bookClubs, setBookClubs }}>
+    <BookClubsContext.Provider value={{ bookClubs, setBookClubs, updateBookClub }}>
       {children}
     </BookClubsContext.Provider>
   );

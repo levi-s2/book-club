@@ -69,4 +69,15 @@
   .delete-club-button:hover {
     background-color: #c82333;
   }
+  .delete-button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
   
+  .delete-button:hover {
+    background-color: darkred;
+  }

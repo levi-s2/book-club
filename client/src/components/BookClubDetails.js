@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from './axiosConfig';
+import { AuthContext } from './context/AuthContext';
 import './css/BookClubDetails.css';
 
 const BookClubDetails = () => {
   const { id } = useParams();
+  const { user } = useContext(AuthContext);
   const [clubDetails, setClubDetails] = useState(null);
   const [error, setError] = useState('');
 
@@ -55,11 +57,21 @@ const BookClubDetails = () => {
     return <div>Loading...</div>;
   }
 
+  const isCreator = user && clubDetails.creator && user.id === clubDetails.creator.id;
+
   return (
     <div className="book-club-details">
       <div className="club-header">
         <h2>{clubDetails.name}</h2>
         <p>{clubDetails.description}</p>
+      </div>
+      <div className="club-creator">
+        <h3>Creator</h3>
+        {clubDetails.creator ? (
+          <p>{clubDetails.creator.username}</p>
+        ) : (
+          <p>Creator not available.</p>
+        )}
       </div>
       <div className="club-members">
         <h3>Members</h3>
@@ -96,10 +108,10 @@ const BookClubDetails = () => {
           <p>No genres selected.</p>
         )}
       </div>
-      {!clubDetails.is_member ? (
+      {!clubDetails.is_member && !isCreator ? (
         <button onClick={handleJoinClub} className="join-club-button">Join Club</button>
       ) : (
-        <button onClick={handleLeaveClub} className="leave-club-button">Leave Club</button>
+        !isCreator && <button onClick={handleLeaveClub} className="leave-club-button">Leave Club</button>
       )}
       {error && <p className="error-message">{error}</p>}
     </div>

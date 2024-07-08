@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
 import { BookClubsContext } from './context/BookClubsContext';
+import { BooksContext } from './context/BooksContext';
+import { GenresContext } from './context/GenresContext';
 import { useHistory } from 'react-router-dom';
 import NavBar from './NavBar';
 import './css/ManageClub.css';
@@ -9,12 +11,12 @@ import './css/ManageClub.css';
 const ManageClub = () => {
   const { user, updateUserCreatedClubs } = useContext(AuthContext);
   const { updateBookClub } = useContext(BookClubsContext);
+  const { books } = useContext(BooksContext);
+  const { genres } = useContext(GenresContext);
   const [clubDetails, setClubDetails] = useState(null);
-  const [genres, setGenres] = useState([]);
   const [members, setMembers] = useState([]);
   const [selectedBookId, setSelectedBookId] = useState('');
   const [selectedGenres, setSelectedGenres] = useState([]);
-  const [books, setBooks] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -37,46 +39,10 @@ const ManageClub = () => {
       }
     };
 
-    const fetchGenres = async () => {
-      try {
-        const response = await axios.get('/genres', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setGenres(response.data);
-      } catch (error) {
-        console.error('Error fetching genres:', error);
-      }
-    };
-
     if (user && user.created_clubs && user.created_clubs.length > 0) {
       fetchClubDetails();
-      fetchGenres();
     }
   }, [user]);
-
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await axios.get('/books', {
-          params: {
-            genre_ids: selectedGenres,
-          },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setBooks(response.data);
-      } catch (error) {
-        console.error('Error fetching books:', error);
-      }
-    };
-
-    if (selectedGenres.length > 0) {
-      fetchBooks();
-    }
-  }, [selectedGenres]);
 
   const handleUpdateCurrentReading = async () => {
     try {
@@ -92,8 +58,10 @@ const ManageClub = () => {
       const updatedClub = { ...clubDetails, current_book: books.find((book) => book.id === selectedBookId) };
       setClubDetails(updatedClub);
       updateBookClub(updatedClub);
+      setError('');
     } catch (error) {
       setError('Error updating current reading.');
+      setMessage('');
     }
   };
 
@@ -113,8 +81,10 @@ const ManageClub = () => {
       const updatedClub = { ...clubDetails, members: updatedMembers };
       setClubDetails(updatedClub);
       updateBookClub(updatedClub);
+      setError('');
     } catch (error) {
       setError('Error removing member.');
+      setMessage('');
     }
   };
 
@@ -133,8 +103,10 @@ const ManageClub = () => {
       const updatedClub = { ...clubDetails, genres: updatedGenres };
       setClubDetails(updatedClub);
       updateBookClub(updatedClub);
+      setError('');
     } catch (error) {
       setError('Error updating genres.');
+      setMessage('');
     }
   };
 
@@ -154,11 +126,13 @@ const ManageClub = () => {
         },
       });
       setMessage(response.data.message);
-      // Update the user context to reflect that the user no longer has any created clubs
+      setError('');
       updateUserCreatedClubs([]);
+      updateBookClub({ id: user.created_clubs[0], deleted: true });
       history.push('/book-clubs');
     } catch (error) {
       setError('Error deleting book club.');
+      setMessage('');
     }
   };
 

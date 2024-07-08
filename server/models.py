@@ -71,10 +71,10 @@ class BookClub(db.Model):
     created_at = db.Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     creator = relationship('User', back_populates='book_clubs_created')
-    members = relationship('Membership', back_populates='book_club')
-    current_reading = relationship('CurrentReading', uselist=False, back_populates='book_club')
-    genres = db.relationship('Genre', secondary=book_club_genres, back_populates='book_clubs')
-    reviews = relationship('Review', back_populates='book_club')
+    members = relationship('Membership', back_populates='book_club', cascade="all, delete-orphan")
+    current_reading = relationship('CurrentReading', uselist=False, back_populates='book_club', cascade="all, delete-orphan")
+    genres = db.relationship('Genre', secondary=book_club_genres, back_populates='book_clubs', cascade="all, delete")
+    reviews = relationship('Review', back_populates='book_club', cascade="all, delete-orphan")
 
     @validates('name')
     def validate_name(self, key, name):
@@ -82,24 +82,23 @@ class BookClub(db.Model):
         return name
 
     def to_dict(self, user_id=None):
-        is_member = False
-        if user_id:
-            is_member = any(member.user_id == user_id for member in self.members)
-
         return {
             'id': self.id,
             'name': self.name,
             'description': self.description,
-            'created_by': self.created_by,
-            'created_at': self.created_at.isoformat() if self.created_at else None,
-            'members': [member.user.to_dict() for member in self.members],
+            'creator': {
+                'id': self.creator.id,
+                'username': self.creator.username
+            } if self.creator else None,
+            'members': [{'id': member.user.id, 'username': member.user.username} for member in self.members],
             'current_book': self.current_reading.book.to_dict() if self.current_reading else None,
-            'genres': [genre.to_dict() for genre in self.genres],
-            'is_member': is_member,
+            'genres': [{'id': genre.id, 'name': genre.name} for genre in self.genres],
+            'is_member': user_id in [member.user.id for member in self.members]
         }
 
     def __repr__(self):
         return f'<BookClub {self.id}. {self.name}>'
+
 
 
 

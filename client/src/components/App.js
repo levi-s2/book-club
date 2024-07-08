@@ -9,6 +9,8 @@ import ManageClub from './ManageClub'
 import BookClubDetails from './BookClubDetails';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { BookClubsProvider, BookClubsContext } from './context/BookClubsContext';
+import { BooksProvider } from './context/BooksContext';
+import { GenresProvider } from './context/GenresContext';
 import ProtectedRoute from './ProtectedRoute';
 import axios from './axiosConfig';
 
@@ -52,16 +54,22 @@ const Main = () => {
   }
 
   return (
-    <Switch>
-      <Route path="/" exact component={LandingPage} />
-      <ProtectedRoute path="/books" component={Books} />
-      <ProtectedRoute path="/book-clubs" exact component={BooksClub} />
-      <ProtectedRoute path="/book-clubs/:id" component={BookClubDetails} />
-      <ProtectedRoute path="/my-clubs" component={MyClubs} />
-      <ProtectedRoute path="/new-club" component={CreateClub} />
-      <ProtectedRoute path="/manage-club" component={ManageClub} />
-      <Redirect to="/" />
-    </Switch>
+    <Router>
+      <BooksProvider>
+        <GenresProvider>
+          <Switch>
+            <Route path="/" exact component={LandingPage} />
+            <ProtectedRoute path="/books" component={Books} />
+            <ProtectedRoute path="/book-clubs" exact component={BooksClub} />
+            <ProtectedRoute path="/book-clubs/:id" component={BookClubDetails} />
+            <ProtectedRoute path="/my-clubs" component={MyClubs} />
+            <ProtectedRoute path="/new-club" component={CreateClub} />
+            <ProtectedRoute path="/manage-club" component={ManageClub} />
+            <Redirect to="/" />
+          </Switch>
+        </GenresProvider>
+      </BooksProvider>
+    </Router>
   );
 };
 

@@ -46,3 +46,8 @@
   display: flex;
   flex-wrap: wrap;
 }
+
+.sidebar li.selected {
+  background-color: #dcdcdc; /* or any highlight color you prefer */
+  font-weight: bold;
+}

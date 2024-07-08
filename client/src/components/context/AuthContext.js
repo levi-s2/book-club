@@ -47,6 +47,7 @@ const AuthProvider = ({ children }) => {
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];
     history.push('/');
@@ -57,7 +58,7 @@ const AuthProvider = ({ children }) => {
       try {
         const response = await axios.post('/refresh', {}, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
           },
         });
         const { access_token } = response.data;
@@ -86,8 +87,9 @@ const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await axios.post('/login', { email, password });
-      const { access_token, user } = response.data;
+      const { access_token, refresh_token, user } = response.data; // added refresh_token
       localStorage.setItem('token', access_token);
+      localStorage.setItem('refreshToken', refresh_token); // store refresh_token
       setUser(user);
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       history.push('/book-clubs');
@@ -106,15 +108,8 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const updateUserCreatedClubs = (createdClubs) => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      created_clubs: createdClubs,
-    }));
-  };
-
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading, updateUserCreatedClubs }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
