@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import MetaData, Integer, String, Text, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship, validates
 from flask_bcrypt import Bcrypt
 import datetime
@@ -18,7 +18,8 @@ class User(db.Model):
 
     book_clubs_created = relationship('BookClub', back_populates='creator')
     memberships = relationship('Membership', back_populates='user')
-    reviews = relationship('Review', back_populates='user')
+    posts = relationship('Post', back_populates='user')
+    post_votes = relationship('PostVotes', back_populates='user')
 
     @property
     def password_hash(self):
@@ -74,7 +75,7 @@ class BookClub(db.Model):
     members = relationship('Membership', back_populates='book_club', cascade="all, delete-orphan")
     current_reading = relationship('CurrentReading', uselist=False, back_populates='book_club', cascade="all, delete-orphan")
     genres = db.relationship('Genre', secondary=book_club_genres, back_populates='book_clubs', cascade="all, delete")
-    reviews = relationship('Review', back_populates='book_club', cascade="all, delete-orphan")
+    posts = relationship('Post', back_populates='book_club', cascade="all, delete-orphan")
 
     @validates('name')
     def validate_name(self, key, name):
@@ -86,6 +87,7 @@ class BookClub(db.Model):
             'id': self.id,
             'name': self.name,
             'description': self.description,
+            'created_at': self.created_at.isoformat(),
             'creator': {
                 'id': self.creator.id,
                 'username': self.creator.username
@@ -100,8 +102,6 @@ class BookClub(db.Model):
         return f'<BookClub {self.id}. {self.name}>'
 
 
-
-
 class Book(db.Model):
     __tablename__ = 'books'
     
@@ -113,7 +113,7 @@ class Book(db.Model):
 
     genre = relationship('Genre', back_populates='books')
     current_reading = relationship('CurrentReading', back_populates='book')
-    reviews = relationship('Review', back_populates='book')
+    posts = relationship('Post', back_populates='book')
 
     @validates('title')
     def validate_title(self, key, title):
@@ -136,6 +136,7 @@ class Book(db.Model):
 
     def __repr__(self):
         return f'<Book {self.id}. {self.title}>'
+
 
 
 class Genre(db.Model):
@@ -207,29 +208,50 @@ class CurrentReading(db.Model):
 
     def __repr__(self):
         return f'<CurrentReading {self.id}. BookClub: {self.book_club_id}, Book: {self.book_id}>'
+    
+
+class PostVotes(db.Model):
+    __tablename__ = 'post_votes'
+    
+    id = db.Column(Integer, primary_key=True)
+    post_id = db.Column(Integer, ForeignKey('posts.id'), nullable=False)
+    user_id = db.Column(Integer, ForeignKey('users.id'), nullable=False)
+    vote = db.Column(Integer, nullable=False)
+
+    post = relationship('Post', back_populates='votes')
+    user = relationship('User', back_populates='post_votes')
+
+    __table_args__ = (UniqueConstraint('post_id', 'user_id', name='_post_user_uc'),)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'post_id': self.post_id,
+            'user_id': self.user_id,
+            'vote': self.vote
+        }
+
+    def __repr__(self):
+        return f'<PostVotes {self.id}. Post: {self.post_id}, User: {self.user_id}, Vote: {self.vote}>'
 
 
 
-class Review(db.Model):
-    __tablename__ = 'reviews'
+
+class Post(db.Model):
+    __tablename__ = 'posts'
     
     id = db.Column(Integer, primary_key=True)
     user_id = db.Column(Integer, ForeignKey('users.id'), nullable=False)
     book_id = db.Column(Integer, ForeignKey('books.id'), nullable=False)
     book_club_id = db.Column(Integer, ForeignKey('book_clubs.id'), nullable=False)
     content = db.Column(Text, nullable=False)
-    rating = db.Column(Integer, nullable=False)
     created_at = db.Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
     updated_at = db.Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc), onupdate=lambda: datetime.datetime.now(datetime.timezone.utc))
 
-    user = relationship('User', back_populates='reviews')
-    book = relationship('Book', back_populates='reviews')
-    book_club = relationship('BookClub', back_populates='reviews')
-
-    @validates('rating')
-    def validate_rating(self, key, rating):
-        assert 1 <= rating <= 5
-        return rating
+    user = relationship('User', back_populates='posts')
+    book = relationship('Book', back_populates='posts')
+    book_club = relationship('BookClub', back_populates='posts')
+    votes = relationship('PostVotes', back_populates='post')
 
     def to_dict(self):
         return {
@@ -238,11 +260,10 @@ class Review(db.Model):
             'book_id': self.book_id,
             'book_club_id': self.book_club_id,
             'content': self.content,
-            'rating': self.rating,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
     
     def __repr__(self):
-        return f'<Review {self.id}. User: {self.user_id}, Book: {self.book_id}, Rating: {self.rating}>'
-    
+        return f'<Post {self.id}. User: {self.user_id}, Book: {self.book_id}, BookClub: {self.book_club_id}>'
+
