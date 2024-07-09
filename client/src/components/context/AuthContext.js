@@ -87,9 +87,9 @@ const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await axios.post('/login', { email, password });
-      const { access_token, refresh_token, user } = response.data; // added refresh_token
+      const { access_token, refresh_token, user } = response.data;
       localStorage.setItem('token', access_token);
-      localStorage.setItem('refreshToken', refresh_token); // store refresh_token
+      localStorage.setItem('refreshToken', refresh_token);
       setUser(user);
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       history.push('/book-clubs');
@@ -108,8 +108,15 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUserCreatedClubs = (createdClubId) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      created_clubs: prevUser.created_clubs.filter(id => id !== createdClubId)
+    }));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading, updateUserCreatedClubs }}>
       {children}
     </AuthContext.Provider>
   );

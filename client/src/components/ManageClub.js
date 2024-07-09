@@ -58,10 +58,8 @@ const ManageClub = () => {
       const updatedClub = { ...clubDetails, current_book: books.find((book) => book.id === selectedBookId) };
       setClubDetails(updatedClub);
       updateBookClub(updatedClub);
-      setError('');
     } catch (error) {
       setError('Error updating current reading.');
-      setMessage('');
     }
   };
 
@@ -81,14 +79,16 @@ const ManageClub = () => {
       const updatedClub = { ...clubDetails, members: updatedMembers };
       setClubDetails(updatedClub);
       updateBookClub(updatedClub);
-      setError('');
     } catch (error) {
       setError('Error removing member.');
-      setMessage('');
     }
   };
 
   const handleUpdateGenres = async () => {
+    if (selectedGenres.length === 0) {
+      setError('You must select at least one genre.');
+      return;
+    }
     try {
       const response = await axios.patch(`/manage-club/${user.created_clubs[0]}`, {
         action: 'update_genres',
@@ -103,10 +103,8 @@ const ManageClub = () => {
       const updatedClub = { ...clubDetails, genres: updatedGenres };
       setClubDetails(updatedClub);
       updateBookClub(updatedClub);
-      setError('');
     } catch (error) {
       setError('Error updating genres.');
-      setMessage('');
     }
   };
 
@@ -126,13 +124,10 @@ const ManageClub = () => {
         },
       });
       setMessage(response.data.message);
-      setError('');
-      updateUserCreatedClubs([]);
-      updateBookClub({ id: user.created_clubs[0], deleted: true });
+      updateUserCreatedClubs(user.created_clubs[0]);
       history.push('/book-clubs');
     } catch (error) {
       setError('Error deleting book club.');
-      setMessage('');
     }
   };
 
@@ -192,8 +187,8 @@ const ManageClub = () => {
             ))}
           </div>
           <button onClick={handleUpdateGenres}>Update Genres</button>
-          <button onClick={handleDeleteClub} className="delete-button">Delete Club</button>
         </div>
+        <button onClick={handleDeleteClub} className="delete-button">Delete Club</button>
         {message && <p className="success-message">{message}</p>}
         {error && <p className="error-message">{error}</p>}
       </div>

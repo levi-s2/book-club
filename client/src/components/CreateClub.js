@@ -4,12 +4,10 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import NavBar from './NavBar';
 import { AuthContext } from './context/AuthContext';
-import { BookClubsContext } from './context/BookClubsContext';
 import './css/CreateClub.css';
 
 const CreateClub = () => {
   const { user } = useContext(AuthContext);
-  const { setBookClubs } = useContext(BookClubsContext);
   const [genres, setGenres] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -43,8 +41,6 @@ const CreateClub = () => {
       });
       setMessage(response.data.message);
       setSubmitting(false);
-      // Update the book clubs context with the newly created club
-      setBookClubs((prevClubs) => [...prevClubs, response.data.club]);
       window.location.href = '/book-clubs'; 
     } catch (error) {
       setError('Error creating book club.');
@@ -54,7 +50,7 @@ const CreateClub = () => {
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Club name is required'),
-    description: Yup.string(),
+    description: Yup.string().required('Description is required'),
     genre_ids: Yup.array().of(Yup.number()).min(1, 'At least one genre must be selected').max(3, 'You can select up to 3 genres'),
   });
 
@@ -89,6 +85,7 @@ const CreateClub = () => {
               <div className="form-group">
                 <label htmlFor="description">Description:</label>
                 <Field as="textarea" id="description" name="description" />
+                <ErrorMessage name="description" component="div" className="error-message" />
               </div>
               <div className="form-group">
                 <label>Genres (select up to 3):</label>
