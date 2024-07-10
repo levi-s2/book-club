@@ -95,11 +95,13 @@ class BookClub(db.Model):
             'members': [{'id': member.user.id, 'username': member.user.username} for member in self.members],
             'current_book': self.current_reading.book.to_dict() if self.current_reading else None,
             'genres': [{'id': genre.id, 'name': genre.name} for genre in self.genres],
-            'is_member': user_id in [member.user.id for member in self.members]
+            'is_member': user_id in [member.user.id for member in self.members],
+            'posts': [post.to_dict(user_id=user_id) for post in self.posts]
         }
 
     def __repr__(self):
         return f'<BookClub {self.id}. {self.name}>'
+
 
 
 class Book(db.Model):
@@ -242,7 +244,7 @@ class Post(db.Model):
     
     id = db.Column(Integer, primary_key=True)
     user_id = db.Column(Integer, ForeignKey('users.id'), nullable=False)
-    book_id = db.Column(Integer, ForeignKey('books.id'), nullable=False)
+    book_id = db.Column(Integer, ForeignKey('books.id'), nullable=True)
     book_club_id = db.Column(Integer, ForeignKey('book_clubs.id'), nullable=False)
     content = db.Column(Text, nullable=False)
     created_at = db.Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
@@ -253,7 +255,7 @@ class Post(db.Model):
     book_club = relationship('BookClub', back_populates='posts')
     votes = relationship('PostVotes', back_populates='post')
 
-    def to_dict(self):
+    def to_dict(self, user_id=None):
         return {
             'id': self.id,
             'user_id': self.user_id,
@@ -261,7 +263,9 @@ class Post(db.Model):
             'book_club_id': self.book_club_id,
             'content': self.content,
             'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
+            'updated_at': self.updated_at.isoformat(),
+            'votes': sum(vote.vote for vote in self.votes),
+            'user_voted': next((vote.vote for vote in self.votes if vote.user_id == user_id), None)
         }
     
     def __repr__(self):

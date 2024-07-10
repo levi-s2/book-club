@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1995520c4ce6
+Revision ID: caaaee5da6ff
 Revises: 
-Create Date: 2024-07-09 17:54:43.256010
+Create Date: 2024-07-10 19:32:45.754684
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1995520c4ce6'
+revision = 'caaaee5da6ff'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -78,23 +78,25 @@ def upgrade():
     op.create_table('posts',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('book_id', sa.Integer(), nullable=True),
     sa.Column('book_club_id', sa.Integer(), nullable=False),
     sa.Column('content', sa.Text(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['book_club_id'], ['book_clubs.id'], ),
+    sa.ForeignKeyConstraint(['book_id'], ['books.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('post_votes',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('post_id', sa.Integer(), nullable=False),
-    sa.Column('vote_type', sa.String(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('vote', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['post_id'], ['posts.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('user_id', 'post_id', name='_user_post_uc')
+    sa.UniqueConstraint('post_id', 'user_id', name='_post_user_uc')
     )
     # ### end Alembic commands ###
 

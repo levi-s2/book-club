@@ -8,6 +8,9 @@ const BookClubDetails = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
   const [clubDetails, setClubDetails] = useState(null);
+  const [newPostContent, setNewPostContent] = useState('');
+  const [editingPost, setEditingPost] = useState(null);
+  const [editedContent, setEditedContent] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -50,6 +53,83 @@ const BookClubDetails = () => {
       setClubDetails(response.data); 
     } catch (error) {
       setError('Error leaving club.');
+    }
+  };
+
+  const handleAddPost = async () => {
+    if (!newPostContent) {
+      setError('Post content cannot be empty.');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`/book-clubs/${id}/posts`, { content: newPostContent }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setClubDetails(prevState => ({
+        ...prevState,
+        posts: [...prevState.posts, response.data]
+      }));
+      setNewPostContent('');
+    } catch (error) {
+      setError('Error adding post.');
+    }
+  };
+
+  const handleEditPost = async (postId) => {
+    if (!editedContent) {
+      setError('Edited content cannot be empty.');
+      return;
+    }
+
+    try {
+      const response = await axios.patch(`/posts/${postId}`, { content: editedContent }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setClubDetails(prevState => ({
+        ...prevState,
+        posts: prevState.posts.map(post => post.id === postId ? response.data : post)
+      }));
+      setEditingPost(null);
+      setEditedContent('');
+    } catch (error) {
+      setError('Error editing post.');
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    try {
+      await axios.delete(`/posts/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setClubDetails(prevState => ({
+        ...prevState,
+        posts: prevState.posts.filter(post => post.id !== postId)
+      }));
+    } catch (error) {
+      setError('Error deleting post.');
+    }
+  };
+
+  const handleVotePost = async (postId, vote) => {
+    try {
+      const response = await axios.post(`/posts/${postId}/vote`, { vote }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setClubDetails(prevState => ({
+        ...prevState,
+        posts: prevState.posts.map(post => post.id === postId ? response.data : post)
+      }));
+    } catch (error) {
+      setError('Error voting on post.');
     }
   };
 
@@ -113,6 +193,47 @@ const BookClubDetails = () => {
       ) : (
         !isCreator && <button onClick={handleLeaveClub} className="leave-club-button">Leave Club</button>
       )}
+      <div className="club-posts">
+        <h3>Posts</h3>
+        {clubDetails.posts && clubDetails.posts.length > 0 ? (
+          <ul>
+            {clubDetails.posts.map((post) => (
+              <li key={post.id}>
+                <p>{post.content}</p>
+                <p>By: {post.user_id}</p>
+                <p>Votes: {post.votes}</p>
+                <button onClick={() => handleVotePost(post.id, 1)}>Upvote</button>
+                <button onClick={() => handleVotePost(post.id, -1)}>Downvote</button>
+                {user && user.id === post.user_id && (
+                  <>
+                    <button onClick={() => setEditingPost(post.id)}>Edit</button>
+                    <button onClick={() => handleDeletePost(post.id)}>Delete</button>
+                  </>
+                )}
+                {editingPost === post.id && (
+                  <div>
+                    <textarea value={editedContent} onChange={(e) => setEditedContent(e.target.value)} />
+                    <button onClick={() => handleEditPost(post.id)}>Save</button>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No posts yet.</p>
+        )}
+        {user && (
+          <div className="new-post">
+            <h4>Add a Post</h4>
+            <textarea
+              value={newPostContent}
+              onChange={(e) => setNewPostContent(e.target.value)}
+              placeholder="Write your post here..."
+            />
+            <button onClick={handleAddPost}>Post</button>
+          </div>
+        )}
+      </div>
       {error && <p className="error-message">{error}</p>}
     </div>
   );

@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request, make_response
+import datetime
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from models import db, bcrypt, User, Book, BookClub, Genre, Membership, CurrentReading
+from models import db, bcrypt, User, Book, BookClub, Genre, Membership, CurrentReading, Post, PostVotes
 from datetime import timedelta
 import os
 import traceback
@@ -170,6 +171,101 @@ class BookClubs(Resource):
 api.add_resource(BookClubs, '/book-clubs', endpoint='book_clubs_endpoint')
 
 
+class ClubPosts(Resource):
+    @jwt_required()
+    def post(self, club_id):
+        try:
+            user_id = get_jwt_identity()
+            data = request.get_json()
+            content = data.get('content')
+            if not content:
+                return {"message": "Content cannot be empty"}, 400
+
+            post = Post(user_id=user_id, book_club_id=club_id, content=content)
+            db.session.add(post)
+            db.session.commit()
+            return make_response(jsonify(post.to_dict()), 201)
+        except Exception as e:
+            print(f"Error creating post: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+api.add_resource(ClubPosts, '/book-clubs/<int:club_id>/posts', endpoint='club_posts_endpoint')
+
+
+class PostManagement(Resource):
+    @jwt_required()
+    def patch(self, post_id):
+        try:
+            user_id = get_jwt_identity()
+            data = request.get_json()
+            content = data.get('content')
+            post = Post.query.get_or_404(post_id)
+            if post.user_id != user_id:
+                return {"message": "Unauthorized"}, 403
+
+            post.content = content
+            post.updated_at = datetime.datetime.now(datetime.timezone.utc)
+            db.session.commit()
+            return make_response(jsonify(post.to_dict()), 200)
+        except Exception as e:
+            print(f"Error updating post: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+    @jwt_required()
+    def delete(self, post_id):
+        try:
+            user_id = get_jwt_identity()
+            post = Post.query.get_or_404(post_id)
+            if post.user_id != user_id:
+                return {"message": "Unauthorized"}, 403
+
+            db.session.delete(post)
+            db.session.commit()
+            return {"message": "Post deleted successfully"}, 200
+        except Exception as e:
+            print(f"Error deleting post: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+api.add_resource(PostManagement, '/posts/<int:post_id>', endpoint='post_management_endpoint')
+
+
+class PostVote(Resource):
+    @jwt_required()
+    def post(self, post_id):
+        try:
+            user_id = get_jwt_identity()
+            data = request.get_json()
+            vote = data.get('vote')
+            if vote not in [-1, 1]:
+                return {"message": "Invalid vote value"}, 400
+
+            post = Post.query.get_or_404(post_id)
+            post_vote = PostVotes.query.filter_by(post_id=post_id, user_id=user_id).first()
+
+            if post_vote:
+                if post_vote.vote == vote:
+                    db.session.delete(post_vote)
+                else:
+                    post_vote.vote = vote
+            else:
+                post_vote = PostVotes(post_id=post_id, user_id=user_id, vote=vote)
+                db.session.add(post_vote)
+
+            db.session.commit()
+            updated_post = Post.query.get_or_404(post_id)
+            return make_response(jsonify(updated_post.to_dict()), 200)
+        except Exception as e:
+            print(f"Error voting on post: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+api.add_resource(PostVote, '/posts/<int:post_id>/vote', endpoint='post_vote_endpoint')
+
+
+
 class BookClubDetails(Resource):
     @jwt_required()
     def get(self, club_id):
@@ -204,6 +300,7 @@ class BookClubDetails(Resource):
         return response
 
 api.add_resource(BookClubDetails, '/book-clubs/<int:club_id>')
+
 
 
 
