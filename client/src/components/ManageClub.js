@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
 import { BookClubsContext } from './context/BookClubsContext';
@@ -15,6 +15,7 @@ const ManageClub = () => {
   const { genres } = useContext(GenresContext);
   const [clubDetails, setClubDetails] = useState(null);
   const [members, setMembers] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
   const [selectedBookId, setSelectedBookId] = useState('');
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [message, setMessage] = useState('');
@@ -43,6 +44,21 @@ const ManageClub = () => {
       fetchClubDetails();
     }
   }, [user]);
+
+  const filterBooksByGenres = useCallback(() => {
+    if (selectedGenres.length > 0) {
+      const filtered = books.filter((book) =>
+        selectedGenres.includes(book.genre.id)
+      );
+      setFilteredBooks(filtered);
+    } else {
+      setFilteredBooks([]);
+    }
+  }, [selectedGenres, books]);
+
+  useEffect(() => {
+    filterBooksByGenres();
+  }, [selectedGenres, books, filterBooksByGenres]);
 
   const handleUpdateCurrentReading = async () => {
     try {
@@ -103,6 +119,7 @@ const ManageClub = () => {
       const updatedClub = { ...clubDetails, genres: updatedGenres };
       setClubDetails(updatedClub);
       updateBookClub(updatedClub);
+      filterBooksByGenres();
     } catch (error) {
       setError('Error updating genres.');
     }
@@ -124,7 +141,8 @@ const ManageClub = () => {
         },
       });
       setMessage(response.data.message);
-      updateUserCreatedClubs(user.created_clubs[0]);
+      updateUserCreatedClubs(user.created_clubs.filter((clubId) => clubId !== clubDetails.id));
+      updateBookClub({ ...clubDetails, deleted: true });
       history.push('/book-clubs');
     } catch (error) {
       setError('Error deleting book club.');
@@ -138,41 +156,13 @@ const ManageClub = () => {
   return (
     <div>
       <NavBar />
-      <div className="manage-club-container">
-        <h2>Manage My Club: {clubDetails.name}</h2>
-        <div className="manage-section">
-          <h3>Update Current Reading</h3>
-          <div className="book-selection">
-            {books.map((book) => (
-              <div key={book.id} className="book-item">
-                <input
-                  type="radio"
-                  id={`book-${book.id}`}
-                  name="selectedBook"
-                  value={book.id}
-                  checked={selectedBookId === book.id}
-                  onChange={() => setSelectedBookId(book.id)}
-                />
-                <label htmlFor={`book-${book.id}`}>{book.title}</label>
-              </div>
-            ))}
+      <div className="manage-club-page">
+        <div className="left-column">
+          <div className="manage-club-container">
+            <h2>Manage My Club: {clubDetails.name}</h2>
           </div>
-          <button onClick={handleUpdateCurrentReading}>Update Current Reading</button>
-        </div>
-        <div className="manage-section">
-          <h3>Remove Members</h3>
-          <ul>
-            {members.map((member) => (
-              <li key={member.id}>
-                {member.username}
-                <button onClick={() => handleRemoveMember(member.id)}>Remove</button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="manage-section">
-          <h3>Update Genres (select up to 3)</h3>
           <div className="genre-list">
+            <h3>Update Genres (select up to 3)</h3>
             {genres.map((genre) => (
               <div key={genre.id} className="genre-item">
                 <input
@@ -185,15 +175,50 @@ const ManageClub = () => {
                 <label htmlFor={`genre-${genre.id}`}>{genre.name}</label>
               </div>
             ))}
+            <button onClick={handleUpdateGenres}>Update Genres</button>
           </div>
-          <button onClick={handleUpdateGenres}>Update Genres</button>
         </div>
-        <button onClick={handleDeleteClub} className="delete-button">Delete Club</button>
-        {message && <p className="success-message">{message}</p>}
-        {error && <p className="error-message">{error}</p>}
+        <div className="center-column">
+          <div className="manage-section">
+            <h3>Update Current Reading</h3>
+            <div className="book-selection">
+              {filteredBooks.map((book) => (
+                <div key={book.id} className="book-item">
+                  <input
+                    type="radio"
+                    id={`book-${book.id}`}
+                    name="selectedBook"
+                    value={book.id}
+                    checked={selectedBookId === book.id}
+                    onChange={() => setSelectedBookId(book.id)}
+                  />
+                  <label htmlFor={`book-${book.id}`}>{book.title}</label>
+                </div>
+              ))}
+            </div>
+            <button onClick={handleUpdateCurrentReading}>Update Current Reading</button>
+          </div>
+        </div>
+        <div className="right-column">
+          <div className="manage-section">
+            <h3>Remove Members</h3>
+            <ul>
+              {members.map((member) => (
+                <li key={member.id}>
+                  {member.username}
+                  <button onClick={() => handleRemoveMember(member.id)}>Remove</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
+      <button onClick={handleDeleteClub} className="delete-button">Delete Club</button>
+      {message && <p className="success-message">{message}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };
 
 export default ManageClub;
+

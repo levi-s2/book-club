@@ -108,12 +108,13 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const updateUserCreatedClubs = (createdClubId) => {
+  const updateUserCreatedClubs = (updatedClubs) => {
     setUser((prevUser) => ({
       ...prevUser,
-      created_clubs: prevUser.created_clubs.filter(id => id !== createdClubId)
+      created_clubs: updatedClubs,
     }));
   };
+  
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout, loading, updateUserCreatedClubs }}>

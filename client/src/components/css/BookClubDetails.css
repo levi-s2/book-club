@@ -1,68 +1,118 @@
+/* Book Club Details Page Styles */
 .book-club-details {
+  display: flex;
   padding: 20px;
-  max-width: 600px;
-  margin: auto;
-  text-align: center;
-  border: 1px solid #ddd;
+  background-color: #f4f4f9;
+}
+
+.left-column, .center-column, .right-column {
+  background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-right: 20px;
+  flex-grow: 1;
 }
 
-.book-club-details img {
-  max-width: 100px;
-  margin: 10px 0;
+.left-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.club-header {
+.center-column {
+  flex: 2;
+  margin-right: 20px;
+}
+
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.club-header, .club-current-reading, .club-genres {
   margin-bottom: 20px;
 }
 
 .club-header h2 {
-  margin-bottom: 10px;
+  font-size: 28px;
+  color: #3b5998;
 }
 
-.club-members, .club-current-reading {
-  margin-bottom: 20px;
+.club-header p {
+  font-size: 16px;
+  color: #555;
 }
 
-.club-members ul, .club-current-reading div {
-  list-style: none;
+.club-creator h3, .club-members h3, .club-current-reading h3, .club-genres h3, .club-posts h3, .new-post h4 {
+  font-size: 20px;
+  margin-top: 20px;
+  color: #3b5998;
+}
+
+.club-creator p, .club-members p, .club-current-reading p, .club-genres p, .club-posts p {
+  font-size: 16px;
+  color: #555;
+}
+
+.club-members ul, .club-genres ul, .club-posts ul {
+  list-style-type: none;
   padding: 0;
 }
 
-.club-members li, .club-current-reading p {
-  background-color: #fff;
-  padding: 10px;
-  margin: 5px 0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.club-members li, .club-genres li, .club-posts li {
+  padding: 5px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.club-current-reading img {
+  max-width: 100px;
+  display: block;
+  margin-top: 10px;
 }
 
 .join-club-button, .leave-club-button {
-  margin-top: 20px;
   padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
+  margin-top: 20px;
+  background-color: #3b5998;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.leave-club-button {
-  background-color: #dc3545;
 }
 
 .join-club-button:hover, .leave-club-button:hover {
-  background-color: #218838;
-}
-
-.leave-club-button:hover {
-  background-color: #c82333;
+  background-color: #2a4378;
 }
 
 .error-message {
   color: red;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.club-posts .new-post textarea, .club-posts textarea {
+  width: 100%;
+  padding: 10px;
   margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.club-posts button {
+  padding: 5px 10px;
+  margin-top: 5px;
+  margin-right: 5px;
+  background-color: #3b5998;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.club-posts button:hover {
+  background-color: #2a4378;
 }

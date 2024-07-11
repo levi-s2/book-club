@@ -1,83 +1,115 @@
+/* Manage Club Page Styles */
+.manage-club-page {
+  display: flex;
+  padding: 20px;
+  background-color: #f4f4f9;
+}
+
+.left-column, .center-column, .right-column {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-right: 20px;
+  flex-grow: 1;
+}
+
+.left-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.center-column {
+  flex: 2;
+  margin-right: 20px;
+}
+
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .manage-club-container {
-    padding: 20px;
-    max-width: 600px;
-    margin: auto;
-    text-align: center;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9;
-  }
-  
-  .manage-section {
-    margin-bottom: 20px;
-  }
-  
-  .manage-section h3 {
-    margin-bottom: 10px;
-  }
-  
-  .genre-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .genre-item {
-    display: flex;
-    align-items: center;
-  }
-  
-  .genre-item label {
-    margin-left: 5px;
-  }
-  
-  button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  .success-message {
-    color: green;
-    margin-top: 10px;
-  }
-  
-  .error-message {
-    color: red;
-    margin-top: 10px;
-  }
-  .delete-club-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .delete-club-button:hover {
-    background-color: #c82333;
-  }
-  .delete-button {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .delete-button:hover {
-    background-color: darkred;
-  }
+  margin-bottom: 20px;
+}
+
+.manage-club-container h2 {
+  font-size: 28px;
+  color: #3b5998;
+}
+
+.manage-section {
+  margin-bottom: 20px;
+}
+
+.manage-section h3 {
+  font-size: 20px;
+  color: #3b5998;
+}
+
+.book-selection, .genre-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.book-item, .genre-item {
+  display: flex;
+  align-items: center;
+}
+
+.book-item input, .genre-item input {
+  margin-right: 10px;
+}
+
+.success-message {
+  color: green;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.delete-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: darkred;
+}
+
+.manage-section button {
+  background-color: #3b5998;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.manage-section button:hover {
+  background-color: #2a4378;
+}
+
+.manage-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.manage-section li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}

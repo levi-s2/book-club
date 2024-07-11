@@ -29,6 +29,7 @@ const BookClubsProvider = ({ children }) => {
 
   const updateBookClub = (updatedClub) => {
     if (updatedClub.deleted) {
+      console.log("Deleting club with id:", updatedClub.id);
       setBookClubs((prevClubs) => prevClubs.filter(club => club.id !== updatedClub.id));
     } else {
       setBookClubs((prevClubs) => prevClubs.map(club => club.id === updatedClub.id ? updatedClub : club));

@@ -259,6 +259,7 @@ class Post(db.Model):
         return {
             'id': self.id,
             'user_id': self.user_id,
+            'username': self.user.username,
             'book_id': self.book_id,
             'book_club_id': self.book_club_id,
             'content': self.content,
