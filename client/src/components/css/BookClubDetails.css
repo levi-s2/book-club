@@ -31,7 +31,7 @@
   flex-direction: column;
 }
 
-.club-header, .club-current-reading, .club-genres {
+.club-header, .club-genres, .club-current-reading, .club-members {
   margin-bottom: 20px;
 }
 
@@ -45,51 +45,36 @@
   color: #555;
 }
 
-.club-creator h3, .club-members h3, .club-current-reading h3, .club-genres h3, .club-posts h3, .new-post h4 {
+.club-genres h3, .club-members h3, .club-current-reading h3, .club-posts h3, .new-post h4 {
   font-size: 20px;
   margin-top: 20px;
   color: #3b5998;
 }
 
-.club-creator p, .club-members p, .club-current-reading p, .club-genres p, .club-posts p {
-  font-size: 16px;
-  color: #555;
-}
-
-.club-members ul, .club-genres ul, .club-posts ul {
+.club-genres ul, .club-members ul {
   list-style-type: none;
   padding: 0;
 }
 
-.club-members li, .club-genres li, .club-posts li {
-  padding: 5px 0;
+.club-genres li, .club-members li {
   font-size: 16px;
   color: #333;
+  padding: 5px 0;
 }
 
-.club-current-reading img {
-  max-width: 100px;
-  display: block;
+.club-current-reading .ant-card {
   margin-top: 10px;
 }
 
 .join-club-button, .leave-club-button {
-  padding: 10px 20px;
   margin-top: 20px;
-  background-color: #3b5998;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
-.join-club-button:hover, .leave-club-button:hover {
-  background-color: #2a4378;
+.leave-club-button {
+  width: auto;
 }
 
 .error-message {
-  color: red;
-  font-size: 14px;
   margin-top: 20px;
 }
 
@@ -103,16 +88,15 @@
 }
 
 .club-posts button {
-  padding: 5px 10px;
   margin-top: 5px;
-  margin-right: 5px;
-  background-color: #3b5998;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
-.club-posts button:hover {
-  background-color: #2a4378;
+.genre-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.genre-item {
+  margin-right: 10px;
 }

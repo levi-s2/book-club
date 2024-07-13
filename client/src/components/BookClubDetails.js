@@ -3,8 +3,12 @@ import { useParams } from 'react-router-dom';
 import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
 import NavBar from './NavBar';
-import './css/BookClubDetails.css';
+import { Card, Form, Input, Button, List, Typography, Space } from 'antd';
 import { LikeTwoTone, DislikeTwoTone } from '@ant-design/icons';
+import './css/BookClubDetails.css';
+
+const { TextArea } = Input;
+
 const BookClubDetails = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
@@ -13,6 +17,8 @@ const BookClubDetails = () => {
   const [editingPost, setEditingPost] = useState(null);
   const [editedContent, setEditedContent] = useState('');
   const [error, setError] = useState('');
+  const [likedPosts, setLikedPosts] = useState({});
+  const [dislikedPosts, setDislikedPosts] = useState({});
 
   useEffect(() => {
     const fetchClubDetails = async () => {
@@ -129,6 +135,13 @@ const BookClubDetails = () => {
         ...prevState,
         posts: prevState.posts.map(post => post.id === postId ? response.data : post)
       }));
+      if (vote === 1) {
+        setLikedPosts(prev => ({ ...prev, [postId]: true }));
+        setDislikedPosts(prev => ({ ...prev, [postId]: false }));
+      } else {
+        setLikedPosts(prev => ({ ...prev, [postId]: false }));
+        setDislikedPosts(prev => ({ ...prev, [postId]: true }));
+      }
     } catch (error) {
       setError('Error voting on post.');
     }
@@ -150,18 +163,6 @@ const BookClubDetails = () => {
             <h2>{clubDetails.name}</h2>
             <p>{clubDetails.description}</p>
           </div>
-          <div className="club-current-reading">
-            <h3>Current Reading</h3>
-            {clubDetails.current_book ? (
-              <div>
-                <p>{clubDetails.current_book.title}</p>
-                <img src={clubDetails.current_book.image_url} alt={clubDetails.current_book.title} />
-                <p>Started at: {new Date(clubDetails.current_book.started_at).toLocaleDateString()}</p>
-              </div>
-            ) : (
-              <p>No current book.</p>
-            )}
-          </div>
           <div className="club-genres">
             <h3>Genres</h3>
             {clubDetails.genres && clubDetails.genres.length > 0 ? (
@@ -174,45 +175,95 @@ const BookClubDetails = () => {
               <p>No genres selected.</p>
             )}
           </div>
+          {!isMember && !isCreator ? (
+            <Button type="primary" onClick={handleJoinClub} className="join-club-button">Join Club</Button>
+          ) : (
+            !isCreator && <Button type="danger" onClick={handleLeaveClub} className="leave-club-button">Leave Club</Button>
+          )}
+          {error && <Typography.Text type="danger" className="error-message">{error}</Typography.Text>}
+          <div className="club-current-reading">
+            <h3>Current Reading</h3>
+            {clubDetails.current_book ? (
+              <Card
+                hoverable
+                cover={<img alt={clubDetails.current_book.title} src={clubDetails.current_book.image_url} />}
+              >
+                <Card.Meta title={clubDetails.current_book.title} description={`Started at: ${new Date(clubDetails.current_book.started_at).toLocaleDateString()}`} />
+              </Card>
+            ) : (
+              <p>No current book.</p>
+            )}
+          </div>
         </div>
         <div className="center-column">
           {isMember || isCreator ? (
             <div>
               <div className="new-post">
                 <h4>Add a Post</h4>
-                <textarea
-                  value={newPostContent}
-                  onChange={(e) => setNewPostContent(e.target.value)}
-                  placeholder="Write your post here..."
-                />
-                <button onClick={handleAddPost}>Post</button>
+                <Form onFinish={handleAddPost}>
+                  <Form.Item name="postContent">
+                    <TextArea
+                      value={newPostContent}
+                      onChange={(e) => setNewPostContent(e.target.value)}
+                      placeholder="Write your post here..."
+                      rows={4}
+                    />
+                  </Form.Item>
+                  <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                      Post
+                    </Button>
+                  </Form.Item>
+                </Form>
               </div>
               <div className="club-posts">
                 <h3>Posts</h3>
                 {clubDetails.posts && clubDetails.posts.length > 0 ? (
-                  <ul>
-                    {clubDetails.posts.map((post) => (
-                      <li key={post.id}>
-                        <p>{post.content}</p>
-                        <p>By: {post.username}</p>
-                        <p>Votes: {post.votes}</p>
-                        <LikeTwoTone onClick={() => handleVotePost(post.id, 1)}/>
-                        <DislikeTwoTone onClick={() => handleVotePost(post.id, -1)}/>
-                        {user && user.id === post.user_id && (
-                          <>
-                            <button onClick={() => setEditingPost(post.id)}>Edit</button>
-                            <button onClick={() => handleDeletePost(post.id)}>Delete</button>
-                          </>
-                        )}
-                        {editingPost === post.id && (
+                  <List
+                    itemLayout="vertical"
+                    size="large"
+                    dataSource={clubDetails.posts}
+                    renderItem={(post) => (
+                      <List.Item
+                        key={post.id}
+                        actions={[
+                          <Space>
+                            <LikeTwoTone
+                              onClick={() => handleVotePost(post.id, 1)}
+                              twoToneColor={likedPosts[post.id] ? "#52c41a" : undefined}
+                            />
+                            <DislikeTwoTone
+                              onClick={() => handleVotePost(post.id, -1)}
+                              twoToneColor={dislikedPosts[post.id] ? "#eb2f96" : undefined}
+                            />
+                            {user && user.id === post.user_id && (
+                              <>
+                                <Button type="link" onClick={() => setEditingPost(post.id)}>Edit</Button>
+                                <Button type="link" onClick={() => handleDeletePost(post.id)}>Delete</Button>
+                              </>
+                            )}
+                          </Space>,
+                        ]}
+                      >
+                        <List.Item.Meta
+                          title={`By: ${post.username}`}
+                          description={`Votes: ${post.votes}`}
+                        />
+                        {editingPost === post.id ? (
                           <div>
-                            <textarea value={editedContent} onChange={(e) => setEditedContent(e.target.value)} />
-                            <button onClick={() => handleEditPost(post.id)}>Save</button>
+                            <TextArea
+                              value={editedContent}
+                              onChange={(e) => setEditedContent(e.target.value)}
+                              rows={4}
+                            />
+                            <Button onClick={() => handleEditPost(post.id)}>Save</Button>
                           </div>
+                        ) : (
+                          <Typography.Paragraph>{post.content}</Typography.Paragraph>
                         )}
-                      </li>
-                    ))}
-                  </ul>
+                      </List.Item>
+                    )}
+                  />
                 ) : (
                   <p>No posts yet.</p>
                 )}
@@ -237,12 +288,6 @@ const BookClubDetails = () => {
           </div>
         </div>
       </div>
-      {!isMember && !isCreator ? (
-        <button onClick={handleJoinClub} className="join-club-button">Join Club</button>
-      ) : (
-        !isCreator && <button onClick={handleLeaveClub} className="leave-club-button">Leave Club</button>
-      )}
-      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };

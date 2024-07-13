@@ -1,12 +1,11 @@
+/* Create Club Styles */
 .create-club-container {
   padding: 20px;
   max-width: 600px;
-  margin: auto;
-  text-align: center;
-  border: 1px solid #ddd;
+  margin: 0 auto;
+  background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .create-club-form {
@@ -14,20 +13,9 @@
   flex-direction: column;
 }
 
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  margin-bottom: 5px;
-  display: block;
-}
-
-.form-group input, .form-group textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.error-message {
+  color: red;
+  margin-top: 5px;
 }
 
 .genre-list {
@@ -37,34 +25,5 @@
 }
 
 .genre-item {
-  display: flex;
-  align-items: center;
-}
-
-.genre-item label {
-  margin-left: 5px;
-}
-
-.create-club-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.create-club-button:hover {
-  background-color: #0056b3;
-}
-
-.success-message {
-  color: green;
-  margin-top: 10px;
-}
-
-.error-message {
-  color: red;
-  margin-top: 10px;
+  margin-right: 10px;
 }

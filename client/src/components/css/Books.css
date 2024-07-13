@@ -60,3 +60,44 @@
   flex-wrap: wrap;
   gap: 20px;
 }
+/* Books.css */
+.books-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.book-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  width: 100%;
+  max-width: 200px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.book-card img {
+  width: 100%;
+  height: auto;
+}
+
+.book-card .title {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 8px 0;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.book-card .author, .book-card .genre {
+  font-size: 14px;
+  color: #666;
+  margin: 4px 0;
+}
+
+.book-card .genre {
+  font-style: italic;
+}

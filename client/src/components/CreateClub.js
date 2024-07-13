@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from './axiosConfig';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import NavBar from './NavBar';
 import { AuthContext } from './context/AuthContext';
+import { Form as AntForm, Input, Checkbox, Button, Alert } from 'antd';
 import './css/CreateClub.css';
 
 const CreateClub = () => {
@@ -76,27 +77,21 @@ const CreateClub = () => {
           onSubmit={handleSubmit}
         >
           {({ isSubmitting, values, setFieldValue }) => (
-            <Form className="create-club-form">
-              <div className="form-group">
-                <label htmlFor="name">Club Name:</label>
-                <Field type="text" id="name" name="name" required />
+            <AntForm className="create-club-form">
+              <AntForm.Item label="Club Name" name="name">
+                <Field as={Input} id="name" name="name" />
                 <ErrorMessage name="name" component="div" className="error-message" />
-              </div>
-              <div className="form-group">
-                <label htmlFor="description">Description:</label>
-                <Field as="textarea" id="description" name="description" />
+              </AntForm.Item>
+              <AntForm.Item label="Description" name="description">
+                <Field as={Input.TextArea} id="description" name="description" />
                 <ErrorMessage name="description" component="div" className="error-message" />
-              </div>
-              <div className="form-group">
-                <label>Genres (select up to 3):</label>
+              </AntForm.Item>
+              <AntForm.Item label="Genres (select up to 3)">
                 <div className="genre-list">
                   {genres.map((genre) => (
                     <div key={genre.id} className="genre-item">
-                      <Field
-                        type="checkbox"
+                      <Checkbox
                         id={`genre-${genre.id}`}
-                        name="genre_ids"
-                        value={genre.id}
                         checked={values.genre_ids.includes(genre.id)}
                         onChange={() => {
                           const newGenreIds = values.genre_ids.includes(genre.id)
@@ -104,19 +99,22 @@ const CreateClub = () => {
                             : [...values.genre_ids, genre.id].slice(0, 3);
                           setFieldValue('genre_ids', newGenreIds);
                         }}
-                      />
-                      <label htmlFor={`genre-${genre.id}`}>{genre.name}</label>
+                      >
+                        {genre.name}
+                      </Checkbox>
                     </div>
                   ))}
                 </div>
                 <ErrorMessage name="genre_ids" component="div" className="error-message" />
-              </div>
-              <button type="submit" className="create-club-button" disabled={isSubmitting}>
-                Create Club
-              </button>
-              {message && <p className="success-message">{message}</p>}
-              {error && <p className="error-message">{error}</p>}
-            </Form>
+              </AntForm.Item>
+              <AntForm.Item>
+                <Button type="primary" htmlType="submit" disabled={isSubmitting}>
+                  Create Club
+                </Button>
+              </AntForm.Item>
+              {message && <Alert message={message} type="success" />}
+              {error && <Alert message={error} type="error" />}
+            </AntForm>
           )}
         </Formik>
       </div>
