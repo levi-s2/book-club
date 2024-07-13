@@ -405,11 +405,15 @@ class ManageClub(Resource):
     def delete(self, club_id):
         try:
             book_club = BookClub.query.get_or_404(club_id)
-        
+            
             if book_club.current_reading:
                 db.session.delete(book_club.current_reading)
-
+            
             Membership.query.filter_by(book_club_id=club_id).delete()
+            PostVotes.query.filter(PostVotes.post_id.in_(
+                db.session.query(Post.id).filter_by(book_club_id=club_id)
+            )).delete(synchronize_session='fetch')
+            Post.query.filter_by(book_club_id=club_id).delete()
             book_club.genres.clear()
             db.session.delete(book_club)
             db.session.commit()

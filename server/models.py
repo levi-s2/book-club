@@ -253,7 +253,7 @@ class Post(db.Model):
     user = relationship('User', back_populates='posts')
     book = relationship('Book', back_populates='posts')
     book_club = relationship('BookClub', back_populates='posts')
-    votes = relationship('PostVotes', back_populates='post')
+    votes = relationship('PostVotes', back_populates='post', cascade="all, delete-orphan")
 
     def to_dict(self, user_id=None):
         return {
