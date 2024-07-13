@@ -1,0 +1,56 @@
+/* Landing Page Styles */
+.landing-page {
+  display: flex;
+  background-image: url('background.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  padding: 20px;
+}
+
+.welcome-section {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  color: black;
+  padding: 20px;
+}
+
+.welcome-section h1 {
+  font-size: 36px;
+}
+
+.form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 20px;
+}
+
+.form-container {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.toggle-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.toggle-button:hover {
+  background-color: #0056b3;
+}

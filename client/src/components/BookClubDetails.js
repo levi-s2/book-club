@@ -4,7 +4,7 @@ import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
 import NavBar from './NavBar';
 import './css/BookClubDetails.css';
-
+import { LikeTwoTone, DislikeTwoTone } from '@ant-design/icons';
 const BookClubDetails = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
@@ -196,8 +196,8 @@ const BookClubDetails = () => {
                         <p>{post.content}</p>
                         <p>By: {post.username}</p>
                         <p>Votes: {post.votes}</p>
-                        <button onClick={() => handleVotePost(post.id, 1)}>Upvote</button>
-                        <button onClick={() => handleVotePost(post.id, -1)}>Downvote</button>
+                        <LikeTwoTone onClick={() => handleVotePost(post.id, 1)}/>
+                        <DislikeTwoTone onClick={() => handleVotePost(post.id, -1)}/>
                         {user && user.id === post.user_id && (
                           <>
                             <button onClick={() => setEditingPost(post.id)}>Edit</button>
