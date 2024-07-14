@@ -1,16 +1,18 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { BookClubsContext } from './context/BookClubsContext';
+import { ThemeContext } from './context/ThemeContext'; // Import ThemeContext
 import NavBar from './NavBar';
 import './css/BookClubs.css';
 
 const BooksClub = () => {
   const { bookClubs } = useContext(BookClubsContext);
+  const { theme } = useContext(ThemeContext); // Access the theme context
 
   return (
     <div>
       <NavBar />
-      <div className="book-clubs-container">
+      <div className={`book-clubs-container ${theme}`}>
         {bookClubs.map((club) => (
           <div key={club.id} className="book-club-card">
             <div className="book-club-info">

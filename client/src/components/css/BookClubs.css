@@ -1,14 +1,24 @@
-/* BookClubs.css */
-
 .book-clubs-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.book-clubs-container.light {
+  background-color: #fff;
+  color: #000;
+}
+
+.book-clubs-container.dark {
+  background-color: #121212;
+  color: #e0e0e0;
 }
 
 .book-club-card {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+  background-color: var(--card-background-color);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 16px;
   margin: 16px;
@@ -22,25 +32,50 @@
 
 .book-club-info h3 {
   margin-top: 0;
+  color: var(--text-color);
 }
 
 .genres {
   margin-top: 8px;
   font-size: 14px;
-  color: #555;
+  color: var(--secondary-text-color);
 }
 
 .view-details-button {
   display: inline-block;
   margin-top: 12px;
   padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
   text-decoration: none;
   border-radius: 4px;
   transition: background-color 0.3s;
 }
 
 .view-details-button:hover {
-  background-color: #0056b3;
+  background-color: var(--button-hover-background-color);
+}
+
+/* Dark Theme Variables */
+.dark-theme {
+  --background-color: #121212;
+  --text-color: #e0e0e0;
+  --card-background-color: #1f1f1f;
+  --border-color: #333;
+  --secondary-text-color: #a0a0a0;
+  --button-background-color: #007bff;
+  --button-text-color: white;
+  --button-hover-background-color: #0056b3;
+}
+
+/* Light Theme Variables */
+.light-theme {
+  --background-color: #f4f4f9;
+  --text-color: #000;
+  --card-background-color: #fff;
+  --border-color: #ddd;
+  --secondary-text-color: #555;
+  --button-background-color: #007bff;
+  --button-text-color: white;
+  --button-hover-background-color: #0056b3;
 }

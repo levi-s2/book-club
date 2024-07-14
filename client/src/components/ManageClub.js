@@ -4,12 +4,14 @@ import { AuthContext } from './context/AuthContext';
 import { BookClubsContext } from './context/BookClubsContext';
 import { BooksContext } from './context/BooksContext';
 import { GenresContext } from './context/GenresContext';
+import { ThemeContext } from './context/ThemeContext'; 
 import { useHistory } from 'react-router-dom';
 import NavBar from './NavBar';
 import './css/ManageClub.css';
 
 const ManageClub = () => {
   const { user, updateUserCreatedClubs } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
   const { updateBookClub } = useContext(BookClubsContext);
   const { books } = useContext(BooksContext);
   const { genres } = useContext(GenresContext);
@@ -156,10 +158,10 @@ const ManageClub = () => {
   return (
     <div>
       <NavBar />
-      <div className="manage-club-page">
+      <div className={`manage-club-page ${theme}`}>
         <div className="left-column">
           <div className="manage-club-container">
-            <h2>Manage My Club: {clubDetails.name}</h2>
+            <h2>Manage My Club: {clubDetails ? clubDetails.name : 'Loading...'}</h2>
           </div>
           <div className="genre-list">
             <h3>Update Genres (select up to 3)</h3>

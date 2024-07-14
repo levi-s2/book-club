@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from './axiosConfig';
-import { Formik, Field, ErrorMessage } from 'formik';
+import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
 import NavBar from './NavBar';
 import { AuthContext } from './context/AuthContext';
+import { ThemeContext } from './context/ThemeContext'; 
 import { Form as AntForm, Input, Checkbox, Button, Alert } from 'antd';
 import './css/CreateClub.css';
 
 const CreateClub = () => {
   const { user } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
   const [genres, setGenres] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -59,7 +61,7 @@ const CreateClub = () => {
     return (
       <div>
         <NavBar />
-        <div className="create-club-container">
+        <div className={`create-club-container ${theme}`}>
           <h2>You have already created a book club</h2>
         </div>
       </div>
@@ -69,15 +71,15 @@ const CreateClub = () => {
   return (
     <div>
       <NavBar />
-      <div className="create-club-container">
+      <div className={`create-club-container ${theme}`}>
         <h2>Create a New Book Club</h2>
         <Formik
           initialValues={{ name: '', description: '', genre_ids: [] }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, values, setFieldValue }) => (
-            <AntForm className="create-club-form">
+          {({ isSubmitting, values, setFieldValue, handleSubmit }) => (
+            <Form className="create-club-form" onSubmit={handleSubmit}>
               <AntForm.Item label="Club Name" name="name">
                 <Field as={Input} id="name" name="name" />
                 <ErrorMessage name="name" component="div" className="error-message" />
@@ -114,7 +116,7 @@ const CreateClub = () => {
               </AntForm.Item>
               {message && <Alert message={message} type="success" />}
               {error && <Alert message={error} type="error" />}
-            </AntForm>
+            </Form>
           )}
         </Formik>
       </div>

@@ -2,12 +2,23 @@
 .books-page {
   display: flex;
   padding: 20px;
-  background-color: #f4f4f9;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.books-page.light {
+  background-color: #fff;
+  color: #000;
+}
+
+.books-page.dark {
+  background-color: #121212;
+  color: #e0e0e0;
 }
 
 .sidebar {
   width: 200px;
-  background-color: #fff;
+  background-color: var(--sidebar-background-color);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -16,7 +27,7 @@
 
 .sidebar h2 {
   font-size: 20px;
-  color: #3b5998;
+  color: var(--primary-color);
   margin-bottom: 10px;
 }
 
@@ -27,14 +38,14 @@
 
 .sidebar li {
   font-size: 16px;
-  color: #555;
+  color: var(--text-color);
   padding: 5px 0;
   cursor: pointer;
 }
 
 .sidebar li.selected {
   font-weight: bold;
-  color: #3b5998;
+  color: var(--primary-color);
 }
 
 .main-content {
@@ -51,8 +62,10 @@
   width: 100%;
   padding: 10px;
   border-radius: 4px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   font-size: 16px;
+  background-color: var(--input-background-color);
+  color: var(--text-color);
 }
 
 .books-container {
@@ -60,44 +73,67 @@
   flex-wrap: wrap;
   gap: 20px;
 }
-/* Books.css */
-.books-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
 
+/* Book Card Styles */
 .book-card {
-  background: #fff;
-  border: 1px solid #e8e8e8;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 16px;
-  width: 100%;
-  max-width: 200px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: var(--card-background-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  margin: 20px;
+  width: 200px;
+  height: auto;
+  text-align: center;
 }
 
 .book-card img {
   width: 100%;
-  height: auto;
+  height: 150px;
+  object-fit: cover;
 }
 
-.book-card .title {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 8px 0;
-  white-space: normal;
-  word-wrap: break-word;
+.book-info {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
-.book-card .author, .book-card .genre {
+.book-info h3 {
+  font-size: 18px;
+  color: var(--text-color);
+  margin: 10px 0;
+}
+
+.book-info p {
   font-size: 14px;
-  color: #666;
-  margin: 4px 0;
+  color: var(--secondary-text-color);
+  margin: 5px 0;
 }
 
-.book-card .genre {
-  font-style: italic;
+/* Dark Theme Variables */
+.dark-theme {
+  --background-color: #121212;
+  --text-color: #e0e0e0;
+  --sidebar-background-color: #1f1f1f;
+  --primary-color: #bb86fc;
+  --border-color: #333;
+  --input-background-color: #333;
+  --card-background-color: #1f1f1f;
+  --secondary-text-color: #a0a0a0;
+}
+
+/* Light Theme Variables */
+.light-theme {
+  --background-color: #f4f4f9;
+  --text-color: #000;
+  --sidebar-background-color: #fff;
+  --primary-color: #3b5998;
+  --border-color: #ddd;
+  --input-background-color: #fff;
+  --card-background-color: #fff;
+  --secondary-text-color: #555;
 }

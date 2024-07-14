@@ -5,6 +5,16 @@
   background-color: #f4f4f9;
 }
 
+.book-club-details.light {
+  background-color: #fff;
+  color: #000;
+}
+
+.book-club-details.dark {
+  background-color: #333;
+  color: #fff;
+}
+
 .left-column, .center-column, .right-column {
   background-color: #fff;
   border-radius: 8px;
@@ -72,6 +82,8 @@
 
 .leave-club-button {
   width: auto;
+  background-color: red;
+  color: white;
 }
 
 .error-message {

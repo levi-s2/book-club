@@ -1,12 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { AppstoreOutlined, SettingOutlined, BookOutlined, UserOutlined, LogoutOutlined, PlusOutlined, ReadOutlined } from '@ant-design/icons';
-import { Menu } from 'antd';
+import { AppstoreOutlined, SettingOutlined, BookOutlined, UserOutlined, LogoutOutlined, PlusOutlined, ReadOutlined, BulbOutlined } from '@ant-design/icons';
+import { Menu, Switch } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
-
+import { ThemeContext } from './context/ThemeContext';
 
 const NavBar = () => {
   const { user, logout } = useContext(AuthContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const location = useLocation();
   const [current, setCurrent] = useState('');
 
@@ -64,6 +65,18 @@ const NavBar = () => {
             icon: <UserOutlined />,
           },
         ],
+    {
+      label: (
+        <Switch
+          checked={theme === 'dark'}
+          onChange={toggleTheme}
+          checkedChildren={<BulbOutlined />}
+          unCheckedChildren={<BulbOutlined />}
+        />
+      ),
+      key: 'theme',
+      icon: <BulbOutlined />,
+    },
   ].filter(Boolean); // Filter out any falsey values
 
   return (

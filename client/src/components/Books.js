@@ -1,9 +1,10 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
-import { Layout, theme } from 'antd';
+import { Layout, theme as antdTheme } from 'antd';
 import { BooksContext } from './context/BooksContext';
 import { GenresContext } from './context/GenresContext';
 import BookCard from './BookCard';
 import NavBar from './NavBar';
+import { ThemeContext } from './context/ThemeContext';
 import './css/Books.css';
 
 const { Content, Sider } = Layout;
@@ -11,6 +12,7 @@ const { Content, Sider } = Layout;
 const Books = () => {
   const { books } = useContext(BooksContext);
   const { genres } = useContext(GenresContext);
+  const { theme } = useContext(ThemeContext); // Access the theme context
   const [authors, setAuthors] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,10 +64,10 @@ const Books = () => {
 
   const {
     token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  } = antdTheme.useToken();
 
   return (
-    <Layout>
+    <Layout className={`books-page ${theme}`}>
       <NavBar />
       <Content
         style={{
@@ -129,7 +131,7 @@ const Books = () => {
               </div>
               <div className="books-container">
                 {filteredBooks.map((book) => (
-                  <BookCard key={book.id} book={book} />
+                  <BookCard key={book.id} book={book} theme={theme} />
                 ))}
               </div>
             </div>
@@ -138,6 +140,6 @@ const Books = () => {
       </Content>
     </Layout>
   );
-};
+}
 
 export default Books;

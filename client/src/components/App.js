@@ -5,12 +5,13 @@ import Books from './Books';
 import BooksClub from './BooksClub';
 import MyClubs from './MyClubs';
 import CreateClub from './CreateClub';
-import ManageClub from './ManageClub'
+import ManageClub from './ManageClub';
 import BookClubDetails from './BookClubDetails';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { BookClubsProvider, BookClubsContext } from './context/BookClubsContext';
 import { BooksProvider } from './context/BooksContext';
 import { GenresProvider } from './context/GenresContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './ProtectedRoute';
 import axios from './axiosConfig';
 
@@ -18,9 +19,11 @@ const App = () => {
   return (
     <AuthProvider>
       <BookClubsProvider>
-        <Router>
-          <Main />
-        </Router>
+        <ThemeProvider>
+          <Router>
+            <Main />
+          </Router>
+        </ThemeProvider>
       </BookClubsProvider>
     </AuthProvider>
   );

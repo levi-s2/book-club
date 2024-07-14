@@ -2,11 +2,22 @@
 .manage-club-page {
   display: flex;
   padding: 20px;
-  background-color: #f4f4f9;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.manage-club-page.light {
+  background-color: #fff;
+  color: #000;
+}
+
+.manage-club-page.dark {
+  background-color: #121212;
+  color: #e0e0e0;
 }
 
 .left-column, .center-column, .right-column {
-  background-color: #fff;
+  background-color: var(--column-background-color);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -37,7 +48,7 @@
 
 .manage-club-container h2 {
   font-size: 28px;
-  color: #3b5998;
+  color: var(--heading-color);
 }
 
 .manage-section {
@@ -46,7 +57,7 @@
 
 .manage-section h3 {
   font-size: 20px;
-  color: #3b5998;
+  color: var(--heading-color);
 }
 
 .book-selection, .genre-list {
@@ -90,8 +101,8 @@
 }
 
 .manage-section button {
-  background-color: #3b5998;
-  color: white;
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
@@ -99,7 +110,7 @@
 }
 
 .manage-section button:hover {
-  background-color: #2a4378;
+  background-color: var(--button-hover-background-color);
 }
 
 .manage-section ul {
@@ -112,4 +123,22 @@
   justify-content: space-between;
   align-items: center;
   padding: 5px 0;
+}
+
+/* Dark Theme Variables */
+.dark-theme {
+  --column-background-color: #1f1f1f;
+  --heading-color: #bb86fc;
+  --button-background-color: #bb86fc;
+  --button-text-color: #121212;
+  --button-hover-background-color: #3700b3;
+}
+
+/* Light Theme Variables */
+.light-theme {
+  --column-background-color: #fff;
+  --heading-color: #3b5998;
+  --button-background-color: #3b5998;
+  --button-text-color: white;
+  --button-hover-background-color: #2a4378;
 }

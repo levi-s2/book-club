@@ -376,6 +376,13 @@ class ManageClub(Resource):
 
         if action == 'update_current_reading':
             book_id = data.get('book_id')
+            
+            # Delete all related posts
+            PostVotes.query.filter(PostVotes.post_id.in_(
+                db.session.query(Post.id).filter_by(book_club_id=club_id)
+            )).delete(synchronize_session='fetch')
+            Post.query.filter_by(book_club_id=club_id).delete()
+
             current_reading = CurrentReading.query.filter_by(book_club_id=club_id).first()
             if current_reading:
                 current_reading.book_id = book_id
@@ -400,7 +407,7 @@ class ManageClub(Resource):
             return {"message": "Genres updated successfully"}, 200
 
         return {"message": "Invalid action"}, 400
-    
+
     @jwt_required()
     def delete(self, club_id):
         try:
@@ -408,7 +415,6 @@ class ManageClub(Resource):
             
             if book_club.current_reading:
                 db.session.delete(book_club.current_reading)
-            
             Membership.query.filter_by(book_club_id=club_id).delete()
             PostVotes.query.filter(PostVotes.post_id.in_(
                 db.session.query(Post.id).filter_by(book_club_id=club_id)

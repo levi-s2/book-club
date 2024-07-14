@@ -204,8 +204,8 @@ class CurrentReading(db.Model):
             'id': self.id,
             'book_club_id': self.book_club_id,
             'book_id': self.book_id,
-            'started_at': self.started_at.isoformat(),
-            'book': self.book.to_dict() 
+            'started_at': self.started_at.isoformat() if self.started_at else None,
+            'book': self.book.to_dict()
         }
 
     def __repr__(self):

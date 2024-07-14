@@ -1,9 +1,9 @@
 import React from 'react';
 import './css/BookCard.css';
 
-const BookCard = ({ book }) => {
+const BookCard = ({ book, theme }) => {
   return (
-    <div className="book-card">
+    <div className={`book-card ${theme}`}>
       <img src={book.image_url} alt={book.title} className="book-image" />
       <div className="book-info">
         <h3>{book.title}</h3>

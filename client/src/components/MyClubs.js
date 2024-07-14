@@ -2,13 +2,14 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from './axiosConfig';
 import { Link } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
+import { ThemeContext } from './context/ThemeContext'; 
 import NavBar from './NavBar';
 import './css/MyClubs.css';
 
 const MyClubs = () => {
   const { user } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
   const [myClubs, setMyClubs] = useState([]);
-  
 
   useEffect(() => {
     const fetchMyClubs = async () => {
@@ -21,6 +22,7 @@ const MyClubs = () => {
           });
           setMyClubs(response.data);
         } catch (error) {
+          console.error('Error fetching my clubs:', error);
         }
       }
     };
@@ -35,23 +37,23 @@ const MyClubs = () => {
   return (
     <div>
       <NavBar />
-      <div className="my-clubs">
-      <h2>My Book Clubs</h2>
-      <div className="club-list">
-        {myClubs.length > 0 ? (
-          myClubs.map((club) => (
-            <div key={club.id} className="club-card">
-              <h3>{club.name}</h3>
-              <p>{club.description}</p>
-              <p>Current Book: {club.current_book ? club.current_book.title : 'None'}</p>
-              <Link to={`/book-clubs/${club.id}`} className="view-details-button">View Details</Link>
-            </div>
-          ))
-        ) : (
-          <p>You are not part of any clubs yet.</p>
-        )}
+      <div className={`my-clubs ${theme}`}>
+        <h2>My Book Clubs</h2>
+        <div className="club-list">
+          {myClubs.length > 0 ? (
+            myClubs.map((club) => (
+              <div key={club.id} className="club-card">
+                <h3>{club.name}</h3>
+                <p>{club.description}</p>
+                <p>Current Book: {club.current_book ? club.current_book.title : 'None'}</p>
+                <Link to={`/book-clubs/${club.id}`} className="view-details-button">View Details</Link>
+              </div>
+            ))
+          ) : (
+            <p>You are not part of any clubs yet.</p>
+          )}
+        </div>
       </div>
-    </div>
     </div>
   );
 };

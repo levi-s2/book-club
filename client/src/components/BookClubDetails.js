@@ -5,6 +5,7 @@ import { AuthContext } from './context/AuthContext';
 import NavBar from './NavBar';
 import { Card, Form, Input, Button, List, Typography, Space } from 'antd';
 import { LikeTwoTone, DislikeTwoTone } from '@ant-design/icons';
+import { ThemeContext } from './context/ThemeContext';
 import './css/BookClubDetails.css';
 
 const { TextArea } = Input;
@@ -12,6 +13,7 @@ const { TextArea } = Input;
 const BookClubDetails = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
   const [clubDetails, setClubDetails] = useState(null);
   const [newPostContent, setNewPostContent] = useState('');
   const [editingPost, setEditingPost] = useState(null);
@@ -157,7 +159,7 @@ const BookClubDetails = () => {
   return (
     <div>
       <NavBar />
-      <div className="book-club-details">
+      <div className={`book-club-details ${theme}`}>
         <div className="left-column">
           <div className="club-header">
             <h2>{clubDetails.name}</h2>
