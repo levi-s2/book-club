@@ -7,6 +7,7 @@ import MyClubs from './MyClubs';
 import CreateClub from './CreateClub';
 import ManageClub from './ManageClub';
 import BookClubDetails from './BookClubDetails';
+import MyBookList from './MyBookList'; // Import the new component
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { BookClubsProvider, BookClubsContext } from './context/BookClubsContext';
 import { BooksProvider } from './context/BooksContext';
@@ -68,6 +69,7 @@ const Main = () => {
             <ProtectedRoute path="/my-clubs" component={MyClubs} />
             <ProtectedRoute path="/new-club" component={CreateClub} />
             <ProtectedRoute path="/manage-club" component={ManageClub} />
+            <ProtectedRoute path="/my-book-list" component={MyBookList} /> {/* Add this line */}
             <Redirect to="/" />
           </Switch>
         </GenresProvider>

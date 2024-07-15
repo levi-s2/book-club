@@ -8,6 +8,17 @@ metadata = MetaData()
 db = SQLAlchemy(metadata=metadata)
 bcrypt = Bcrypt()
 
+book_club_genres = db.Table('book_club_genres',
+    db.Column('book_club_id', db.Integer, db.ForeignKey('book_clubs.id'), primary_key=True),
+    db.Column('genre_id', db.Integer, db.ForeignKey('genres.id'), primary_key=True)
+)
+
+user_books = db.Table('user_books',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('book_id', db.Integer, db.ForeignKey('books.id'), primary_key=True),
+    db.Column('rating', db.Integer)
+)
+
 class User(db.Model):
     __tablename__ = 'users'
     
@@ -20,6 +31,8 @@ class User(db.Model):
     memberships = relationship('Membership', back_populates='user')
     posts = relationship('Post', back_populates='user')
     post_votes = relationship('PostVotes', back_populates='user')
+
+    books = db.relationship('Book', secondary='user_books', back_populates='users')
 
     @property
     def password_hash(self):
@@ -49,17 +62,12 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
+            'books': [book.to_dict() for book in self.books],
             'created_clubs': [club.id for club in self.book_clubs_created]
         }
 
     def __repr__(self):
         return f'<User {self.id}. {self.username}>'
-
-
-book_club_genres = db.Table('book_club_genres',
-    db.Column('book_club_id', db.Integer, db.ForeignKey('book_clubs.id'), primary_key=True),
-    db.Column('genre_id', db.Integer, db.ForeignKey('genres.id'), primary_key=True)
-)
 
 
 class BookClub(db.Model):
@@ -116,6 +124,8 @@ class Book(db.Model):
     genre = relationship('Genre', back_populates='books')
     current_reading = relationship('CurrentReading', back_populates='book')
     posts = relationship('Post', back_populates='book')
+
+    users = db.relationship('User', secondary='user_books', back_populates='books')
 
     @validates('title')
     def validate_title(self, key, title):

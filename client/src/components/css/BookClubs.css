@@ -1,29 +1,41 @@
+.book-clubs-page {
+  background-color: var(--page-background-color);
+  color: var(--text-color);
+  min-height: 100vh; /* Ensure the whole page height is covered */
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.book-clubs-page.light {
+  --page-background-color: #f4f4f9;
+  --text-color: #000;
+}
+
+.book-clubs-page.dark {
+  --page-background-color: #121212;
+  --text-color: #e0e0e0;
+}
+
 .book-clubs-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-
-.book-clubs-container.light {
-  background-color: #fff;
-  color: #000;
-}
-
-.book-clubs-container.dark {
-  background-color: #121212;
-  color: #e0e0e0;
 }
 
 .book-club-card {
-  background-color: var(--card-background-color);
+  background-color: #fff; /* Keep the card background white */
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 16px;
   margin: 16px;
   width: 300px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #000; /* Ensure text in card is black */
 }
 
 .book-club-info {
@@ -32,50 +44,42 @@
 
 .book-club-info h3 {
   margin-top: 0;
-  color: var(--text-color);
+  color: inherit; /* Inherit color from parent */
 }
 
 .genres {
   margin-top: 8px;
   font-size: 14px;
-  color: var(--secondary-text-color);
+  color: inherit; /* Inherit color from parent */
 }
 
 .view-details-button {
   display: inline-block;
   margin-top: 12px;
   padding: 8px 16px;
-  background-color: var(--button-background-color);
-  color: var(--button-text-color);
+  background-color: #007bff; /* Keep the button background blue */
+  color: white;
   text-decoration: none;
   border-radius: 4px;
   transition: background-color 0.3s;
 }
 
 .view-details-button:hover {
-  background-color: var(--button-hover-background-color);
+  background-color: #0056b3;
 }
 
 /* Dark Theme Variables */
 .dark-theme {
-  --background-color: #121212;
+  --page-background-color: #121212;
   --text-color: #e0e0e0;
-  --card-background-color: #1f1f1f;
   --border-color: #333;
-  --secondary-text-color: #a0a0a0;
-  --button-background-color: #007bff;
-  --button-text-color: white;
-  --button-hover-background-color: #0056b3;
+  --secondary-text-color: #e0e0e0; /* Update to ensure text is readable in dark mode */
 }
 
 /* Light Theme Variables */
 .light-theme {
-  --background-color: #f4f4f9;
+  --page-background-color: #f4f4f9;
   --text-color: #000;
-  --card-background-color: #fff;
   --border-color: #ddd;
   --secondary-text-color: #555;
-  --button-background-color: #007bff;
-  --button-text-color: white;
-  --button-hover-background-color: #0056b3;
 }

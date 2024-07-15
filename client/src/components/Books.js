@@ -1,10 +1,12 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
-import { Layout, theme as antdTheme } from 'antd';
+import { Layout, theme as antdTheme, message } from 'antd';
 import { BooksContext } from './context/BooksContext';
 import { GenresContext } from './context/GenresContext';
+import { AuthContext } from './context/AuthContext'; // Import AuthContext
 import BookCard from './BookCard';
 import NavBar from './NavBar';
 import { ThemeContext } from './context/ThemeContext';
+import axios from './axiosConfig';
 import './css/Books.css';
 
 const { Content, Sider } = Layout;
@@ -12,9 +14,11 @@ const { Content, Sider } = Layout;
 const Books = () => {
   const { books } = useContext(BooksContext);
   const { genres } = useContext(GenresContext);
-  const { theme } = useContext(ThemeContext); // Access the theme context
+  const { user } = useContext(AuthContext); // Access AuthContext
+  const { theme } = useContext(ThemeContext);
   const [authors, setAuthors] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
+  const [userBookList, setUserBookList] = useState([]); // State to hold user's book list
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
@@ -60,6 +64,40 @@ const Books = () => {
 
   const handleAuthorClick = (author) => {
     setSelectedAuthor(prevAuthor => (prevAuthor === author ? null : author));
+  };
+
+  const fetchUserBookList = useCallback(async () => {
+    try {
+      const response = await axios.get('/user/books', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setUserBookList(response.data.map(book => book.id));
+    } catch (error) {
+      console.error('Error fetching user book list:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserBookList();
+    }
+  }, [user, fetchUserBookList]);
+
+  const handleAddToList = async (bookId) => {
+    try {
+      await axios.post('/user/books', { bookId }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      message.success('Book added to list');
+      setUserBookList(prevList => [...prevList, bookId]);
+    } catch (error) {
+      console.error('Error adding book to list:', error);
+      message.error('Failed to add book to list');
+    }
   };
 
   const {
@@ -131,7 +169,13 @@ const Books = () => {
               </div>
               <div className="books-container">
                 {filteredBooks.map((book) => (
-                  <BookCard key={book.id} book={book} theme={theme} />
+                  <BookCard
+                    key={book.id}
+                    book={book}
+                    theme={theme}
+                    handleAddToList={handleAddToList}
+                    isInList={userBookList.includes(book.id)}
+                  />
                 ))}
               </div>
             </div>

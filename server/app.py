@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from models import db, bcrypt, User, Book, BookClub, Genre, Membership, CurrentReading, Post, PostVotes
+from models import db, bcrypt, User, Book, BookClub, Genre, Membership, CurrentReading, Post, PostVotes, user_books
 from datetime import timedelta
 import os
 import traceback
@@ -105,6 +105,105 @@ class UserDetail(Resource):
             return {"message": "Internal Server Error"}, 500
 
 api.add_resource(UserDetail, '/users/<int:user_id>', endpoint='user_detail_endpoint')
+
+class UserBooks(Resource):
+    @jwt_required()
+    def get(self):
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        user_books_with_ratings = []
+
+        for book in user.books:
+            user_book = db.session.query(user_books).filter_by(user_id=user_id, book_id=book.id).first()
+            user_books_with_ratings.append({
+                'id': book.id,
+                'title': book.title,
+                'author': book.author,
+                'image_url': book.image_url,
+                'rating': user_book.rating if user_book else None
+            })
+
+        return make_response(jsonify(user_books_with_ratings), 200)
+
+    @jwt_required()
+    def post(self):
+        try:
+            user_id = get_jwt_identity()
+            data = request.get_json()
+            book_id = data.get('bookId')
+            rating = data.get('rating') 
+            user = User.query.get(user_id)
+            book = Book.query.get(book_id)
+
+            if not book:
+                return make_response({"message": "Book not found"}, 404)
+
+            if book in user.books:
+                return make_response({"message": "Book already in list"}, 400)
+
+            user.books.append(book)
+            db.session.commit()
+
+            user_book = db.session.query(user_books).filter_by(user_id=user_id, book_id=book_id).first()
+            if user_book:
+                db.session.execute(
+                    user_books.update().
+                    where(user_books.c.user_id == user_id).
+                    where(user_books.c.book_id == book_id).
+                    values(rating=rating)
+                )
+                db.session.commit()
+
+            return make_response({"message": "Book added to list"}, 201)
+        except Exception as e:
+            traceback.print_exc()
+            return make_response({"message": "Internal Server Error"}, 500)
+
+    @jwt_required()
+    def patch(self, book_id):
+        try:
+            user_id = get_jwt_identity()
+            data = request.get_json()
+            rating = data.get('rating')
+            user_book = db.session.query(user_books).filter_by(user_id=user_id, book_id=book_id).first()
+
+            if not user_book:
+                return make_response({"message": "Book not in list"}, 400)
+
+            db.session.execute(
+                user_books.update().
+                where(user_books.c.user_id == user_id).
+                where(user_books.c.book_id == book_id).
+                values(rating=rating)
+            )
+            db.session.commit()
+
+            return make_response({"message": "Rating updated"}, 200)
+        except Exception as e:
+            traceback.print_exc()
+            return make_response({"message": "Internal Server Error"}, 500)
+
+    @jwt_required()
+    def delete(self, book_id):
+        try:
+            user_id = get_jwt_identity()
+            user = User.query.get(user_id)
+            book = Book.query.get(book_id)
+
+            if book not in user.books:
+                return make_response({"message": "Book not in list"}, 400)
+
+            user.books.remove(book)
+            db.session.commit()
+
+            return make_response({"message": "Book removed from list"}, 200)
+        except Exception as e:
+            traceback.print_exc()
+            return make_response({"message": "Internal Server Error"}, 500)
+
+api.add_resource(UserBooks, '/user/books', '/user/books/<int:book_id>')
+
+
 
 
 
