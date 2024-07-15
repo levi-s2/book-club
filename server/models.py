@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData, Integer, String, Text, DateTime, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import relationship, validates
+from sqlalchemy.orm import relationship, validates, backref
 from flask_bcrypt import Bcrypt
 import datetime
 
@@ -19,6 +19,12 @@ user_books = db.Table('user_books',
     db.Column('rating', db.Integer)
 )
 
+friends = db.Table(
+    'friends',
+    db.Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
+    db.Column('friend_id', Integer, ForeignKey('users.id'), primary_key=True)
+)
+
 class User(db.Model):
     __tablename__ = 'users'
     
@@ -26,6 +32,16 @@ class User(db.Model):
     username = db.Column(String, unique=True, nullable=False)
     email = db.Column(String, unique=True, nullable=False)
     _password_hash = db.Column(String, nullable=False)
+    profile_image_url = db.Column(String, nullable=True)
+
+    friends = db.relationship(
+        'User',
+        secondary=friends,
+        primaryjoin=(id == friends.c.user_id),
+        secondaryjoin=(id == friends.c.friend_id),
+        backref=backref('friends_back', lazy='dynamic'),
+        lazy='dynamic'
+    )
 
     book_clubs_created = relationship('BookClub', back_populates='creator')
     memberships = relationship('Membership', back_populates='user')
@@ -62,7 +78,9 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
+            'profile_image_url': self.profile_image_url,
             'books': [book.to_dict() for book in self.books],
+            'friends': [friend.to_dict() for friend in self.friends],
             'created_clubs': [club.id for club in self.book_clubs_created]
         }
 

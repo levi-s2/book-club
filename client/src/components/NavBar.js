@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AppstoreOutlined, SettingOutlined, BookOutlined, UserOutlined, LogoutOutlined, PlusOutlined, ReadOutlined, BulbOutlined } from '@ant-design/icons';
 import { Menu, Switch } from 'antd';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
 
@@ -9,6 +9,7 @@ const NavBar = () => {
   const { user, logout } = useContext(AuthContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
   const location = useLocation();
+  const history = useHistory();
   const [current, setCurrent] = useState('');
 
   useEffect(() => {
@@ -18,6 +19,12 @@ const NavBar = () => {
 
   const onClick = (e) => {
     setCurrent(e.key);
+  };
+
+  const goToProfile = () => {
+    if (user) {
+      history.push(`/users/${user.id}`);
+    }
   };
 
   const items = [
@@ -41,10 +48,20 @@ const NavBar = () => {
       key: 'library',
       icon: <AppstoreOutlined />,
     },
+    {
+      label: <Link to="/my-book-list">My Book List</Link>,
+      key: 'my-book-list',
+      icon: <AppstoreOutlined />,
+    },
     user && user.created_clubs && user.created_clubs.length > 0 && {
       label: <Link to="/manage-club">Manage My Club</Link>,
       key: 'manage-club',
       icon: <SettingOutlined />,
+    },
+    user && {
+      label: <span onClick={goToProfile}>My Profile</span>,
+      key: 'my-profile',
+      icon: <UserOutlined />,
     },
     user
       ? {

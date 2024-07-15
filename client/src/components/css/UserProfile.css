@@ -1,0 +1,29 @@
+/* UserProfile.css */
+
+.user-profile-page {
+    min-height: 100vh;
+    background-color: var(--page-background-color);
+    color: var(--text-color);
+  }
+  
+  .user-card {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .clubs-card, .book-list-card, .friends-card {
+    margin-top: 20px;
+  }
+  
+  .book-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .rating {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  

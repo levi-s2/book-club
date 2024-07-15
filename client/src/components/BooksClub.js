@@ -10,22 +10,24 @@ const BooksClub = () => {
   const { theme } = useContext(ThemeContext); // Access the theme context
 
   return (
-    <div>
+    <div className={`book-clubs-page ${theme}`}>
       <NavBar />
-      <div className={`book-clubs-container ${theme}`}>
-        {bookClubs.map((club) => (
-          <div key={club.id} className="book-club-card">
-            <div className="book-club-info">
-              <h3>{club.name}</h3>
-              <p>{club.description}</p>
-              <p>Current Book: {club.current_book ? club.current_book.title : 'None'}</p>
-              <div className="genres">
-                <strong>Genres:</strong> {club.genres.map((genre) => genre.name).join(', ')}
+      <div className="content">
+        <div className="book-clubs-container">
+          {bookClubs.map((club) => (
+            <div key={club.id} className="book-club-card">
+              <div className="book-club-info">
+                <h3>{club.name}</h3>
+                <p>{club.description}</p>
+                <p>Current Book: {club.current_book ? club.current_book.title : 'None'}</p>
+                <div className="genres">
+                  <strong>Genres:</strong> {club.genres.map((genre) => genre.name).join(', ')}
+                </div>
+                <Link to={`/book-clubs/${club.id}`} className="view-details-button">View Details</Link>
               </div>
-              <Link to={`/book-clubs/${club.id}`} className="view-details-button">View Details</Link>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

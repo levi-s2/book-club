@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
 import NavBar from './NavBar';
 import { Card, Form, Input, Button, List, Typography, Space } from 'antd';
-import { LikeTwoTone, DislikeTwoTone } from '@ant-design/icons';
+import { LikeTwoTone, DislikeTwoTone, UserOutlined } from '@ant-design/icons';
 import { ThemeContext } from './context/ThemeContext';
 import './css/BookClubDetails.css';
 
@@ -276,22 +276,28 @@ const BookClubDetails = () => {
           )}
         </div>
         <div className="right-column">
-          <div className="club-members">
-            <h3>Members</h3>
-            {clubDetails.members && clubDetails.members.length > 0 ? (
-              <ul>
-                {clubDetails.members.map((member) => (
-                  <li key={member.id}>{member.username}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>No members yet.</p>
-            )}
-          </div>
+        <div className="club-members">
+    <h3>Members</h3>
+    {clubDetails.members && clubDetails.members.length > 0 ? (
+      <ul>
+        {clubDetails.members.map((member) => (
+          <li key={member.id}>
+            <UserOutlined />
+            <Link to={`/users/${member.id}`} className="profile-link">
+              {member.username}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No members yet.</p>
+    )}
+  </div>
         </div>
       </div>
     </div>
   );
+  
 };
 
 export default BookClubDetails;

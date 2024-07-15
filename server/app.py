@@ -204,6 +204,54 @@ class UserBooks(Resource):
 api.add_resource(UserBooks, '/user/books', '/user/books/<int:book_id>')
 
 
+class AddFriend(Resource):
+    @jwt_required()
+    def post(self, friend_id):
+        try:
+            user_id = get_jwt_identity()
+            user = User.query.get(user_id)
+            friend = User.query.get(friend_id)
+
+            if not friend:
+                return {"message": "Friend not found"}, 404
+
+            if friend in user.friends:
+                return {"message": "Already friends"}, 400
+
+            user.friends.append(friend)
+            db.session.commit()
+            return {"message": "Friend added successfully"}, 201
+        except Exception as e:
+            print(f"Error adding friend: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+api.add_resource(AddFriend, '/users/<int:friend_id>/add-friend', endpoint='add_friend_endpoint')
+
+
+class RemoveFriend(Resource):
+    @jwt_required()
+    def delete(self, friend_id):
+        try:
+            user_id = get_jwt_identity()
+            user = User.query.get(user_id)
+            friend = User.query.get(friend_id)
+
+            if not friend:
+                return {"message": "Friend not found"}, 404
+
+            if friend not in user.friends:
+                return {"message": "Not friends"}, 400
+
+            user.friends.remove(friend)
+            db.session.commit()
+            return {"message": "Friend removed successfully"}, 200
+        except Exception as e:
+            print(f"Error removing friend: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+api.add_resource(RemoveFriend, '/users/<int:friend_id>/remove-friend', endpoint='remove_friend_endpoint')
 
 
 
