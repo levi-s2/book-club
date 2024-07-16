@@ -579,7 +579,5 @@ class ManageClub(Resource):
 api.add_resource(ManageClub, '/manage-club/<int:club_id>')
 
 
-
-
 if __name__ == "__main__":
     app.run(debug=True)

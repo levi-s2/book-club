@@ -8,7 +8,8 @@ import CreateClub from './CreateClub';
 import ManageClub from './ManageClub';
 import BookClubDetails from './BookClubDetails';
 import MyBookList from './MyBookList';
-import UserProfile from './UserProfile'; // Import the UserProfile component
+import UserProfile from './UserProfile'; // Import UserProfile
+import UserDetails from './UserDetails'; // Import UserDetails
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { BookClubsProvider, BookClubsContext } from './context/BookClubsContext';
 import { BooksProvider } from './context/BooksContext';
@@ -71,7 +72,8 @@ const Main = () => {
             <ProtectedRoute path="/new-club" component={CreateClub} />
             <ProtectedRoute path="/manage-club" component={ManageClub} />
             <ProtectedRoute path="/my-book-list" component={MyBookList} />
-            <ProtectedRoute path="/users/:userId" component={UserProfile} /> {/* Add this line */}
+            <ProtectedRoute path="/my-profile" component={UserProfile} />
+            <ProtectedRoute path="/users/:userId" component={UserDetails} />
             <Redirect to="/" />
           </Switch>
         </GenresProvider>

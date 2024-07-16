@@ -80,9 +80,11 @@ class User(db.Model):
             'email': self.email,
             'profile_image_url': self.profile_image_url,
             'books': [book.to_dict() for book in self.books],
-            'friends': [friend.to_dict() for friend in self.friends],
-            'created_clubs': [club.id for club in self.book_clubs_created]
-        }
+            'friends': [{'id': friend.id, 'username': friend.username} for friend in self.friends],
+            'created_clubs': [{'id': club.id, 'name': club.name} for club in self.book_clubs_created],
+            'joined_clubs': [{'id': membership.book_club.id, 'name': membership.book_club.name} for membership in self.memberships]
+    }
+
 
     def __repr__(self):
         return f'<User {self.id}. {self.username}>'

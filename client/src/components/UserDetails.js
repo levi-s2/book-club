@@ -1,54 +1,70 @@
+// UserDetails.js
 import React, { useEffect, useState, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from './axiosConfig';
 import NavBar from './NavBar';
-import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
-import { Card, Spin, Rate, Button, List } from 'antd';
-import { Link } from 'react-router-dom';
+import { AuthContext } from './context/AuthContext';
+import { Card, Spin, List, Button } from 'antd';
 import './css/UserProfile.css';
 
-const UserProfile = () => {
-  const { user } = useContext(AuthContext); // Get the user from AuthContext
+const UserDetails = () => {
+  const { userId } = useParams();
   const { theme } = useContext(ThemeContext);
+  const { user } = useContext(AuthContext);
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isFriend, setIsFriend] = useState(false);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      if (user && user.id) {
-        try {
-          const response = await axios.get(`/users/${user.id}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          setUserDetails(response.data);
-          setLoading(false);
-        } catch (error) {
-          setError('Error fetching user details.');
-          setLoading(false);
-        }
-      } else {
-        setError('User not found.');
+      try {
+        const response = await axios.get(`/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        setUserDetails(response.data);
+        setLoading(false);
+        setIsFriend(user.friends.some((friend) => friend.id === parseInt(userId)));
+      } catch (error) {
+        setError('Error fetching user details.');
         setLoading(false);
       }
     };
 
     fetchUserDetails();
-  }, [user]);
+  }, [userId, user.friends]);
 
-
-  const handleRemoveFriend = async (friendId) => {
+  const handleAddFriend = async () => {
     try {
-      await axios.delete(`/users/${friendId}/remove-friend`, {
+      await axios.post(`/users/${userId}/add-friend`, {}, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
+      setIsFriend(true);
       setUserDetails((prevDetails) => ({
         ...prevDetails,
-        friends: prevDetails.friends.filter((friend) => friend.id !== friendId),
+        friends: [...prevDetails.friends, { id: user.id, username: user.username }],
+      }));
+    } catch (error) {
+      setError('Error adding friend.');
+    }
+  };
+
+  const handleRemoveFriend = async () => {
+    try {
+      await axios.delete(`/users/${userId}/remove-friend`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setIsFriend(false);
+      setUserDetails((prevDetails) => ({
+        ...prevDetails,
+        friends: prevDetails.friends.filter((friend) => friend.id !== user.id),
       }));
     } catch (error) {
       setError('Error removing friend.');
@@ -68,6 +84,11 @@ const UserProfile = () => {
             <Card className="profile-card">
               <img src={userDetails.profile_image_url} alt={userDetails.username} className="profile-image" />
               <h2>{userDetails.username}</h2>
+              {isFriend ? (
+                <Button onClick={handleRemoveFriend}>Remove Friend</Button>
+              ) : (
+                <Button onClick={handleAddFriend}>Add Friend</Button>
+              )}
             </Card>
             <div className="friends-list">
               <h3>Friends</h3>
@@ -75,12 +96,7 @@ const UserProfile = () => {
                 itemLayout="horizontal"
                 dataSource={userDetails.friends}
                 renderItem={(friend) => (
-                  <List.Item
-                    actions={[
-                      <Button onClick={() => handleRemoveFriend(friend.id)}>Remove Friend</Button>,
-                      <Link to={`/users/${friend.id}`}>View Profile</Link>
-                    ]}
-                  >
+                  <List.Item>
                     <List.Item.Meta
                       title={friend.username}
                     />
@@ -88,28 +104,14 @@ const UserProfile = () => {
                 )}
               />
             </div>
-            {userDetails.created_clubs.length > 0 && (
-              <div className="created-clubs">
-                <h3>Created Club</h3>
-                <List
-                  itemLayout="horizontal"
-                  dataSource={userDetails.created_clubs}
-                  renderItem={(club) => (
-                    <List.Item>
-                      <List.Item.Meta title={club.name} />
-                    </List.Item>
-                  )}
-                />
-              </div>
-            )}
             <div className="clubs-list">
               <h3>Clubs</h3>
               <List
                 itemLayout="horizontal"
-                dataSource={userDetails.joined_clubs}
+                dataSource={userDetails.created_clubs}
                 renderItem={(club) => (
                   <List.Item>
-                    <List.Item.Meta title={club.name} /> 
+                    <List.Item.Meta title={club.name} />
                   </List.Item>
                 )}
               />
@@ -126,7 +128,6 @@ const UserProfile = () => {
                       cover={<img alt={book.title} src={book.image_url} />}
                     >
                       <Card.Meta title={book.title} description={`Author: ${book.author}`} />
-                      <Rate value={book.rating || 0} />
                     </Card>
                   </List.Item>
                 )}
@@ -141,4 +142,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default UserDetails;

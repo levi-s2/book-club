@@ -4,7 +4,7 @@ import { AuthContext } from './context/AuthContext';
 import { BookClubsContext } from './context/BookClubsContext';
 import { BooksContext } from './context/BooksContext';
 import { GenresContext } from './context/GenresContext';
-import { ThemeContext } from './context/ThemeContext'; 
+import { ThemeContext } from './context/ThemeContext';
 import { useHistory } from 'react-router-dom';
 import NavBar from './NavBar';
 import './css/ManageClub.css';
@@ -22,13 +22,14 @@ const ManageClub = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
   const history = useHistory();
 
-  useEffect(() => {
-    const fetchClubDetails = async () => {
-      try {
-        const response = await axios.get(`/manage-club/${user.created_clubs[0]}`, {
+  const fetchClubDetails = useCallback(async () => {
+    try {
+      if (user && user.created_clubs && user.created_clubs.length > 0) {
+        const clubId = user.created_clubs[0].id || user.created_clubs[0]; // Ensure correct ID format
+        console.log('Fetching details for club ID:', clubId); // Debugging log
+        const response = await axios.get(`/manage-club/${clubId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -36,16 +37,16 @@ const ManageClub = () => {
         setClubDetails(response.data);
         setMembers(response.data.members);
         setSelectedGenres(response.data.genres.map((genre) => genre.id));
-      } catch (error) {
-        console.error('Error fetching club details:', error);
-        setError('Error fetching club details.');
       }
-    };
-
-    if (user && user.created_clubs && user.created_clubs.length > 0) {
-      fetchClubDetails();
+    } catch (error) {
+      console.error('Error fetching club details:', error);
+      setError('Error fetching club details.');
     }
   }, [user]);
+
+  useEffect(() => {
+    fetchClubDetails();
+  }, [fetchClubDetails]);
 
   const filterBooksByGenres = useCallback(() => {
     if (selectedGenres.length > 0) {
@@ -54,7 +55,7 @@ const ManageClub = () => {
       );
       setFilteredBooks(filtered);
     } else {
-      setFilteredBooks([]);
+      setFilteredBooks(books); // Show all books if no genre is selected
     }
   }, [selectedGenres, books]);
 
@@ -64,7 +65,8 @@ const ManageClub = () => {
 
   const handleUpdateCurrentReading = async () => {
     try {
-      const response = await axios.patch(`/manage-club/${user.created_clubs[0]}`, {
+      const clubId = user.created_clubs[0].id || user.created_clubs[0]; // Ensure correct ID format
+      const response = await axios.patch(`/manage-club/${clubId}`, {
         action: 'update_current_reading',
         book_id: selectedBookId,
       }, {
@@ -83,7 +85,8 @@ const ManageClub = () => {
 
   const handleRemoveMember = async (memberId) => {
     try {
-      const response = await axios.patch(`/manage-club/${user.created_clubs[0]}`, {
+      const clubId = user.created_clubs[0].id || user.created_clubs[0]; // Ensure correct ID format
+      const response = await axios.patch(`/manage-club/${clubId}`, {
         action: 'remove_member',
         member_id: memberId,
       }, {
@@ -108,7 +111,8 @@ const ManageClub = () => {
       return;
     }
     try {
-      const response = await axios.patch(`/manage-club/${user.created_clubs[0]}`, {
+      const clubId = user.created_clubs[0].id || user.created_clubs[0]; // Ensure correct ID format
+      const response = await axios.patch(`/manage-club/${clubId}`, {
         action: 'update_genres',
         genre_ids: selectedGenres,
       }, {
@@ -137,7 +141,8 @@ const ManageClub = () => {
 
   const handleDeleteClub = async () => {
     try {
-      const response = await axios.delete(`/manage-club/${user.created_clubs[0]}`, {
+      const clubId = user.created_clubs[0].id || user.created_clubs[0]; // Ensure correct ID format
+      const response = await axios.delete(`/manage-club/${clubId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -154,7 +159,6 @@ const ManageClub = () => {
   if (!clubDetails) {
     return <div>Loading...</div>;
   }
-
   return (
     <div>
       <NavBar />
