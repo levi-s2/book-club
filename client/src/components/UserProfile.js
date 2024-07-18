@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import './css/UserProfile.css';
 
 const UserProfile = () => {
-  const { user } = useContext(AuthContext); // Get the user from AuthContext
+  const { user } = useContext(AuthContext); 
   const { theme } = useContext(ThemeContext);
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);

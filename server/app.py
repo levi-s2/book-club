@@ -389,7 +389,6 @@ class PostVote(Resource):
             if vote not in [-1, 1]:
                 return {"message": "Invalid vote value"}, 400
 
-            post = Post.query.get_or_404(post_id)
             post_vote = PostVotes.query.filter_by(post_id=post_id, user_id=user_id).first()
 
             if post_vote:
@@ -403,13 +402,14 @@ class PostVote(Resource):
 
             db.session.commit()
             updated_post = Post.query.get_or_404(post_id)
-            return make_response(jsonify(updated_post.to_dict()), 200)
+            return make_response(jsonify(updated_post.to_dict(user_id=user_id)), 200)
         except Exception as e:
             print(f"Error voting on post: {e}")
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
 
 api.add_resource(PostVote, '/posts/<int:post_id>/vote', endpoint='post_vote_endpoint')
+
 
 
 
