@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from './context/AuthContext';
+import { Form as AntForm, Input, Button } from 'antd';
 
 const Register = () => {
   const history = useHistory();
@@ -48,22 +49,21 @@ const Register = () => {
       >
         {({ isSubmitting, errors }) => (
           <Form className="login-form">
-            <div className="form-group">
-              <label>Username:</label>
-              <Field name="username" type="text" className="form-input" />
+            <AntForm.Item label="Username" name="username">
+              <Field as={Input} name="username" type="text" />
               <ErrorMessage name="username" component="div" className="error-message" />
-            </div>
-            <div className="form-group">
-              <label>Email:</label>
-              <Field name="email" type="email" className="form-input" />
+            </AntForm.Item>
+            <AntForm.Item label="Email" name="email">
+              <Field as={Input} name="email" type="email" />
               <ErrorMessage name="email" component="div" className="error-message" />
-            </div>
-            <div className="form-group">
-              <label>Password:</label>
-              <Field name="password" type="password" className="form-input" />
+            </AntForm.Item>
+            <AntForm.Item label="Password" name="password">
+              <Field as={Input.Password} name="password" />
               <ErrorMessage name="password" component="div" className="error-message" />
-            </div>
-            <button type="submit" className="login-button" disabled={isSubmitting}>Register</button>
+            </AntForm.Item>
+            <Button type="primary" htmlType="submit" disabled={isSubmitting}>
+              Register
+            </Button>
             {errors.general && <p className="error-message">{errors.general}</p>}
           </Form>
         )}

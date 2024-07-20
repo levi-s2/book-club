@@ -16,6 +16,7 @@ const BookClubDetails = () => {
   const [clubDetails, setClubDetails] = useState(null);
   const [posts, setPosts] = useState([]);
 
+
   useEffect(() => {
     const fetchClubDetails = async () => {
       try {
@@ -109,12 +110,25 @@ const BookClubDetails = () => {
         </div>
         <div className="center-column">
           {isMember || isCreator ? (
-            <Posts clubId={id} posts={posts} setPosts={setPosts} /> // Use the Posts component here
+            <Posts clubId={id} posts={posts} setPosts={setPosts} />
           ) : (
             <p>You must be a member to view and post comments.</p>
           )}
         </div>
         <div className="right-column">
+          <div className="club-creator">
+            <h3>Creator</h3>
+            {clubDetails.creator ? (
+              <div>
+                <UserOutlined />
+                <Link to={`/users/${clubDetails.creator.id}`} className="profile-link">
+                  {clubDetails.creator.username}
+                </Link>
+              </div>
+            ) : (
+              <p>Unknown creator</p>
+            )}
+          </div>
           <div className="club-members">
             <h3>Members</h3>
             {clubDetails.members && clubDetails.members.length > 0 ? (

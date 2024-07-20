@@ -102,6 +102,7 @@ const MyBookList = () => {
                       key={book.id}
                       hoverable
                       cover={<img alt={book.title} src={book.image_url} className="book-image" />}
+                      className={`book-card ${theme}`} // Add theme class
                       actions={[
                         <Button type="primary" onClick={() => handleRemoveBook(book.id)}>Remove from List</Button>,
                       ]}

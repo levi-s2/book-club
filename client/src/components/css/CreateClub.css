@@ -3,7 +3,7 @@
   padding: 20px;
   max-width: 600px;
   margin: 0 auto;
-  background-color: var(--background-color);
+  background-color: var(--container-background-color);
   color: var(--text-color);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -15,7 +15,7 @@
 }
 
 .create-club-container.dark {
-  background-color: #121212;
+  background-color: #1f1f1f;
   color: #e0e0e0;
 }
 
@@ -37,4 +37,55 @@
 
 .genre-item {
   margin-right: 10px;
+}
+
+/* Page Background Styles */
+body.light-mode {
+  background-color: #f4f4f9;
+  color: #000;
+}
+
+body.dark-mode {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Update AntD component styles */
+.ant-form-item-label > label {
+  color: var(--text-color);
+}
+
+.ant-input,
+.ant-input-textarea,
+.ant-btn-primary {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ddd;
+}
+
+
+.ant-input:focus,
+.ant-input-textarea:hover,
+.ant-input-textarea:focus,
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background-color: #ffffff;
+  color: #b11919;
+  border: 1px solid #1b1483;
+}
+
+.ant-checkbox-wrapper {
+  color: var(--text-color);
+}
+
+/* Dark Theme Variables */
+.dark-theme {
+  --container-background-color: #333;
+  --text-color: #fff;
+}
+
+/* Light Theme Variables */
+.light-theme {
+  --container-background-color: #fff;
+  --text-color: #000;
 }

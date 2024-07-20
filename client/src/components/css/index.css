@@ -1,0 +1,12 @@
+/* index.css */
+
+body.dark-mode {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  body.light-mode {
+    background-color: #f4f4f9;
+    color: #000;
+  }
+  

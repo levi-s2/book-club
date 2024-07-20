@@ -1,9 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { AppstoreOutlined, SettingOutlined, BookOutlined, UserOutlined, LogoutOutlined, PlusOutlined, ReadOutlined, BulbOutlined } from '@ant-design/icons';
-import { Menu, Switch } from 'antd';
+import { AppstoreOutlined, SettingOutlined, BookOutlined, UserOutlined, LogoutOutlined, PlusOutlined, ReadOutlined } from '@ant-design/icons';
+import { Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
+import { SunOutlined, MoonOutlined } from '@ant-design/icons'; // Importing sun and moon icons from Ant Design
+import './css/NavBar.css'; // Import the new CSS file
 
 const NavBar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -56,41 +58,26 @@ const NavBar = () => {
       key: 'my-profile',
       icon: <UserOutlined />,
     },
-    user
-      ? {
-          label: 'Logout',
-          key: 'logout',
-          icon: <LogoutOutlined />,
-          onClick: logout,
-        }
-      : [
-          {
-            label: <Link to="/login">Login</Link>,
-            key: 'login',
-            icon: <UserOutlined />,
-          },
-          {
-            label: <Link to="/register">Register</Link>,
-            key: 'register',
-            icon: <UserOutlined />,
-          },
-        ],
     {
       label: (
-        <Switch
-          checked={theme === 'dark'}
-          onChange={toggleTheme}
-          checkedChildren={<BulbOutlined />}
-          unCheckedChildren={<BulbOutlined />}
-        />
+        <span className="theme-toggle" onClick={toggleTheme}>
+          {theme === 'dark' ? <SunOutlined /> : <MoonOutlined />}
+          <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+        </span>
       ),
       key: 'theme',
-      icon: <BulbOutlined />,
+    },
+    user && {
+      label: 'Logout',
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      onClick: logout,
+      className: 'logout-button', // Add class for logout button
     },
   ].filter(Boolean); // Filter out any falsey values
 
   return (
-    <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
+    <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} className={`navbar ${theme}`} />
   );
 };
 

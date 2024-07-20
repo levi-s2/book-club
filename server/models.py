@@ -74,16 +74,23 @@ class User(db.Model):
         return username
 
     def to_dict(self):
+        books_with_ratings = []
+        for book in self.books:
+            rating = db.session.query(user_books.c.rating).filter_by(user_id=self.id, book_id=book.id).first()
+            book_data = book.to_dict()
+            book_data['rating'] = rating[0] if rating else 0
+            books_with_ratings.append(book_data)
+
         return {
             'id': self.id,
             'username': self.username,
             'email': self.email,
             'profile_image_url': self.profile_image_url,
-            'books': [book.to_dict() for book in self.books],
+            'books': books_with_ratings,
             'friends': [{'id': friend.id, 'username': friend.username} for friend in self.friends],
             'created_clubs': [{'id': club.id, 'name': club.name} for club in self.book_clubs_created],
             'joined_clubs': [{'id': membership.book_club.id, 'name': membership.book_club.name} for membership in self.memberships]
-    }
+        }
 
 
     def __repr__(self):

@@ -2,8 +2,9 @@ import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import './css/login.css';
 import { AuthContext } from './context/AuthContext';
+import { Form as AntForm, Input, Button } from 'antd';
+import './css/login.css';
 
 const Login = () => {
   const history = useHistory();
@@ -44,17 +45,17 @@ const Login = () => {
       >
         {({ isSubmitting, errors }) => (
           <Form className="login-form">
-            <div className="form-group">
-              <label>Email:</label>
-              <Field name="email" type="email" className="form-input" />
+            <AntForm.Item label="Email" name="email">
+              <Field as={Input} name="email" type="email" />
               <ErrorMessage name="email" component="div" className="error-message" />
-            </div>
-            <div className="form-group">
-              <label>Password:</label>
-              <Field name="password" type="password" className="form-input" />
+            </AntForm.Item>
+            <AntForm.Item label="Password" name="password">
+              <Field as={Input.Password} name="password" />
               <ErrorMessage name="password" component="div" className="error-message" />
-            </div>
-            <button type="submit" className="login-button" disabled={isSubmitting}>Login</button>
+            </AntForm.Item>
+            <Button type="primary" htmlType="submit" disabled={isSubmitting}>
+              Login
+            </Button>
             {errors.general && <p className="error-message">{errors.general}</p>}
           </Form>
         )}

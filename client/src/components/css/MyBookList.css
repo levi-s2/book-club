@@ -49,6 +49,17 @@
   color: var(--secondary-text-color);
 }
 
+/* Add specific styles for the book-card in light and dark themes */
+.book-card.light {
+  background-color: var(--card-background-color);
+  color: var(--text-color);
+}
+
+.book-card.dark {
+  background-color: var(--card-background-color);
+  color: var(--text-color);
+}
+
 /* Dark Theme Variables */
 .my-book-list-page.dark {
   --page-background-color: #121212;

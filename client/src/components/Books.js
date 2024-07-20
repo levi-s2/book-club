@@ -105,27 +105,30 @@ const Books = () => {
   } = antdTheme.useToken();
 
   return (
-    <Layout className={`books-page ${theme}`}>
+    <div>
       <NavBar />
+      <Layout className={`books-page ${theme}`}>
       <Content
         style={{
           padding: '0 48px',
+          background: theme === 'dark' ? '#121212' : '#fff', // Ensure background matches the theme
+          color: theme === 'dark' ? '#e0e0e0' : '#000', // Ensure text color matches the theme
         }}
       >
         <Layout
           style={{
             padding: '24px 0',
-            background: colorBgContainer,
+            background: theme === 'dark' ? '#1f1f1f' : colorBgContainer,
             borderRadius: borderRadiusLG,
           }}
         >
           <Sider
             style={{
-              background: colorBgContainer,
+              background: theme === 'dark' ? '#1f1f1f' : colorBgContainer,
             }}
             width={200}
           >
-            <div className="sidebar">
+            <div className={`sidebar ${theme}`}>
               <h2>Genres</h2>
               <ul>
                 {genres.map((genre) => (
@@ -183,7 +186,8 @@ const Books = () => {
         </Layout>
       </Content>
     </Layout>
-  );
+    </div>
+  );  
 }
 
 export default Books;

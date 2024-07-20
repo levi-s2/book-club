@@ -1,29 +1,87 @@
 /* UserProfile.css */
 
 .user-profile-page {
-    min-height: 100vh;
-    background-color: var(--page-background-color);
-    color: var(--text-color);
-  }
-  
-  .user-card {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  .clubs-card, .book-list-card, .friends-card {
-    margin-top: 20px;
-  }
-  
-  .book-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-  
-  .rating {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
-  }
-  
+  background-color: var(--background-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  display: flex;
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.profile-container {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+}
+
+.left-column, .center-column, .right-column {
+  flex: 1;
+}
+
+.left-column {
+  flex: 0.3;
+}
+
+.center-column {
+  flex: 1.4;
+}
+
+.right-column {
+  flex: 0.3;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--card-background-color);
+  color: var(--text-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.profile-info {
+  text-align: center;
+}
+
+.friends-list, .created-clubs, .clubs-list, .books-list {
+  background-color: var(--card-background-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+/* Dark Theme Variables */
+.user-profile-page.dark {
+  --background-color: #121212;
+  --text-color: #e0e0e0;
+  --card-background-color: #1f1f1f;
+  --button-background-color: #007bff;
+  --button-text-color: #fff;
+  --button-hover-background-color: #0056b3;
+}
+
+/* Light Theme Variables */
+.user-profile-page.light {
+  --background-color: #f4f4f9;
+  --text-color: #000;
+  --card-background-color: #fff;
+  --button-background-color: #007bff;
+  --button-text-color: #fff;
+  --button-hover-background-color: #0056b3;
+}

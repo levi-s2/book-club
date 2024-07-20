@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './components/App';
 import { AuthProvider } from './components/context/AuthContext';
 import { BookClubsProvider } from './components/context/BookClubsContext';
+import './components/css/index.css'; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

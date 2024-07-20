@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
-import { List, Form, Input, Button, Typography, Space } from 'antd';
+import { List, Form, Input, Button, Typography, Space, message } from 'antd';
 import { LikeTwoTone, DislikeTwoTone } from '@ant-design/icons';
 
 const { TextArea } = Input;
@@ -23,7 +23,7 @@ const Posts = ({ clubId, posts, setPosts }) => {
           },
         });
         setPosts(response.data.posts || []);
-        
+
         const votes = response.data.posts.reduce((acc, post) => {
           acc[post.id] = post.user_voted;
           return acc;
@@ -40,20 +40,21 @@ const Posts = ({ clubId, posts, setPosts }) => {
     }
   }, [user, clubId, setPosts]);
 
-  const handleAddPost = async () => {
-    if (!newPostContent) {
+  const handleAddPost = async (values) => {
+    if (!values.content) {
       setError('Post content cannot be empty.');
       return;
     }
 
     try {
-      const response = await axios.post(`/book-clubs/${clubId}/posts`, { content: newPostContent }, {
+      const response = await axios.post(`/book-clubs/${clubId}/posts`, { content: values.content }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       setPosts((prevState) => [...(prevState || []), response.data]);
-      setNewPostContent('');
+      setNewPostContent(''); // Clear the input field
+      message.success('Post added successfully');
     } catch (error) {
       setError('Error adding post.');
     }
@@ -76,6 +77,7 @@ const Posts = ({ clubId, posts, setPosts }) => {
       );
       setEditingPost(null);
       setEditedContent('');
+      message.success('Post edited successfully');
     } catch (error) {
       setError('Error editing post.');
     }
@@ -89,6 +91,7 @@ const Posts = ({ clubId, posts, setPosts }) => {
         },
       });
       setPosts((prevState) => (prevState || []).filter((post) => post.id !== postId));
+      message.success('Post deleted successfully');
     } catch (error) {
       setError('Error deleting post.');
     }
@@ -115,7 +118,7 @@ const Posts = ({ clubId, posts, setPosts }) => {
       <div className="new-post">
         <h4>Add a Post</h4>
         <Form onFinish={handleAddPost}>
-          <Form.Item name="postContent">
+          <Form.Item name="content">
             <TextArea
               value={newPostContent}
               onChange={(e) => setNewPostContent(e.target.value)}
@@ -153,7 +156,10 @@ const Posts = ({ clubId, posts, setPosts }) => {
                     />
                     {user && user.id === post.user_id && (
                       <>
-                        <Button type="link" onClick={() => setEditingPost(post.id)}>Edit</Button>
+                        <Button type="link" onClick={() => {
+                          setEditingPost(post.id);
+                          setEditedContent(post.content);
+                        }}>Edit</Button>
                         <Button type="link" onClick={() => handleDeletePost(post.id)}>Delete</Button>
                       </>
                     )}

@@ -10,7 +10,7 @@ const ThemeProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    document.body.className = theme;
+    document.body.className = theme === 'dark' ? 'dark-mode' : 'light-mode';
   }, [theme]);
 
   return (

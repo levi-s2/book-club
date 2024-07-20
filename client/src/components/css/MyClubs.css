@@ -1,7 +1,24 @@
+.page-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-container.light {
+  background-color: #f4f4f9;
+  color: #000;
+}
+
+.page-container.dark {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
 .my-clubs {
   padding: 20px;
-  max-width: 800px;
-  margin: auto;
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto; /* Adjust margin to bring it to the top center */
   text-align: center;
 }
 
@@ -18,7 +35,7 @@
 .club-list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center; /* Center the clubs */
 }
 
 .club-card {
@@ -29,6 +46,14 @@
   width: 250px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: var(--card-background-color);
+}
+
+.club-card.light {
+  background-color: #e0e0e0; /* Light gray for light theme */
+}
+
+.club-card.dark {
+  background-color: #444; /* Dark gray for dark theme */
 }
 
 .club-card h3 {
@@ -63,7 +88,7 @@
 /* Dark Theme Variables */
 .dark-theme {
   --border-color: #333;
-  --card-background-color: #1f1f1f;
+  --card-background-color: #444;
   --button-background-color: #007bff;
   --button-text-color: white;
   --button-hover-background-color: #0056b3;
@@ -72,7 +97,7 @@
 /* Light Theme Variables */
 .light-theme {
   --border-color: #ddd;
-  --card-background-color: #f9f9f9;
+  --card-background-color: #e0e0e0;
   --button-background-color: #007bff;
   --button-text-color: white;
   --button-hover-background-color: #0056b3;

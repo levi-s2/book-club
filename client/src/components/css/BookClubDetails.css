@@ -2,7 +2,6 @@
 .book-club-details {
   display: flex;
   padding: 20px;
-  background-color: #f4f4f9;
 }
 
 .book-club-details.light {
@@ -16,7 +15,7 @@
 }
 
 .left-column, .center-column, .right-column {
-  background-color: #fff;
+  background-color: var(--column-bg);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -47,18 +46,18 @@
 
 .club-header h2 {
   font-size: 28px;
-  color: #3b5998;
+  color: var(--header-color);
 }
 
 .club-header p {
   font-size: 16px;
-  color: #555;
+  color: var(--text-color);
 }
 
 .club-genres h3, .club-members h3, .club-current-reading h3, .club-posts h3, .new-post h4 {
   font-size: 20px;
   margin-top: 20px;
-  color: #3b5998;
+  color: var(--header-color);
 }
 
 .club-genres ul, .club-members ul {
@@ -68,7 +67,7 @@
 
 .club-genres li, .club-members li {
   font-size: 16px;
-  color: #333;
+  color: var(--text-color);
   padding: 5px 0;
 }
 
@@ -111,4 +110,42 @@
 
 .genre-item {
   margin-right: 10px;
+}
+
+.posts-section {
+  margin-top: 20px;
+}
+
+.new-post {
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: red;
+}
+
+.club-posts {
+  margin-top: 20px;
+}
+
+/* Dark Mode Specific */
+.book-club-details.dark .left-column,
+.book-club-details.dark .center-column,
+.book-club-details.dark .right-column {
+  background-color: #444;
+}
+
+.book-club-details.dark .club-header h2,
+.book-club-details.dark .club-genres h3,
+.book-club-details.dark .club-members h3,
+.book-club-details.dark .club-current-reading h3,
+.book-club-details.dark .club-posts h3,
+.book-club-details.dark .new-post h4 {
+  color: #fff;
+}
+
+.book-club-details.dark .club-header p,
+.book-club-details.dark .club-genres li,
+.book-club-details.dark .club-members li {
+  color: #ddd;
 }

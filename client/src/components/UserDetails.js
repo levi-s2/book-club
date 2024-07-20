@@ -1,17 +1,18 @@
-// UserDetails.js
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import axios from './axiosConfig';
 import NavBar from './NavBar';
 import { ThemeContext } from './context/ThemeContext';
 import { AuthContext } from './context/AuthContext';
-import { Card, Spin, List, Button } from 'antd';
-import './css/UserProfile.css';
+import { Card, Spin, List, Rate } from 'antd';
+import { UserAddOutlined, UserDeleteOutlined } from '@ant-design/icons';
+import './css/UserDetails.css';
 
 const UserDetails = () => {
   const { userId } = useParams();
   const { theme } = useContext(ThemeContext);
   const { user } = useContext(AuthContext);
+  const history = useHistory();
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -19,23 +20,27 @@ const UserDetails = () => {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      try {
-        const response = await axios.get(`/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setUserDetails(response.data);
-        setLoading(false);
-        setIsFriend(user.friends.some((friend) => friend.id === parseInt(userId)));
-      } catch (error) {
-        setError('Error fetching user details.');
-        setLoading(false);
+      if (user && user.id === parseInt(userId)) {
+        history.push('/my-profile');
+      } else {
+        try {
+          const response = await axios.get(`/users/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+          setUserDetails(response.data);
+          setLoading(false);
+          setIsFriend(user.friends.some((friend) => friend.id === parseInt(userId)));
+        } catch (error) {
+          setError('Error fetching user details.');
+          setLoading(false);
+        }
       }
     };
 
     fetchUserDetails();
-  }, [userId, user.friends]);
+  }, [userId, user, history]);
 
   const handleAddFriend = async () => {
     try {
@@ -81,54 +86,73 @@ const UserDetails = () => {
           <p>{error}</p>
         ) : userDetails ? (
           <div className="profile-container">
-            <Card className="profile-card">
-              <img src={userDetails.profile_image_url} alt={userDetails.username} className="profile-image" />
-              <h2>{userDetails.username}</h2>
-              {isFriend ? (
-                <Button onClick={handleRemoveFriend}>Remove Friend</Button>
+            <div className="left-column">
+              <Card className="profile-card">
+                <img src={userDetails.profile_image_url} alt={userDetails.username} className="profile-image" />
+                <div className="profile-info">
+                  <h2>{userDetails.username}</h2>
+                  {isFriend ? (
+                    <UserDeleteOutlined onClick={handleRemoveFriend} style={{ fontSize: '20px', cursor: 'pointer', color: '#007bff' }} />
+                  ) : (
+                    <UserAddOutlined onClick={handleAddFriend} style={{ fontSize: '20px', cursor: 'pointer', color: '#007bff' }} />
+                  )}
+                </div>
+              </Card>
+              <div className="created-clubs">
+                <h3>Created Club</h3>
+                <List
+                  itemLayout="horizontal"
+                  dataSource={userDetails.created_clubs}
+                  renderItem={(club) => (
+                    <List.Item>
+                      <List.Item.Meta title={club.name} />
+                    </List.Item>
+                  )}
+                />
+              </div>
+              <div className="clubs-list">
+                <h3>Joined Clubs</h3>
+                <List
+                  itemLayout="horizontal"
+                  dataSource={userDetails.joined_clubs}
+                  renderItem={(club) => (
+                    <List.Item>
+                      <List.Item.Meta title={club.name} /> 
+                    </List.Item>
+                  )}
+                />
+              </div>
+            </div>
+            <div className="center-column">
+              <h3>Books</h3>
+              {userDetails.books.length > 0 ? (
+                <List
+                  grid={{ gutter: 16, column: 4 }}
+                  dataSource={userDetails.books}
+                  renderItem={(book) => (
+                    <List.Item>
+                      <Card
+                        hoverable
+                        cover={<img alt={book.title} src={book.image_url} />}
+                      >
+                        <Card.Meta title={book.title} description={`Author: ${book.author}`} />
+                        <Rate value={book.rating || 0} />
+                      </Card>
+                    </List.Item>
+                  )}
+                />
               ) : (
-                <Button onClick={handleAddFriend}>Add Friend</Button>
+                <p>No books yet.</p>
               )}
-            </Card>
-            <div className="friends-list">
+            </div>
+            <div className="right-column">
               <h3>Friends</h3>
               <List
                 itemLayout="horizontal"
                 dataSource={userDetails.friends}
                 renderItem={(friend) => (
                   <List.Item>
-                    <List.Item.Meta
-                      title={friend.username}
-                    />
-                  </List.Item>
-                )}
-              />
-            </div>
-            <div className="clubs-list">
-              <h3>Clubs</h3>
-              <List
-                itemLayout="horizontal"
-                dataSource={userDetails.created_clubs}
-                renderItem={(club) => (
-                  <List.Item>
-                    <List.Item.Meta title={club.name} />
-                  </List.Item>
-                )}
-              />
-            </div>
-            <div className="books-list">
-              <h3>Books</h3>
-              <List
-                grid={{ gutter: 16, column: 4 }}
-                dataSource={userDetails.books}
-                renderItem={(book) => (
-                  <List.Item>
-                    <Card
-                      hoverable
-                      cover={<img alt={book.title} src={book.image_url} />}
-                    >
-                      <Card.Meta title={book.title} description={`Author: ${book.author}`} />
-                    </Card>
+                    <List.Item.Meta title={friend.username} />
                   </List.Item>
                 )}
               />

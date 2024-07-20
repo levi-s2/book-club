@@ -35,14 +35,14 @@ const MyClubs = () => {
   }
 
   return (
-    <div>
+    <div className={`page-container ${theme}`}>
       <NavBar />
       <div className={`my-clubs ${theme}`}>
         <h2>My Book Clubs</h2>
         <div className="club-list">
           {myClubs.length > 0 ? (
             myClubs.map((club) => (
-              <div key={club.id} className="club-card">
+              <div key={club.id} className={`club-card ${theme}`}>
                 <h3>{club.name}</h3>
                 <p>{club.description}</p>
                 <p>Current Book: {club.current_book ? club.current_book.title : 'None'}</p>

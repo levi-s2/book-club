@@ -27,8 +27,8 @@ const ManageClub = () => {
   const fetchClubDetails = useCallback(async () => {
     try {
       if (user && user.created_clubs && user.created_clubs.length > 0) {
-        const clubId = user.created_clubs[0].id || user.created_clubs[0]; // Ensure correct ID format
-        console.log('Fetching details for club ID:', clubId); // Debugging log
+        const clubId = user.created_clubs[0].id || user.created_clubs[0]; 
+        console.log('Fetching details for club ID:', clubId); 
         const response = await axios.get(`/manage-club/${clubId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -227,4 +227,3 @@ const ManageClub = () => {
 };
 
 export default ManageClub;
-
