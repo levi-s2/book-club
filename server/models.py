@@ -32,7 +32,6 @@ class User(db.Model):
     username = db.Column(String, unique=True, nullable=False)
     email = db.Column(String, unique=True, nullable=False)
     _password_hash = db.Column(String, nullable=False)
-    profile_image_url = db.Column(String, nullable=True)
 
     friends = db.relationship(
         'User',
@@ -85,7 +84,6 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'profile_image_url': self.profile_image_url,
             'books': books_with_ratings,
             'friends': [{'id': friend.id, 'username': friend.username} for friend in self.friends],
             'created_clubs': [{'id': club.id, 'name': club.name} for club in self.book_clubs_created],

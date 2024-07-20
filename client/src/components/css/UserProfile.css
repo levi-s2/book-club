@@ -1,7 +1,5 @@
-/* UserProfile.css */
-
 .user-profile-page {
-  background-color: var(--background-color);
+  background-color: var(--page-background-color);
   color: var(--text-color);
   min-height: 100vh;
   display: flex;
@@ -9,79 +7,58 @@
 }
 
 .content {
-  display: flex;
-  padding: 20px;
   flex-grow: 1;
+  padding: 20px;
+}
+
+.user-profile-page.light {
+  --page-background-color: #f4f4f9;
+  --text-color: #000;
+}
+
+.user-profile-page.dark {
+  --page-background-color: #121212;
+  --text-color: #e0e0e0;
 }
 
 .profile-container {
   display: flex;
-  flex: 1;
-  gap: 20px;
+  justify-content: space-around;
+  align-items: flex-start;
 }
 
 .left-column, .center-column, .right-column {
   flex: 1;
-}
-
-.left-column {
-  flex: 0.3;
-}
-
-.center-column {
-  flex: 1.4;
-}
-
-.right-column {
-  flex: 0.3;
+  margin: 20px;
 }
 
 .profile-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: var(--card-background-color);
-  color: var(--text-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  text-align: center;
 }
 
 .profile-image {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  object-fit: cover;
   margin-bottom: 10px;
 }
 
-.profile-info {
-  text-align: center;
+.profile-info h2 {
+  margin: 0;
 }
 
-.friends-list, .created-clubs, .clubs-list, .books-list {
-  background-color: var(--card-background-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+.created-clubs, .clubs-list, .friends-list {
+  margin-top: 20px;
 }
 
-/* Dark Theme Variables */
-.user-profile-page.dark {
-  --background-color: #121212;
-  --text-color: #e0e0e0;
-  --card-background-color: #1f1f1f;
-  --button-background-color: #007bff;
-  --button-text-color: #fff;
-  --button-hover-background-color: #0056b3;
+.created-clubs h3, .clubs-list h3, .friends-list h3 {
+  margin-bottom: 10px;
 }
 
-/* Light Theme Variables */
-.user-profile-page.light {
-  --background-color: #f4f4f9;
-  --text-color: #000;
-  --card-background-color: #fff;
-  --button-background-color: #007bff;
-  --button-text-color: #fff;
-  --button-hover-background-color: #0056b3;
+.club-list .ant-list-item-meta-title, .friends-list .ant-list-item-meta-title {
+  color: inherit;
+}
+
+.ant-list-item-meta-description {
+  color: var(--text-color);
 }

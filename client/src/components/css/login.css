@@ -1,42 +1,22 @@
-.landing-page {
-    text-align: center;
-    margin-top: 50px;
-  }
-  
-  .toggle-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .login-container, .register-container {
-    max-width: 400px;
-    margin: 0 auto;
-    text-align: left;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-  }
-  
-  .login-button, .register-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .error-message {
-    color: red;
-    font-size: 14px;
-  }
-  
+.login-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form .ant-form-item {
+  margin-bottom: 16px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 5px;
+}

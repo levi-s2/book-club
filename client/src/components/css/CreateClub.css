@@ -70,7 +70,7 @@ body.dark-mode {
 .ant-btn-primary:hover,
 .ant-btn-primary:focus {
   background-color: #ffffff;
-  color: #b11919;
+  color: #000000;
   border: 1px solid #1b1483;
 }
 

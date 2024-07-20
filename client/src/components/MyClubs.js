@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext'; 
 import NavBar from './NavBar';
+import { Card, Button } from 'antd';
 import './css/MyClubs.css';
 
 const MyClubs = () => {
@@ -42,12 +43,22 @@ const MyClubs = () => {
         <div className="club-list">
           {myClubs.length > 0 ? (
             myClubs.map((club) => (
-              <div key={club.id} className={`club-card ${theme}`}>
-                <h3>{club.name}</h3>
-                <p>{club.description}</p>
-                <p>Current Book: {club.current_book ? club.current_book.title : 'None'}</p>
-                <Link to={`/book-clubs/${club.id}`} className="view-details-button">View Details</Link>
-              </div>
+              <Card
+                key={club.id}
+                className={`club-card ${theme}`}
+                title={club.name}
+                bordered={false}
+              >
+                <div className="club-info">
+                  <p>{club.description}</p>
+                  <p>Current Book: {club.current_book ? club.current_book.title : 'None'}</p>
+                  <Link to={`/book-clubs/${club.id}`}>
+                    <Button type="primary" className="view-details-button">
+                      View Details
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
             ))
           ) : (
             <p>You are not part of any clubs yet.</p>

@@ -4,12 +4,12 @@ import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
 import NavBar from './NavBar';
 import { AuthContext } from './context/AuthContext';
-import { ThemeContext } from './context/ThemeContext'; 
+import { ThemeContext } from './context/ThemeContext';
 import { Form as AntForm, Input, Checkbox, Button, Alert } from 'antd';
 import './css/CreateClub.css';
 
 const CreateClub = () => {
-  const { user } = useContext(AuthContext);
+  const { user, updateUserCreatedClubs } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
   const [genres, setGenres] = useState([]);
   const [message, setMessage] = useState('');
@@ -44,7 +44,10 @@ const CreateClub = () => {
       });
       setMessage(response.data.message);
       setSubmitting(false);
-      window.location.href = '/book-clubs'; 
+
+      // Update user context with the new club
+      updateUserCreatedClubs([...user.created_clubs, response.data.club]);
+      window.location.href = '/book-clubs';
     } catch (error) {
       setError('Error creating book club.');
       setSubmitting(false);

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from './context/AuthContext';
-import { Form as AntForm, Input, Button } from 'antd';
+import { Form as AntForm, Input, Button, message } from 'antd';
 import './css/login.css';
 
 const Login = () => {
@@ -27,9 +27,11 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
       await login(values.email, values.password);
+      message.success('Login successful!');
       history.push('/book-clubs');
     } catch (error) {
       setErrors({ general: 'Login failed: ' + error.message });
+      message.error('Login failed. Please try again.');
     } finally {
       setSubmitting(false);
     }

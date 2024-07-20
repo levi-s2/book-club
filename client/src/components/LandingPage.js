@@ -16,9 +16,12 @@ const LandingPage = () => {
         <div className="welcome-section">
           <h1>Welcome to the Book Club Platform</h1>
           <p>
-            Discover and join book clubs, share your thoughts on books, and connect
-            with fellow book enthusiasts. Create your own book club, manage your reading
-            list, and stay updated with the latest posts and reviews.
+            Discover and join book clubs made by our community and connect
+            with fellow book enthusiasts. Create your own club and manage your readings
+            for your members. Want to show others the books you most appreciate? Explore
+            our vast library and add any books to your own custom list and display your 
+            ratings in your profile for friends to see!
+            
           </p>
         </div>
       </div>

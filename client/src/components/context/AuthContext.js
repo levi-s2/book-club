@@ -6,22 +6,8 @@ import { useHistory } from 'react-router-dom';
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        return decoded;
-      } catch (error) {
-        console.error('Invalid token at startup:', error);
-        localStorage.removeItem('token');
-      }
-    }
-    return null;
-  });
-
-  const [loading, setLoading] = useState(!user);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const history = useHistory();
 
   const fetchUser = useCallback(async (token) => {
@@ -30,10 +16,12 @@ const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       const response = await axios.get(`/users/${decoded.sub}`);
       setUser(response.data);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching user:', error);
       localStorage.removeItem('token');
       setUser(null);
+      setLoading(false);
     }
   }, []);
 
@@ -41,8 +29,9 @@ const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     if (token) {
       fetchUser(token);
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, [fetchUser]);
 
   const logout = useCallback(() => {
@@ -114,7 +103,6 @@ const AuthProvider = ({ children }) => {
       created_clubs: updatedClubs,
     }));
   };
-  
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout, loading, updateUserCreatedClubs }}>

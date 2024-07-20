@@ -8,6 +8,7 @@ const { TextArea } = Input;
 
 const Posts = ({ clubId, posts, setPosts }) => {
   const { user } = useContext(AuthContext);
+  const [form] = Form.useForm();
   const [newPostContent, setNewPostContent] = useState('');
   const [editingPost, setEditingPost] = useState(null);
   const [editedContent, setEditedContent] = useState('');
@@ -53,7 +54,7 @@ const Posts = ({ clubId, posts, setPosts }) => {
         },
       });
       setPosts((prevState) => [...(prevState || []), response.data]);
-      setNewPostContent(''); // Clear the input field
+      form.resetFields(); // Clear the input field
       message.success('Post added successfully');
     } catch (error) {
       setError('Error adding post.');
@@ -117,7 +118,7 @@ const Posts = ({ clubId, posts, setPosts }) => {
     <div>
       <div className="new-post">
         <h4>Add a Post</h4>
-        <Form onFinish={handleAddPost}>
+        <Form form={form} onFinish={handleAddPost}>
           <Form.Item name="content">
             <TextArea
               value={newPostContent}
@@ -156,11 +157,23 @@ const Posts = ({ clubId, posts, setPosts }) => {
                     />
                     {user && user.id === post.user_id && (
                       <>
-                        <Button type="link" onClick={() => {
-                          setEditingPost(post.id);
-                          setEditedContent(post.content);
-                        }}>Edit</Button>
-                        <Button type="link" onClick={() => handleDeletePost(post.id)}>Delete</Button>
+                        <Button
+                          type="link"
+                          style={{ padding: '0' }}
+                          onClick={() => {
+                            setEditingPost(post.id);
+                            setEditedContent(post.content);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          type="link"
+                          style={{ padding: '0' }}
+                          onClick={() => handleDeletePost(post.id)}
+                        >
+                          Delete
+                        </Button>
                       </>
                     )}
                   </Space>,

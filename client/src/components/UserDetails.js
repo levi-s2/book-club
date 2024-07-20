@@ -7,11 +7,12 @@ import { AuthContext } from './context/AuthContext';
 import { Card, Spin, List, Rate } from 'antd';
 import { UserAddOutlined, UserDeleteOutlined } from '@ant-design/icons';
 import './css/UserDetails.css';
+import defaultAvatar from './css/avatar-15.png';
 
 const UserDetails = () => {
   const { userId } = useParams();
   const { theme } = useContext(ThemeContext);
-  const { user } = useContext(AuthContext);
+  const { user, loading: userLoading } = useContext(AuthContext);
   const history = useHistory();
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,8 +40,10 @@ const UserDetails = () => {
       }
     };
 
-    fetchUserDetails();
-  }, [userId, user, history]);
+    if (!userLoading) {
+      fetchUserDetails();
+    }
+  }, [userId, user, userLoading, history]);
 
   const handleAddFriend = async () => {
     try {
@@ -80,7 +83,7 @@ const UserDetails = () => {
     <div className={`user-profile-page ${theme}`}>
       <NavBar />
       <div className="content">
-        {loading ? (
+        {loading || userLoading ? (
           <Spin size="large" />
         ) : error ? (
           <p>{error}</p>
@@ -88,39 +91,53 @@ const UserDetails = () => {
           <div className="profile-container">
             <div className="left-column">
               <Card className="profile-card">
-                <img src={userDetails.profile_image_url} alt={userDetails.username} className="profile-image" />
+                <img src={userDetails.profile_image_url || defaultAvatar} alt={userDetails.username} className="profile-image" />
                 <div className="profile-info">
                   <h2>{userDetails.username}</h2>
-                  {isFriend ? (
-                    <UserDeleteOutlined onClick={handleRemoveFriend} style={{ fontSize: '20px', cursor: 'pointer', color: '#007bff' }} />
-                  ) : (
-                    <UserAddOutlined onClick={handleAddFriend} style={{ fontSize: '20px', cursor: 'pointer', color: '#007bff' }} />
-                  )}
+                  <div className="friend-action">
+                    {isFriend ? (
+                      <>
+                        <UserDeleteOutlined onClick={handleRemoveFriend} style={{ fontSize: '20px', cursor: 'pointer', color: '#007bff' }} />
+                        <span onClick={handleRemoveFriend} style={{ cursor: 'pointer', color: '#007bff' }}>Remove Friend</span>
+                      </>
+                    ) : (
+                      <>
+                        <UserAddOutlined onClick={handleAddFriend} style={{ fontSize: '20px', cursor: 'pointer', color: '#007bff' }} />
+                        <span onClick={handleAddFriend} style={{ cursor: 'pointer', color: '#007bff' }}>Add Friend</span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </Card>
-              <div className="created-clubs">
-                <h3>Created Club</h3>
-                <List
-                  itemLayout="horizontal"
-                  dataSource={userDetails.created_clubs}
-                  renderItem={(club) => (
-                    <List.Item>
-                      <List.Item.Meta title={club.name} />
-                    </List.Item>
-                  )}
-                />
-              </div>
+              {userDetails.created_clubs.length > 0 && (
+                <div className="created-clubs">
+                  <h3>Created Club</h3>
+                  <List
+                    itemLayout="horizontal"
+                    dataSource={userDetails.created_clubs}
+                    renderItem={(club) => (
+                      <List.Item>
+                        <List.Item.Meta title={club.name} />
+                      </List.Item>
+                    )}
+                  />
+                </div>
+              )}
               <div className="clubs-list">
                 <h3>Joined Clubs</h3>
-                <List
-                  itemLayout="horizontal"
-                  dataSource={userDetails.joined_clubs}
-                  renderItem={(club) => (
-                    <List.Item>
-                      <List.Item.Meta title={club.name} /> 
-                    </List.Item>
-                  )}
-                />
+                {userDetails.joined_clubs.length > 0 ? (
+                  <List
+                    itemLayout="horizontal"
+                    dataSource={userDetails.joined_clubs}
+                    renderItem={(club) => (
+                      <List.Item>
+                        <List.Item.Meta title={club.name} /> 
+                      </List.Item>
+                    )}
+                  />
+                ) : (
+                  <p>No clubs joined yet.</p>
+                )}
               </div>
             </div>
             <div className="center-column">
@@ -147,15 +164,19 @@ const UserDetails = () => {
             </div>
             <div className="right-column">
               <h3>Friends</h3>
-              <List
-                itemLayout="horizontal"
-                dataSource={userDetails.friends}
-                renderItem={(friend) => (
-                  <List.Item>
-                    <List.Item.Meta title={friend.username} />
-                  </List.Item>
-                )}
-              />
+              {userDetails.friends.length > 0 ? (
+                <List
+                  itemLayout="horizontal"
+                  dataSource={userDetails.friends}
+                  renderItem={(friend) => (
+                    <List.Item>
+                      <List.Item.Meta title={friend.username} />
+                    </List.Item>
+                  )}
+                />
+              ) : (
+                <p>No friends yet.</p>
+              )}
             </div>
           </div>
         ) : (
@@ -163,7 +184,7 @@ const UserDetails = () => {
         )}
       </div>
     </div>
-  );
+  );  
 };
 
 export default UserDetails;

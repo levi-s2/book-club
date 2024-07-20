@@ -3,10 +3,11 @@ import axios from './axiosConfig';
 import NavBar from './NavBar';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
-import { Card, Spin, Rate, List } from 'antd';
+import { Card, Spin, List, Rate } from 'antd';
 import { Link } from 'react-router-dom';
 import { UserDeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import './css/UserProfile.css';
+import defaultAvatar from './css/avatar-15.png'; 
 
 const UserProfile = () => {
   const { user } = useContext(AuthContext); 
@@ -67,7 +68,7 @@ const UserProfile = () => {
           <div className="profile-container">
             <div className="left-column">
               <Card className="profile-card">
-                <img src={userDetails.profile_image_url} alt={userDetails.username} className="profile-image" />
+                <img src={defaultAvatar} alt="User Avatar" className="profile-image" />
                 <div className="profile-info">
                   <h2>{userDetails.username}</h2>
                 </div>

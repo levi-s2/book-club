@@ -3,7 +3,8 @@ import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from './context/AuthContext';
-import { Form as AntForm, Input, Button } from 'antd';
+import { Form as AntForm, Input, Button, message } from 'antd';
+import './css/Register.css'; // Ensure you have a CSS file for styling
 
 const Register = () => {
   const history = useHistory();
@@ -28,19 +29,22 @@ const Register = () => {
       .required('Password is required'),
   });
 
-  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+  const handleSubmit = async (values, { setSubmitting, setErrors, resetForm }) => {
     try {
       await register(values.username, values.email, values.password);
+      message.success('Registration successful!');
+      resetForm();
       history.push('/');
     } catch (error) {
       setErrors({ general: 'Registration failed: ' + error.message });
+      message.error('Registration failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="login-container">
+    <div className="register-container">
       <h2>Register</h2>
       <Formik
         initialValues={initialValues}
@@ -48,7 +52,7 @@ const Register = () => {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting, errors }) => (
-          <Form className="login-form">
+          <Form className="register-form">
             <AntForm.Item label="Username" name="username">
               <Field as={Input} name="username" type="text" />
               <ErrorMessage name="username" component="div" className="error-message" />

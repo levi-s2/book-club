@@ -1,7 +1,7 @@
 .book-clubs-page {
   background-color: var(--page-background-color);
   color: var(--text-color);
-  min-height: 100vh; /* Ensure the whole page height is covered */
+  min-height: 100vh; 
   display: flex;
   flex-direction: column;
 }
@@ -24,18 +24,24 @@
 .book-clubs-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 20px; 
 }
 
 .book-club-card {
-  background-color: #fff; /* Keep the card background white */
-  border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 16px;
-  margin: 16px;
-  width: 300px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  color: #000; /* Ensure text in card is black */
+  overflow: hidden;
+  width: 350px; 
+}
+
+.book-club-card.light {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+.book-club-card.dark {
+  background-color: #1f1f1f;
+  color: #e0e0e0;
 }
 
 .book-club-info {
@@ -44,42 +50,25 @@
 
 .book-club-info h3 {
   margin-top: 0;
-  color: inherit; /* Inherit color from parent */
+  color: inherit; 
 }
 
 .genres {
   margin-top: 8px;
   font-size: 14px;
-  color: inherit; /* Inherit color from parent */
+  color: inherit; 
 }
 
 .view-details-button {
-  display: inline-block;
   margin-top: 12px;
-  padding: 8px 16px;
-  background-color: #007bff; /* Keep the button background blue */
+  background-color: #007bff; 
   color: white;
   text-decoration: none;
   border-radius: 4px;
   transition: background-color 0.3s;
 }
 
-.view-details-button:hover {
+.view-details-button:hover,
+.view-details-button:focus {
   background-color: #0056b3;
-}
-
-/* Dark Theme Variables */
-.dark-theme {
-  --page-background-color: #121212;
-  --text-color: #e0e0e0;
-  --border-color: #333;
-  --secondary-text-color: #e0e0e0; /* Update to ensure text is readable in dark mode */
-}
-
-/* Light Theme Variables */
-.light-theme {
-  --page-background-color: #f4f4f9;
-  --text-color: #000;
-  --border-color: #ddd;
-  --secondary-text-color: #555;
 }

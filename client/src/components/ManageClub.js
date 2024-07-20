@@ -27,8 +27,8 @@ const ManageClub = () => {
   const fetchClubDetails = useCallback(async () => {
     try {
       if (user && user.created_clubs && user.created_clubs.length > 0) {
-        const clubId = user.created_clubs[0].id || user.created_clubs[0]; 
-        console.log('Fetching details for club ID:', clubId); 
+        const clubId = user.created_clubs[0].id || user.created_clubs[0];
+        console.log('Fetching details for club ID:', clubId);
         const response = await axios.get(`/manage-club/${clubId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -55,7 +55,7 @@ const ManageClub = () => {
       );
       setFilteredBooks(filtered);
     } else {
-      setFilteredBooks(books); // Show all books if no genre is selected
+      setFilteredBooks(books);
     }
   }, [selectedGenres, books]);
 
@@ -64,8 +64,20 @@ const ManageClub = () => {
   }, [selectedGenres, books, filterBooksByGenres]);
 
   const handleUpdateCurrentReading = async () => {
+    if (!selectedBookId) {
+      setError('You must select a book.');
+      return;
+    }
+
+    const selectedBook = books.find((book) => book.id === selectedBookId);
+
+    if (!selectedGenres.includes(selectedBook.genre.id)) {
+      setError('The selected book does not match the club genres.');
+      return;
+    }
+
     try {
-      const clubId = user.created_clubs[0].id || user.created_clubs[0]; // Ensure correct ID format
+      const clubId = user.created_clubs[0].id || user.created_clubs[0];
       const response = await axios.patch(`/manage-club/${clubId}`, {
         action: 'update_current_reading',
         book_id: selectedBookId,
@@ -75,7 +87,7 @@ const ManageClub = () => {
         },
       });
       setMessage(response.data.message);
-      const updatedClub = { ...clubDetails, current_book: books.find((book) => book.id === selectedBookId) };
+      const updatedClub = { ...clubDetails, current_book: selectedBook };
       setClubDetails(updatedClub);
       updateBookClub(updatedClub);
     } catch (error) {
@@ -85,7 +97,7 @@ const ManageClub = () => {
 
   const handleRemoveMember = async (memberId) => {
     try {
-      const clubId = user.created_clubs[0].id || user.created_clubs[0]; // Ensure correct ID format
+      const clubId = user.created_clubs[0].id || user.created_clubs[0];
       const response = await axios.patch(`/manage-club/${clubId}`, {
         action: 'remove_member',
         member_id: memberId,
@@ -111,7 +123,7 @@ const ManageClub = () => {
       return;
     }
     try {
-      const clubId = user.created_clubs[0].id || user.created_clubs[0]; // Ensure correct ID format
+      const clubId = user.created_clubs[0].id || user.created_clubs[0];
       const response = await axios.patch(`/manage-club/${clubId}`, {
         action: 'update_genres',
         genre_ids: selectedGenres,
@@ -141,15 +153,22 @@ const ManageClub = () => {
 
   const handleDeleteClub = async () => {
     try {
-      const clubId = user.created_clubs[0].id || user.created_clubs[0]; // Ensure correct ID format
+      const clubId = user.created_clubs[0].id || user.created_clubs[0];
       const response = await axios.delete(`/manage-club/${clubId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       setMessage(response.data.message);
-      updateUserCreatedClubs(user.created_clubs.filter((clubId) => clubId !== clubDetails.id));
+
+      // Update user context
+      const updatedClubs = user.created_clubs.filter((club) => club.id !== clubId);
+      updateUserCreatedClubs(updatedClubs);
+
+      // Update book clubs context
       updateBookClub({ ...clubDetails, deleted: true });
+
+      // Redirect to book clubs or a different page
       history.push('/book-clubs');
     } catch (error) {
       setError('Error deleting book club.');
@@ -159,6 +178,7 @@ const ManageClub = () => {
   if (!clubDetails) {
     return <div>Loading...</div>;
   }
+
   return (
     <div>
       <NavBar />

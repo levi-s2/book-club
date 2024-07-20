@@ -40,7 +40,7 @@ const NavBar = () => {
     },
     {
       label: <Link to="/books">Library</Link>,
-      key: 'library',
+      key: '',
       icon: <AppstoreOutlined />,
     },
     {
