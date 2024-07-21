@@ -37,6 +37,7 @@ const BooksProvider = ({ children }) => {
     fetchBooksByGenre();
   }, [selectedGenres]);
 
+
   return (
     <BooksContext.Provider value={{ books, setSelectedGenres }}>
       {children}

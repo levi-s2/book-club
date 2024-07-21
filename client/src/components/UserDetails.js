@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import axios from './axiosConfig';
 import NavBar from './NavBar';
 import { ThemeContext } from './context/ThemeContext';
 import { AuthContext } from './context/AuthContext';
@@ -12,7 +11,7 @@ import defaultAvatar from './css/avatar-15.png';
 const UserDetails = () => {
   const { userId } = useParams();
   const { theme } = useContext(ThemeContext);
-  const { user, loading: userLoading } = useContext(AuthContext);
+  const { user, loading: userLoading, fetchUserDetailsById, addFriend, removeFriend } = useContext(AuthContext);
   const history = useHistory();
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,12 +24,8 @@ const UserDetails = () => {
         history.push('/my-profile');
       } else {
         try {
-          const response = await axios.get(`/users/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          setUserDetails(response.data);
+          const data = await fetchUserDetailsById(userId);
+          setUserDetails(data);
           setLoading(false);
           setIsFriend(user.friends.some((friend) => friend.id === parseInt(userId)));
         } catch (error) {
@@ -43,15 +38,11 @@ const UserDetails = () => {
     if (!userLoading) {
       fetchUserDetails();
     }
-  }, [userId, user, userLoading, history]);
+  }, [userId, user, userLoading, history, fetchUserDetailsById]);
 
   const handleAddFriend = async () => {
     try {
-      await axios.post(`/users/${userId}/add-friend`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      await addFriend(userId);
       setIsFriend(true);
       setUserDetails((prevDetails) => ({
         ...prevDetails,
@@ -64,11 +55,7 @@ const UserDetails = () => {
 
   const handleRemoveFriend = async () => {
     try {
-      await axios.delete(`/users/${userId}/remove-friend`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      await removeFriend(userId);
       setIsFriend(false);
       setUserDetails((prevDetails) => ({
         ...prevDetails,

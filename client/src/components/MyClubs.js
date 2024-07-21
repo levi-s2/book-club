@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
-import axios from './axiosConfig';
 import { Link } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
-import { ThemeContext } from './context/ThemeContext'; 
+import { ThemeContext } from './context/ThemeContext';
+import { BookClubsContext } from './context/BookClubsContext'; 
 import NavBar from './NavBar';
 import { Card, Button } from 'antd';
 import './css/MyClubs.css';
@@ -10,26 +10,23 @@ import './css/MyClubs.css';
 const MyClubs = () => {
   const { user } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
+  const { fetchUserClubs } = useContext(BookClubsContext); 
   const [myClubs, setMyClubs] = useState([]);
 
   useEffect(() => {
-    const fetchMyClubs = async () => {
+    const fetchClubs = async () => {
       if (user) {
         try {
-          const response = await axios.get('/my-clubs', {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          setMyClubs(response.data);
+          const clubs = await fetchUserClubs();
+          setMyClubs(clubs);
         } catch (error) {
           console.error('Error fetching my clubs:', error);
         }
       }
     };
 
-    fetchMyClubs();
-  }, [user]);
+    fetchClubs();
+  }, [user, fetchUserClubs]);
 
   if (!user) {
     return <div>Please log in to view your clubs.</div>;

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-import axios from './axiosConfig';
 import NavBar from './NavBar';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
@@ -10,7 +9,7 @@ import './css/UserProfile.css';
 import defaultAvatar from './css/avatar-15.png'; 
 
 const UserProfile = () => {
-  const { user } = useContext(AuthContext); 
+  const { user, fetchUserDetailsById, removeFriend } = useContext(AuthContext); 
   const { theme } = useContext(ThemeContext);
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -20,12 +19,8 @@ const UserProfile = () => {
     const fetchUserDetails = async () => {
       if (user && user.id) {
         try {
-          const response = await axios.get(`/users/${user.id}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          setUserDetails(response.data);
+          const data = await fetchUserDetailsById(user.id);
+          setUserDetails(data);
           setLoading(false);
         } catch (error) {
           setError('Error fetching user details.');
@@ -38,15 +33,11 @@ const UserProfile = () => {
     };
 
     fetchUserDetails();
-  }, [user]);
+  }, [user, fetchUserDetailsById]);
 
   const handleRemoveFriend = async (friendId) => {
     try {
-      await axios.delete(`/users/${friendId}/remove-friend`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      await removeFriend(friendId);
       setUserDetails((prevDetails) => ({
         ...prevDetails,
         friends: prevDetails.friends.filter((friend) => friend.id !== friendId),

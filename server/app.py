@@ -104,7 +104,7 @@ class UserDetail(Resource):
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
 
-api.add_resource(UserDetail, '/users/<int:user_id>', endpoint='user_detail_endpoint')
+api.add_resource(UserDetail, '/users/<int:user_id>', endpoint='user_detail_endpoint') 
 
 class UserBooks(Resource):
     @jwt_required()
@@ -350,7 +350,6 @@ class BookClubs(Resource):
             return {"message": "Internal Server Error"}, 500
 
 api.add_resource(BookClubs, '/book-clubs', endpoint='book_clubs_endpoint')
-
 
 
 

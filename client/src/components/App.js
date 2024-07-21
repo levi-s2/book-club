@@ -14,6 +14,7 @@ import { AuthProvider } from './context/AuthContext';
 import { BookClubsProvider } from './context/BookClubsContext';
 import { BooksProvider } from './context/BooksContext';
 import { GenresProvider } from './context/GenresContext';
+import { PostsProvider } from './context/PostsContext';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -22,11 +23,13 @@ const App = () => {
   return (
     <AuthProvider>
       <BookClubsProvider>
-        <ThemeProvider>
-          <Router>
-            <Main />
-          </Router>
-        </ThemeProvider>
+        <PostsProvider> 
+          <ThemeProvider>
+            <Router>
+              <Main />
+            </Router>
+          </ThemeProvider>
+        </PostsProvider>
       </BookClubsProvider>
     </AuthProvider>
   );

@@ -1,45 +1,25 @@
 import React, { useState, useContext, useEffect } from 'react';
-import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
+import { PostsContext } from './context/PostsContext';
 import { List, Form, Input, Button, Typography, Space, message } from 'antd';
 import { LikeTwoTone, DislikeTwoTone } from '@ant-design/icons';
 
 const { TextArea } = Input;
 
-const Posts = ({ clubId, posts, setPosts }) => {
+const Posts = ({ clubId }) => {
   const { user } = useContext(AuthContext);
+  const { posts, userVotes, fetchPostsAndVotes, addPost, editPost, deletePost, votePost } = useContext(PostsContext);
   const [form] = Form.useForm();
   const [newPostContent, setNewPostContent] = useState('');
   const [editingPost, setEditingPost] = useState(null);
   const [editedContent, setEditedContent] = useState('');
   const [error, setError] = useState('');
-  const [userVotes, setUserVotes] = useState({});
 
   useEffect(() => {
-    const fetchPostsAndVotes = async () => {
-      try {
-        const response = await axios.get(`/book-clubs/${clubId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setPosts(response.data.posts || []);
-
-        const votes = response.data.posts.reduce((acc, post) => {
-          acc[post.id] = post.user_voted;
-          return acc;
-        }, {});
-
-        setUserVotes(votes);
-      } catch (error) {
-        console.error('Error fetching posts and votes:', error);
-      }
-    };
-
     if (user) {
-      fetchPostsAndVotes();
+      fetchPostsAndVotes(clubId);
     }
-  }, [user, clubId, setPosts]);
+  }, [user, clubId, fetchPostsAndVotes]);
 
   const handleAddPost = async (values) => {
     if (!values.content) {
@@ -48,12 +28,7 @@ const Posts = ({ clubId, posts, setPosts }) => {
     }
 
     try {
-      const response = await axios.post(`/book-clubs/${clubId}/posts`, { content: values.content }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setPosts((prevState) => [...(prevState || []), response.data]);
+      await addPost(clubId, values.content);
       form.resetFields(); // Clear the input field
       message.success('Post added successfully');
     } catch (error) {
@@ -68,14 +43,7 @@ const Posts = ({ clubId, posts, setPosts }) => {
     }
 
     try {
-      const response = await axios.patch(`/posts/${postId}`, { content: editedContent }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setPosts((prevState) =>
-        (prevState || []).map((post) => (post.id === postId ? response.data : post))
-      );
+      await editPost(postId, editedContent);
       setEditingPost(null);
       setEditedContent('');
       message.success('Post edited successfully');
@@ -86,12 +54,7 @@ const Posts = ({ clubId, posts, setPosts }) => {
 
   const handleDeletePost = async (postId) => {
     try {
-      await axios.delete(`/posts/${postId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setPosts((prevState) => (prevState || []).filter((post) => post.id !== postId));
+      await deletePost(postId);
       message.success('Post deleted successfully');
     } catch (error) {
       setError('Error deleting post.');
@@ -100,15 +63,7 @@ const Posts = ({ clubId, posts, setPosts }) => {
 
   const handleVotePost = async (postId, vote) => {
     try {
-      const response = await axios.post(`/posts/${postId}/vote`, { vote }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setPosts((prevState) =>
-        (prevState || []).map((post) => (post.id === postId ? response.data : post))
-      );
-      setUserVotes((prev) => ({ ...prev, [postId]: prev[postId] === vote ? null : vote }));
+      await votePost(postId, vote);
     } catch (error) {
       setError('Error voting on post.');
     }

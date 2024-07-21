@@ -4,8 +4,8 @@ import { Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
-import { SunOutlined, MoonOutlined } from '@ant-design/icons'; // Importing sun and moon icons from Ant Design
-import './css/NavBar.css'; // Import the new CSS file
+import { SunOutlined, MoonOutlined } from '@ant-design/icons'; 
+import './css/NavBar.css'; 
 
 const NavBar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -72,9 +72,9 @@ const NavBar = () => {
       key: 'logout',
       icon: <LogoutOutlined />,
       onClick: logout,
-      className: 'logout-button', // Add class for logout button
+      className: 'logout-button', 
     },
-  ].filter(Boolean); // Filter out any falsey values
+  ].filter(Boolean);
 
   return (
     <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} className={`navbar ${theme}`} />

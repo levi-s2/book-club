@@ -1,6 +1,7 @@
+// AuthContext.js
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import axios from '../axiosConfig';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; 
 import { useHistory } from 'react-router-dom';
 
 const AuthContext = createContext();
@@ -104,8 +105,131 @@ const AuthProvider = ({ children }) => {
     }));
   };
 
+  // New methods for friends
+  const addFriend = async (userId) => {
+    try {
+      const response = await axios.post(`/users/${userId}/add-friend`, {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error adding friend.', error);
+      throw error;
+    }
+  };
+
+  const removeFriend = async (userId) => {
+    try {
+      const response = await axios.delete(`/users/${userId}/remove-friend`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error removing friend.', error);
+      throw error;
+    }
+  };
+
+  // New methods for books
+  const fetchUserBooks = async () => {
+    try {
+      const response = await axios.get('/user/books', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching book list.', error);
+      throw error;
+    }
+  };
+
+  const addUserBook = async (bookId, rating) => {
+    try {
+      const response = await axios.post(
+        '/user/books',
+        { bookId, rating },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error adding book to list.', error);
+      throw error;
+    }
+  };
+
+  const updateBookRating = async (bookId, rating) => {
+    try {
+      await axios.patch(
+        `/user/books/${bookId}`,
+        { rating },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error('Error updating rating.', error);
+      throw error;
+    }
+  };
+
+  const removeUserBook = async (bookId) => {
+    try {
+      await axios.delete(`/user/books/${bookId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+    } catch (error) {
+      console.error('Error removing book from list.', error);
+      throw error;
+    }
+  };
+
+  const fetchUserDetailsById = async (userId) => {
+    try {
+      const response = await axios.get(`/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user details.', error);
+      throw error;
+    }
+  };
+  
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading, updateUserCreatedClubs }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        register,
+        logout,
+        loading,
+        updateUserCreatedClubs,
+        fetchUserBooks,
+        addUserBook,
+        updateBookRating,
+        removeUserBook,
+        addFriend,
+        removeFriend,
+        fetchUserDetailsById
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

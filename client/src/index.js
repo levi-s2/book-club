@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './components/App';
 import { AuthProvider } from './components/context/AuthContext';
 import { BookClubsProvider } from './components/context/BookClubsContext';
+import { PostsProvider } from './components/context/PostsContext';
 import './components/css/index.css'; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -11,9 +12,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthProvider>
     <BookClubsProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <PostsProvider> 
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </PostsProvider>
     </BookClubsProvider>
   </AuthProvider>
 );

@@ -172,10 +172,36 @@ const BookClubsProvider = ({ children }) => {
     }
   }, []);
 
+  const fetchUserClubs = useCallback(async () => {
+    try {
+      const response = await axios.get('/my-clubs', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user clubs.');
+      throw error;
+    }
+  }, []);
+  
+
   return (
     <BookClubsContext.Provider value={{
-      bookClubs, setBookClubs, updateBookClub, fetchClubDetails, joinClub, leaveClub, createClub,
-      fetchManageClubDetails, updateCurrentReading, removeMember, updateGenres, deleteClub
+      bookClubs,
+      setBookClubs,
+      updateBookClub,
+      fetchClubDetails,
+      joinClub,
+      leaveClub,
+      createClub,
+      fetchManageClubDetails,
+      updateCurrentReading,
+      removeMember,
+      updateGenres,
+      deleteClub,
+      fetchUserClubs
     }}>
       {children}
     </BookClubsContext.Provider>

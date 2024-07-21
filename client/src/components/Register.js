@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from './context/AuthContext';
 import { Form as AntForm, Input, Button, message } from 'antd';
-import './css/Register.css'; // Ensure you have a CSS file for styling
+import './css/Register.css'; 
 
 const Register = () => {
   const history = useHistory();
