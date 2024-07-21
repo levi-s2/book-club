@@ -1,63 +1,44 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
+import { BookClubsContext } from './context/BookClubsContext';
 import NavBar from './NavBar';
 import { Card, Button } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
 import { ThemeContext } from './context/ThemeContext';
 import './css/BookClubDetails.css';
-import Posts from './Posts'; // Import the new Posts component
+import Posts from './Posts';
 
 const BookClubDetails = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
+  const { fetchClubDetails, joinClub, leaveClub } = useContext(BookClubsContext);
   const [clubDetails, setClubDetails] = useState(null);
   const [posts, setPosts] = useState([]);
 
-
   useEffect(() => {
-    const fetchClubDetails = async () => {
-      try {
-        const response = await axios.get(`/book-clubs/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setClubDetails(response.data);
-        setPosts(response.data.posts || []);
-      } catch (error) {
-        console.error('Error fetching club details.');
+    const getClubDetails = async () => {
+      const details = await fetchClubDetails(id);
+      if (details) {
+        setClubDetails(details);
+        setPosts(details.posts || []);
       }
     };
 
-    fetchClubDetails();
-  }, [id]);
+    getClubDetails();
+  }, [id, fetchClubDetails]);
 
   const handleJoinClub = async () => {
-    try {
-      const response = await axios.post(`/book-clubs/${id}`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setClubDetails(response.data); 
-    } catch (error) {
-      console.error('Error joining club.');
+    const updatedDetails = await joinClub(id);
+    if (updatedDetails) {
+      setClubDetails(updatedDetails);
     }
   };
 
   const handleLeaveClub = async () => {
-    try {
-      const response = await axios.delete(`/book-clubs/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setClubDetails(response.data); 
-    } catch (error) {
-      console.error('Error leaving club.');
+    const updatedDetails = await leaveClub(id);
+    if (updatedDetails) {
+      setClubDetails(updatedDetails);
     }
   };
 
@@ -120,7 +101,6 @@ const BookClubDetails = () => {
             <h3>Creator</h3>
             {clubDetails.creator ? (
               <div>
-                <UserOutlined />
                 <Link to={`/users/${clubDetails.creator.id}`} className="profile-link">
                   {clubDetails.creator.username}
                 </Link>
@@ -135,7 +115,6 @@ const BookClubDetails = () => {
               <ul>
                 {clubDetails.members.map((member) => (
                   <li key={member.id}>
-                    <UserOutlined />
                     <Link to={`/users/${member.id}`} className="profile-link">
                       {member.username}
                     </Link>

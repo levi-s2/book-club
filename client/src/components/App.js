@@ -10,13 +10,13 @@ import BookClubDetails from './BookClubDetails';
 import MyBookList from './MyBookList';
 import UserProfile from './UserProfile';
 import UserDetails from './UserDetails';
-import { AuthProvider, AuthContext } from './context/AuthContext';
-import { BookClubsProvider, BookClubsContext } from './context/BookClubsContext';
+import { AuthProvider } from './context/AuthContext';
+import { BookClubsProvider } from './context/BookClubsContext';
 import { BooksProvider } from './context/BooksContext';
 import { GenresProvider } from './context/GenresContext';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
 import ProtectedRoute from './ProtectedRoute';
-import axios from './axiosConfig';
+
 
 const App = () => {
   return (
@@ -33,36 +33,11 @@ const App = () => {
 };
 
 const Main = () => {
-  const { user, loading } = useContext(AuthContext);
-  const { setBookClubs } = useContext(BookClubsContext);
   const { theme } = useContext(ThemeContext);
-
-  useEffect(() => {
-    const fetchBookClubs = async () => {
-      if (user) {
-        try {
-          const response = await axios.get('/book-clubs', {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          setBookClubs(response.data);
-        } catch (error) {
-          console.error('Error fetching book clubs:', error);
-        }
-      }
-    };
-
-    fetchBookClubs();
-  }, [user, setBookClubs]);
 
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-mode' : 'light-mode';
   }, [theme]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <BooksProvider>

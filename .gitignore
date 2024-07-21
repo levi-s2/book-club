@@ -1,0 +1,44 @@
+# Node.js dependencies
+node_modules/
+
+# Python dependencies
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.idea/
+.vscode/
+.sublime-project
+.sublime-workspace
+
+# Environment variables
+.env
+
+# Build directories
+dist/
+build/
+client/build/
+
+# Testing
+coverage/
+
+# Miscellaneous
+*.swp
+*.swo
+*.tmp
+*.temp
+
+# Ignore migrations and database files
+server/migrations/
+server/app.db

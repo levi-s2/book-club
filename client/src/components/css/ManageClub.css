@@ -100,8 +100,8 @@
   background-color: darkred;
 }
 
-.manage-section button {
-  background-color: var(--button-background-color);
+.update-button {
+  background-color: rgb(31, 31, 175);
   color: var(--button-text-color);
   border: none;
   padding: 10px 20px;
@@ -109,9 +109,16 @@
   cursor: pointer;
 }
 
-.manage-section button:hover {
-  background-color: var(--button-hover-background-color);
+.manage-section button {
+  background-color: rgb(31, 31, 175);
+  color: var(--button-text-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
 }
+
+
 
 .manage-section ul {
   list-style-type: none;

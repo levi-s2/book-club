@@ -126,6 +126,7 @@ class BookClub(db.Model):
                 'username': self.creator.username
             } if self.creator else None,
             'members': [{'id': member.user.id, 'username': member.user.username} for member in self.members],
+            'member_count': len(self.members),
             'current_book': self.current_reading.book.to_dict() if self.current_reading else None,
             'genres': [{'id': genre.id, 'name': genre.name} for genre in self.genres],
             'is_member': user_id in [member.user.id for member in self.members],

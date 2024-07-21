@@ -315,7 +315,43 @@ class BookClubs(Resource):
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
 
+    @jwt_required()
+    def post(self):
+        try:
+            user_id = get_jwt_identity()
+            data = request.get_json()
+            name = data.get('name')
+            description = data.get('description')
+            genre_ids = data.get('genre_ids')
+
+            if not name or not genre_ids or len(genre_ids) == 0:
+                return {"message": "Name and at least one genre are required"}, 400
+
+            existing_club = BookClub.query.filter_by(created_by=user_id).first()
+            if existing_club:
+                return {"message": "You have already created a book club"}, 400
+
+            new_club = BookClub(name=name, description=description, created_by=user_id)
+            db.session.add(new_club)
+            db.session.commit()
+
+            for genre_id in genre_ids:
+                genre = Genre.query.get(genre_id)
+                if genre:
+                    new_club.genres.append(genre)
+            
+            db.session.commit()
+
+            return {"message": "Book club created successfully", "club": new_club.to_dict()}, 201
+
+        except Exception as e:
+            print(f"Error during book club creation: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
 api.add_resource(BookClubs, '/book-clubs', endpoint='book_clubs_endpoint')
+
+
 
 
 class ClubPosts(Resource):
@@ -450,7 +486,6 @@ api.add_resource(BookClubDetails, '/book-clubs/<int:club_id>')
 
 
 
-
 class MyClubs(Resource):
     @jwt_required()
     def get(self):
@@ -461,45 +496,6 @@ class MyClubs(Resource):
         return response
 
 api.add_resource(MyClubs, '/my-clubs')
-
-
-class CreateClub(Resource):
-    @jwt_required()
-    def post(self):
-        try:
-            user_id = get_jwt_identity()
-            data = request.get_json()
-            name = data.get('name')
-            description = data.get('description')
-            genre_ids = data.get('genre_ids')
-
-            if not name or not genre_ids or len(genre_ids) == 0:
-                return {"message": "Name and at least one genre are required"}, 400
-
-            existing_club = BookClub.query.filter_by(created_by=user_id).first()
-            if existing_club:
-                return {"message": "You have already created a book club"}, 400
-
-            new_club = BookClub(name=name, description=description, created_by=user_id)
-            db.session.add(new_club)
-            db.session.commit()
-
-            for genre_id in genre_ids:
-                genre = Genre.query.get(genre_id)
-                if genre:
-                    new_club.genres.append(genre)
-            
-            db.session.commit()
-
-            return {"message": "Book club created successfully"}, 201
-
-        except Exception as e:
-            print(f"Error during book club creation: {e}")
-            traceback.print_exc()
-            return {"message": "Internal Server Error"}, 500
-
-api.add_resource(CreateClub, '/create-club', endpoint='create_club_endpoint')
-
 
 
 class ManageClub(Resource):

@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useCallback } from 'react';
 import { Layout, theme as antdTheme, message } from 'antd';
 import { BooksContext } from './context/BooksContext';
 import { GenresContext } from './context/GenresContext';
-import { AuthContext } from './context/AuthContext'; // Import AuthContext
+import { AuthContext } from './context/AuthContext'; 
 import BookCard from './BookCard';
 import NavBar from './NavBar';
 import { ThemeContext } from './context/ThemeContext';
@@ -14,11 +14,11 @@ const { Content, Sider } = Layout;
 const Books = () => {
   const { books } = useContext(BooksContext);
   const { genres } = useContext(GenresContext);
-  const { user } = useContext(AuthContext); // Access AuthContext
+  const { user } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
   const [authors, setAuthors] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
-  const [userBookList, setUserBookList] = useState([]); // State to hold user's book list
+  const [userBookList, setUserBookList] = useState([]); 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
@@ -111,8 +111,8 @@ const Books = () => {
       <Content
         style={{
           padding: '0 48px',
-          background: theme === 'dark' ? '#121212' : '#fff', // Ensure background matches the theme
-          color: theme === 'dark' ? '#e0e0e0' : '#000', // Ensure text color matches the theme
+          background: theme === 'dark' ? '#121212' : '#fff', 
+          color: theme === 'dark' ? '#e0e0e0' : '#000', 
         }}
       >
         <Layout

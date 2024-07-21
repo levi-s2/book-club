@@ -1,55 +1,34 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from './axiosConfig';
+import React, { useState, useContext } from 'react';
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
 import NavBar from './NavBar';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
+import { GenresContext } from './context/GenresContext';
+import { BookClubsContext } from './context/BookClubsContext';
 import { Form as AntForm, Input, Checkbox, Button, Alert } from 'antd';
 import './css/CreateClub.css';
 
 const CreateClub = () => {
   const { user, updateUserCreatedClubs } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
-  const [genres, setGenres] = useState([]);
+  const { genres } = useContext(GenresContext);
+  const { createClub } = useContext(BookClubsContext); 
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    const fetchGenres = async () => {
-      try {
-        const response = await axios.get('/genres', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setGenres(response.data);
-      } catch (error) {
-        console.error('Error fetching genres:', error);
-      }
-    };
-
-    fetchGenres();
-  }, []);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setMessage('');
     setError('');
 
     try {
-      const response = await axios.post('/create-club', values, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setMessage(response.data.message);
-      setSubmitting(false);
-
-      // Update user context with the new club
-      updateUserCreatedClubs([...user.created_clubs, response.data.club]);
+      const response = await createClub(values);
+      setMessage(response.message);
+      updateUserCreatedClubs([...user.created_clubs, response.club]);
       window.location.href = '/book-clubs';
     } catch (error) {
       setError('Error creating book club.');
+    } finally {
       setSubmitting(false);
     }
   };
@@ -81,8 +60,8 @@ const CreateClub = () => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, values, setFieldValue, handleSubmit }) => (
-            <Form className="create-club-form" onSubmit={handleSubmit}>
+          {({ isSubmitting, values, setFieldValue }) => (
+            <Form className="create-club-form">
               <AntForm.Item label="Club Name" name="name">
                 <Field as={Input} id="name" name="name" />
                 <ErrorMessage name="name" component="div" className="error-message" />

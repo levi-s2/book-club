@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import axios from './axiosConfig';
 import { AuthContext } from './context/AuthContext';
 import { BookClubsContext } from './context/BookClubsContext';
 import { BooksContext } from './context/BooksContext';
 import { GenresContext } from './context/GenresContext';
 import { ThemeContext } from './context/ThemeContext';
 import { useHistory } from 'react-router-dom';
+import { Form as AntForm, Checkbox, Button } from 'antd';
 import NavBar from './NavBar';
 import './css/ManageClub.css';
 
 const ManageClub = () => {
   const { user, updateUserCreatedClubs } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
-  const { updateBookClub } = useContext(BookClubsContext);
+  const { fetchManageClubDetails, updateBookClub, updateCurrentReading, removeMember, updateGenres, deleteClub } = useContext(BookClubsContext);
   const { books } = useContext(BooksContext);
   const { genres } = useContext(GenresContext);
   const [clubDetails, setClubDetails] = useState(null);
@@ -29,20 +29,20 @@ const ManageClub = () => {
       if (user && user.created_clubs && user.created_clubs.length > 0) {
         const clubId = user.created_clubs[0].id || user.created_clubs[0];
         console.log('Fetching details for club ID:', clubId);
-        const response = await axios.get(`/manage-club/${clubId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setClubDetails(response.data);
-        setMembers(response.data.members);
-        setSelectedGenres(response.data.genres.map((genre) => genre.id));
+        const details = await fetchManageClubDetails(clubId);
+        if (details) {
+          setClubDetails(details);
+          setMembers(details.members);
+          setSelectedGenres(details.genres.map((genre) => genre.id));
+        } else {
+          setError('Error fetching club details.');
+        }
       }
     } catch (error) {
       console.error('Error fetching club details:', error);
       setError('Error fetching club details.');
     }
-  }, [user]);
+  }, [user, fetchManageClubDetails]);
 
   useEffect(() => {
     fetchClubDetails();
@@ -78,15 +78,8 @@ const ManageClub = () => {
 
     try {
       const clubId = user.created_clubs[0].id || user.created_clubs[0];
-      const response = await axios.patch(`/manage-club/${clubId}`, {
-        action: 'update_current_reading',
-        book_id: selectedBookId,
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setMessage(response.data.message);
+      const response = await updateCurrentReading(clubId, selectedBookId);
+      setMessage(response.message);
       const updatedClub = { ...clubDetails, current_book: selectedBook };
       setClubDetails(updatedClub);
       updateBookClub(updatedClub);
@@ -98,15 +91,8 @@ const ManageClub = () => {
   const handleRemoveMember = async (memberId) => {
     try {
       const clubId = user.created_clubs[0].id || user.created_clubs[0];
-      const response = await axios.patch(`/manage-club/${clubId}`, {
-        action: 'remove_member',
-        member_id: memberId,
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setMessage(response.data.message);
+      const response = await removeMember(clubId, memberId);
+      setMessage(response.message);
       const updatedMembers = members.filter((member) => member.id !== memberId);
       setMembers(updatedMembers);
       const updatedClub = { ...clubDetails, members: updatedMembers };
@@ -124,15 +110,8 @@ const ManageClub = () => {
     }
     try {
       const clubId = user.created_clubs[0].id || user.created_clubs[0];
-      const response = await axios.patch(`/manage-club/${clubId}`, {
-        action: 'update_genres',
-        genre_ids: selectedGenres,
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setMessage(response.data.message);
+      const response = await updateGenres(clubId, selectedGenres);
+      setMessage(response.message);
       const updatedGenres = genres.filter((genre) => selectedGenres.includes(genre.id));
       const updatedClub = { ...clubDetails, genres: updatedGenres };
       setClubDetails(updatedClub);
@@ -154,12 +133,8 @@ const ManageClub = () => {
   const handleDeleteClub = async () => {
     try {
       const clubId = user.created_clubs[0].id || user.created_clubs[0];
-      const response = await axios.delete(`/manage-club/${clubId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setMessage(response.data.message);
+      const response = await deleteClub(clubId);
+      setMessage(response.message);
 
       // Update user context
       const updatedClubs = user.created_clubs.filter((club) => club.id !== clubId);
@@ -187,22 +162,27 @@ const ManageClub = () => {
           <div className="manage-club-container">
             <h2>Manage My Club: {clubDetails ? clubDetails.name : 'Loading...'}</h2>
           </div>
-          <div className="genre-list">
-            <h3>Update Genres (select up to 3)</h3>
-            {genres.map((genre) => (
-              <div key={genre.id} className="genre-item">
-                <input
-                  type="checkbox"
-                  id={`genre-${genre.id}`}
-                  value={genre.id}
-                  checked={selectedGenres.includes(genre.id)}
-                  onChange={() => handleGenreChange(genre.id)}
-                />
-                <label htmlFor={`genre-${genre.id}`}>{genre.name}</label>
-              </div>
-            ))}
-            <button onClick={handleUpdateGenres}>Update Genres</button>
-          </div>
+          <AntForm.Item label="Update Genres (select up to 3)">
+            <div className="genre-list">
+              {genres.map((genre) => (
+                <div key={genre.id} className="genre-item">
+                  <Checkbox
+                    id={`genre-${genre.id}`}
+                    checked={selectedGenres.includes(genre.id)}
+                    onChange={() => handleGenreChange(genre.id)}
+                  >
+                    {genre.name}
+                  </Checkbox>
+                </div>
+              ))}
+            </div>
+            <Button type="primary" onClick={handleUpdateGenres} className="update-button">
+              Update Genres
+            </Button>
+            <Button type="danger" onClick={handleDeleteClub} className="delete-button">
+              Delete Club
+            </Button>
+          </AntForm.Item>
         </div>
         <div className="center-column">
           <div className="manage-section">
@@ -210,19 +190,22 @@ const ManageClub = () => {
             <div className="book-selection">
               {filteredBooks.map((book) => (
                 <div key={book.id} className="book-item">
-                  <input
+                  <Checkbox
                     type="radio"
                     id={`book-${book.id}`}
                     name="selectedBook"
                     value={book.id}
                     checked={selectedBookId === book.id}
                     onChange={() => setSelectedBookId(book.id)}
-                  />
-                  <label htmlFor={`book-${book.id}`}>{book.title}</label>
+                  >
+                    {book.title}
+                  </Checkbox>
                 </div>
               ))}
             </div>
-            <button onClick={handleUpdateCurrentReading}>Update Current Reading</button>
+            <Button type="primary" onClick={handleUpdateCurrentReading} className="update-button">
+              Update Current Reading
+            </Button>
           </div>
         </div>
         <div className="right-column">
@@ -232,18 +215,19 @@ const ManageClub = () => {
               {members.map((member) => (
                 <li key={member.id}>
                   {member.username}
-                  <button onClick={() => handleRemoveMember(member.id)}>Remove</button>
+                  <Button type="danger" onClick={() => handleRemoveMember(member.id)} className="remove-button">
+                    Remove
+                  </Button>
                 </li>
               ))}
             </ul>
           </div>
         </div>
+        {message && <p className="success-message">{message}</p>}
+        {error && <p className="error-message">{error}</p>}
       </div>
-      <button onClick={handleDeleteClub} className="delete-button">Delete Club</button>
-      {message && <p className="success-message">{message}</p>}
-      {error && <p className="error-message">{error}</p>}
     </div>
-  );
+  );  
 };
 
 export default ManageClub;

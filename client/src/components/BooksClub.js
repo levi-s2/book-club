@@ -24,7 +24,8 @@ const BooksClub = () => {
             >
               <div className="book-club-info">
                 <p>{club.description}</p>
-                <p>Current Book: {club.current_book ? club.current_book.title : 'None'}</p>
+                <p><strong>Members: </strong> {club.member_count}</p>
+                <strong>Current Book: </strong><p>{club.current_book ? club.current_book.title : 'None'}</p>
                 <div className="genres">
                   <strong>Genres:</strong> {club.genres.map((genre) => genre.name).join(', ')}
                 </div>
