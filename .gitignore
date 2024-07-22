@@ -42,3 +42,33 @@ coverage/
 # Ignore migrations and database files
 server/migrations/
 server/app.db
+
+client/node_modules/.cache/
+
+.cache/
+
+# ESLint cache
+.eslintcache
+
+# Stylelint cache
+.stylelintcache
+
+# Yarn and npm logs
+.yarn-integrity
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Jest cache
+jest/
+
+# Temporary files
+tmp/
+temp/
+
+# Any compiled code
+*.out
+*.o
+*.obj
+*.exe
+*.dllclient/node_modules/.cache/
