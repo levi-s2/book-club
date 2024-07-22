@@ -7,7 +7,7 @@
         "@testing-library/jest-dom": "^5.13.0",
         "@testing-library/react": "^11.2.7",
         "@testing-library/user-event": "^12.8.3",
-        "antd": "^5.19.1",
+        "antd": "^5.19.3",
         "axios": "^1.6.8",
         "formik": "^2.4.6",
         "jwt-decode": "^4.0.0",
