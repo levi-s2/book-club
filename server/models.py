@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData, Integer, String, Text, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import MetaData, Integer, String, Boolean, Text, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship, validates, backref
 from flask_bcrypt import Bcrypt
 import datetime
@@ -32,6 +32,7 @@ class User(db.Model):
     username = db.Column(String, unique=True, nullable=False)
     email = db.Column(String, unique=True, nullable=False)
     _password_hash = db.Column(String, nullable=False)
+    dark_mode = db.Column(Boolean, default=False) 
 
     friends = db.relationship(
         'User',
@@ -87,9 +88,9 @@ class User(db.Model):
             'books': books_with_ratings,
             'friends': [{'id': friend.id, 'username': friend.username} for friend in self.friends],
             'created_clubs': [{'id': club.id, 'name': club.name} for club in self.book_clubs_created],
-            'joined_clubs': [{'id': membership.book_club.id, 'name': membership.book_club.name} for membership in self.memberships]
+            'joined_clubs': [{'id': membership.book_club.id, 'name': membership.book_club.name} for membership in self.memberships],
+            'dark_mode': self.dark_mode 
         }
-
 
     def __repr__(self):
         return f'<User {self.id}. {self.username}>'

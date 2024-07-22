@@ -1,23 +1,51 @@
+/* Register Styles */
 .register-container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .register-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .register-form .ant-form-item {
-    margin-bottom: 16px;
-  }
-  
-  .error-message {
-    color: red;
-    margin-top: 5px;
-  }
-  
+  width: 100%;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-form .ant-form-item-label > label {
+  color: black;
+}
+
+.register-form .ant-input,
+.register-form .ant-input-password {
+  background-color: white;
+  color: black;
+}
+
+.register-form .ant-btn-primary {
+  background-color: #007bff;
+  border: none;
+  color: white;
+}
+
+.register-form .ant-btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: red;
+  margin-top: 5px;
+}
+
+/* Dark Theme Adjustments */
+.register-container.dark .ant-form-item-label > label {
+  color: white;
+}
+
+.register-container.dark .ant-input,
+.register-container.dark .ant-input-password {
+  background-color: #333;
+  color: white;
+}
+
+.register-container.dark .ant-btn-primary {
+  background-color: #0056b3;
+  border: none;
+  color: white;
+}

@@ -13,7 +13,7 @@
 
 .book-image {
   width: 100%;
-  height: 150px; /* Adjusted height for better card appearance */
+  height: 150px;
   object-fit: cover;
 }
 
@@ -22,19 +22,19 @@
 }
 
 .ant-card {
-  margin: 10px; /* Reduced margin for closer cards */
-  width: 200px; /* Fixed width for consistency */
-  border-radius: 8px; /* Match the BookCard style */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Match the BookCard style */
+  margin: 10px;
+  width: 200px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .ant-card-meta-title {
-  font-size: 18px; /* Adjusted font size */
+  font-size: 18px;
   color: var(--text-color);
 }
 
 .ant-card-meta-description {
-  font-size: 14px; /* Adjusted font size */
+  font-size: 14px;
   color: var(--secondary-text-color);
 }
 
@@ -49,7 +49,6 @@
   color: var(--secondary-text-color);
 }
 
-/* Add specific styles for the book-card in light and dark themes */
 .book-card.light {
   background-color: var(--card-background-color);
   color: var(--text-color);
@@ -60,7 +59,6 @@
   color: var(--text-color);
 }
 
-/* Dark Theme Variables */
 .my-book-list-page.dark {
   --page-background-color: #121212;
   --text-color: #e0e0e0;
@@ -68,10 +66,21 @@
   --secondary-text-color: #a0a0a0;
 }
 
-/* Light Theme Variables */
 .my-book-list-page.light {
   --page-background-color: #f4f4f9;
   --text-color: #000;
   --card-background-color: #fff;
   --secondary-text-color: #555;
+}
+
+/* Profile Container and Columns for Consistency */
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.center-column {
+  flex: 1;
+  margin: 20px;
 }

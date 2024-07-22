@@ -66,3 +66,12 @@
 .toggle-button:hover {
   background-color: #0056b3;
 }
+
+/* Light and Dark Theme Adjustments */
+.landing-page.light .form-container {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.landing-page.dark .form-container {
+  background: rgba(50, 50, 50, 0.9);
+}

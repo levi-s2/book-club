@@ -1,10 +1,6 @@
+/* Login Styles */
 .login-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .login-form {
@@ -12,11 +8,44 @@
   flex-direction: column;
 }
 
-.login-form .ant-form-item {
-  margin-bottom: 16px;
+.login-form .ant-form-item-label > label {
+  color: black;
+}
+
+.login-form .ant-input,
+.login-form .ant-input-password {
+  background-color: white;
+  color: black;
+}
+
+.login-form .ant-btn-primary {
+  background-color: #007bff;
+  border: none;
+  color: white;
+}
+
+.login-form .ant-btn-primary:hover {
+  background-color: #0056b3;
 }
 
 .error-message {
   color: red;
   margin-top: 5px;
+}
+
+/* Dark Theme Adjustments */
+.login-container.dark .ant-form-item-label > label {
+  color: white;
+}
+
+.login-container.dark .ant-input,
+.login-container.dark .ant-input-password {
+  background-color: #333;
+  color: white;
+}
+
+.login-container.dark .ant-btn-primary {
+  background-color: #0056b3;
+  border: none;
+  color: white;
 }

@@ -40,11 +40,21 @@
 }
 
 .book-card.light {
-  background-color: #fff;
-  color: #000;
+  background-color: var(--card-background-color-light);
+  color: var(--text-color-light);
 }
 
 .book-card.dark {
-  background-color: #1f1f1f;
-  color: #e0e0e0;
+  background-color: var(--card-background-color-dark);
+  color: var(--text-color-dark);
+}
+
+/* Variables for light and dark themes */
+:root {
+  --card-background-color-light: #fff;
+  --card-background-color-dark: #1f1f1f;
+  --text-color-light: #000;
+  --text-color-dark: #e0e0e0;
+  --secondary-text-color-light: #555;
+  --secondary-text-color-dark: #a0a0a0;
 }

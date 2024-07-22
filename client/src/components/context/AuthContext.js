@@ -210,6 +210,23 @@ const AuthProvider = ({ children }) => {
       throw error;
     }
   };
+
+  const updateUserThemePreference = async (isDarkMode) => {
+    try {
+      await axios.patch(`/users/${user.id}`, { dark_mode: isDarkMode }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setUser((prevUser) => ({
+        ...prevUser,
+        dark_mode: isDarkMode,
+      }));
+    } catch (error) {
+      console.error('Error updating theme preference.', error);
+    }
+  };
+  
   
 
   return (
@@ -227,7 +244,8 @@ const AuthProvider = ({ children }) => {
         removeUserBook,
         addFriend,
         removeFriend,
-        fetchUserDetailsById
+        fetchUserDetailsById,
+        updateUserThemePreference
       }}
     >
       {children}

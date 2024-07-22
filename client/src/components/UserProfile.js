@@ -58,7 +58,7 @@ const UserProfile = () => {
         ) : userDetails ? (
           <div className="profile-container">
             <div className="left-column">
-              <Card className="profile-card">
+              <Card className={`profile-card ${theme}`}>
                 <img src={defaultAvatar} alt="User Avatar" className="profile-image" />
                 <div className="profile-info">
                   <h2>{userDetails.username}</h2>
@@ -105,6 +105,7 @@ const UserProfile = () => {
                     <List.Item>
                       <Card
                         hoverable
+                        className={`book-card ${theme}`} 
                         cover={<img alt={book.title} src={book.image_url} />}
                       >
                         <Card.Meta title={book.title} description={`Author: ${book.author}`} />

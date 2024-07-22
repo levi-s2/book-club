@@ -4,9 +4,9 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from './context/AuthContext';
 import { Form as AntForm, Input, Button, message } from 'antd';
-import './css/Register.css'; 
+import './css/Register.css';
 
-const Register = () => {
+const Register = ({ theme }) => {
   const history = useHistory();
   const { register } = useContext(AuthContext);
 
@@ -44,7 +44,7 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container">
+    <div className={`register-container ${theme}`}>
       <h2>Register</h2>
       <Formik
         initialValues={initialValues}

@@ -104,7 +104,30 @@ class UserDetail(Resource):
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
 
-api.add_resource(UserDetail, '/users/<int:user_id>', endpoint='user_detail_endpoint') 
+    @jwt_required()
+    def patch(self, user_id):
+        try:
+            user = User.query.get(user_id)
+            if not user:
+                return {"message": "User not found"}, 404
+
+            data = request.get_json()
+            dark_mode = data.get('dark_mode')
+
+            if dark_mode is not None:
+                user.dark_mode = dark_mode
+                db.session.commit()
+                return {"message": "User theme preference updated"}, 200
+            else:
+                return {"message": "Invalid data"}, 400
+
+        except Exception as e:
+            print(f"Error updating user theme preference: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+api.add_resource(UserDetail, '/users/<int:user_id>', endpoint='user_detail_endpoint')
+
 
 class UserBooks(Resource):
     @jwt_required()

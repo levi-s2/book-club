@@ -47,9 +47,10 @@ const MyClubs = () => {
                 bordered={false}
               >
                 <div className="club-info">
-                  <p>{club.description}</p>
+                  <h5>{club.description}</h5>
                   <p><strong>Members: </strong> {club.member_count}</p>
                   <strong>Current Book: </strong><p>{club.current_book ? club.current_book.title : 'None'}</p>
+                  <p><strong>Genres:</strong> {club.genres.map((genre) => genre.name).join(', ')}</p>
                   <Link to={`/book-clubs/${club.id}`}>
                     <Button type="primary" className="view-details-button">
                       View Details

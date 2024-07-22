@@ -14,16 +14,18 @@ const BookCard = ({ book, theme, handleAddToList, isInList }) => {
         title={book.title}
         description={
           <>
-            <p>Author: {book.author}</p>
-            <p>Genre: {book.genre ? book.genre.name : 'Unknown'}</p>
-            <Button
-              type="primary"
-              onClick={() => handleAddToList(book.id)}
-              disabled={isInList}
-              className="view-details-button"
-            >
-              {isInList ? 'Added to List' : 'Add to List'}
-            </Button>
+            <div className="book-info">
+              <p><strong>Author: </strong>{book.author}</p>
+              <p><strong>Genre: </strong>{book.genre ? book.genre.name : 'Unknown'}</p>
+              <Button
+                type="primary"
+                onClick={() => handleAddToList(book.id)}
+                disabled={isInList}
+                className="view-details-button"
+              >
+                {isInList ? 'Added to List' : 'Add to List'}
+              </Button>
+            </div>
           </>
         }
       />

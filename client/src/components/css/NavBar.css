@@ -1,54 +1,51 @@
 /* NavBar Styles */
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  background-color: var(--navbar-bg);
-  color: var(--navbar-text);
-}
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--navbar-bg);
+    color: var(--navbar-text);
+  }
+  
+  .navbar.light {
+    --navbar-bg: white;
+    --navbar-text: black;
+    --navbar-hover-bg: #f0f0f0;
+    --navbar-hover-text: black;
+  }
+  
+  .navbar.dark {
+    --navbar-bg: black;
+    --navbar-text: white;
+    --navbar-hover-bg: #1a1a1a;
+    --navbar-hover-text: white;
+  }
+  
 
-.navbar.light {
-  --navbar-bg: white;
-  --navbar-text: black;
-  --navbar-hover-bg: #f0f0f0;
-  --navbar-hover-text: black;
-}
+  
 
-.navbar.dark {
-  --navbar-bg: black;
-  --navbar-text: white;
-  --navbar-hover-bg: #1a1a1a;
-  --navbar-hover-text: white;
-}
 
-.ant-menu-horizontal > .ant-menu-item {
-  color: inherit;
-}
-
-.ant-menu-horizontal > .ant-menu-item:hover,
-.ant-menu-horizontal > .ant-menu-item-active,
-.ant-menu-horizontal > .ant-menu-item-selected {
-  background-color: var(--navbar-hover-bg) !important;
-  color: var(--navbar-hover-text) !important; /* Ensure text remains readable */
-}
-
-.logout-button {
-  margin-left: auto; /* Push the logout button to the far right */
-}
-
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.theme-toggle span {
-  margin-left: 8px;
-}
-
-.navbar.light .theme-toggle span {
-  color: black;
-}
-
-.navbar.dark .theme-toggle span {
-  color: white;
-}
+  .ant-menu-horizontal > .ant-menu-item-selected {
+    background-color: var(--navbar-hover-bg) !important;
+  }
+  
+  .logout-button {
+    margin-left: auto; 
+  }
+  
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .theme-toggle span {
+    margin-left: 8px;
+  }
+  
+  .navbar.light .theme-toggle span {
+    color: black;
+  }
+  
+  .navbar.dark .theme-toggle span {
+    color: white;
+  }

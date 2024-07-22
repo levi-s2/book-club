@@ -56,22 +56,31 @@ body.dark-mode {
 }
 
 .ant-input,
-.ant-input-textarea,
-.ant-btn-primary {
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #ddd;
+.ant-input-textarea {
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #dddddd;
 }
-
 
 .ant-input:focus,
 .ant-input-textarea:hover,
-.ant-input-textarea:focus,
-.ant-btn-primary:hover,
-.ant-btn-primary:focus {
+.ant-input-textarea:focus {
   background-color: #ffffff;
   color: #000000;
-  border: 1px solid #1b1483;
+  border: 1px solid #2f25b4;
+}
+
+.ant-btn-primary {
+  background-color: #332c91;
+  color: #ffffff;
+  border: 1px solid #0e058b;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background-color: #0a0464;
+  color: #ffffff;
+  border: 1px solid #3a31b1;
 }
 
 .ant-checkbox-wrapper {

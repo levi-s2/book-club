@@ -23,11 +23,11 @@ const BooksClub = () => {
               bordered={false}
             >
               <div className="book-club-info">
-                <p>{club.description}</p>
+                <h5>{club.description}</h5>
                 <p><strong>Members: </strong> {club.member_count}</p>
                 <strong>Current Book: </strong><p>{club.current_book ? club.current_book.title : 'None'}</p>
                 <div className="genres">
-                  <strong>Genres:</strong> {club.genres.map((genre) => genre.name).join(', ')}
+                  <p><strong>Genres:</strong> {club.genres.map((genre) => genre.name).join(', ')}</p>
                 </div>
                 <Link to={`/book-clubs/${club.id}`}>
                   <Button type="primary" className="view-details-button">

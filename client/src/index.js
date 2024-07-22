@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import App from './components/App';
+import Root from './components/App';
 import { AuthProvider } from './components/context/AuthContext';
 import { BookClubsProvider } from './components/context/BookClubsContext';
 import { PostsProvider } from './components/context/PostsContext';
@@ -14,7 +14,7 @@ root.render(
     <BookClubsProvider>
       <PostsProvider> 
         <BrowserRouter>
-          <App />
+          <Root />
         </BrowserRouter>
       </PostsProvider>
     </BookClubsProvider>

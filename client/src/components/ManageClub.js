@@ -179,9 +179,11 @@ const ManageClub = () => {
             <Button type="primary" onClick={handleUpdateGenres} className="update-button">
               Update Genres
             </Button>
+            <div>
             <Button type="danger" onClick={handleDeleteClub} className="delete-button">
               Delete Club
             </Button>
+            </div>
           </AntForm.Item>
         </div>
         <div className="center-column">

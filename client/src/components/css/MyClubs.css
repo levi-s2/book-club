@@ -1,68 +1,68 @@
 .page-container {
-  background-color: var(--page-background-color);
-  color: var(--text-color);
-  min-height: 100vh; /* Ensure the whole page height is covered */
-  display: flex;
-  flex-direction: column;
-}
-
-.my-clubs {
-  flex-grow: 1;
-  padding: 20px;
-}
-
-.my-clubs.light {
-  --page-background-color: #f4f4f9;
-  --text-color: #000;
-}
-
-.my-clubs.dark {
-  --page-background-color: #121212;
-  --text-color: #e0e0e0;
-}
-
-.club-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px; /* Space between cards */
-}
-
-.club-card {
-  border-radius: 8px;
-  overflow: hidden;
-  width: 320px; /* Adjust card width */
-}
-
-.club-card.light {
-  background-color: #f0f0f0;
-  color: #000;
-}
-
-.club-card.dark {
-  background-color: #1f1f1f;
-  color: #e0e0e0;
-}
-
-.club-info {
-  text-align: left;
-}
-
-.club-info h3 {
-  margin-top: 0;
-  color: inherit; /* Inherit color from parent */
-}
-
-.view-details-button {
-  margin-top: 12px;
-  background-color: #007bff; /* Blue background for the button */
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-.view-details-button:hover,
-.view-details-button:focus {
-  background-color: #0056b3;
-}
+    background-color: var(--page-background-color);
+    color: var(--text-color);
+    min-height: 100vh; /* Ensure the whole page height is covered */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .my-clubs {
+    flex-grow: 1;
+    padding: 20px;
+  }
+  
+  .my-clubs.light {
+    --page-background-color: #f4f4f9;
+    --text-color: #000;
+  }
+  
+  .my-clubs.dark {
+    --page-background-color: #121212;
+    --text-color: #e0e0e0;
+  }
+  
+  .club-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px; /* Space between cards */
+  }
+  
+  .club-card {
+    border-radius: 8px;
+    overflow: hidden;
+    width: 320px; /* Adjust card width */
+  }
+  
+  .club-card.light {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+  
+  .club-card.dark {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+  }
+  
+  .club-info {
+    text-align: left;
+  }
+  
+  .club-info h3 {
+    margin-top: 0;
+    color: inherit; /* Inherit color from parent */
+  }
+  
+  .view-details-button {
+    margin-top: 12px;
+    background-color: #007bff; /* Blue background for the button */
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .view-details-button:hover,
+  .view-details-button:focus {
+    background-color: #0056b3;
+  }

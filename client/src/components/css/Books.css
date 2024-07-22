@@ -7,13 +7,13 @@
 }
 
 .books-page.light {
-  background-color: #fff;
+  background-color: #ffffff;
   color: #000;
 }
 
 .books-page.dark {
   background-color: #121212;
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 .sidebar {
@@ -68,6 +68,7 @@
   color: var(--text-color);
 }
 
+/* Books Container Styles */
 .books-container {
   display: flex;
   flex-wrap: wrap;
@@ -88,12 +89,12 @@
 
 /* Light Theme Variables */
 .light-theme {
-  --background-color: #f4f4f9;
+  --background-color: #ffffff;
   --text-color: #000;
   --sidebar-background-color: #fff;
   --primary-color: #3b5998;
   --border-color: #ddd;
-  --input-background-color: #fff;
+  --input-background-color: hsl(0, 0%, 100%);
   --card-background-color: #fff;
   --secondary-text-color: #555;
 }

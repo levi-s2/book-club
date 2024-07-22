@@ -108,84 +108,84 @@ const Books = () => {
     <div>
       <NavBar />
       <Layout className={`books-page ${theme}`}>
-      <Content
-        style={{
-          padding: '0 48px',
-          background: theme === 'dark' ? '#121212' : '#fff', 
-          color: theme === 'dark' ? '#e0e0e0' : '#000', 
-        }}
-      >
-        <Layout
+        <Content
           style={{
-            padding: '24px 0',
-            background: theme === 'dark' ? '#1f1f1f' : colorBgContainer,
-            borderRadius: borderRadiusLG,
+            padding: '0 48px',
+            background: theme === 'dark' ? '#121212' : '#fff',
+            color: theme === 'dark' ? '#e0e0e0' : '#000',
           }}
         >
-          <Sider
+          <Layout
             style={{
+              padding: '24px 0',
               background: theme === 'dark' ? '#1f1f1f' : colorBgContainer,
-            }}
-            width={200}
-          >
-            <div className={`sidebar ${theme}`}>
-              <h2>Genres</h2>
-              <ul>
-                {genres.map((genre) => (
-                  <li
-                    key={genre.id}
-                    onClick={() => handleGenreClick(genre.id)}
-                    className={selectedGenre === genre.id ? 'selected' : ''}
-                  >
-                    {genre.name}
-                  </li>
-                ))}
-              </ul>
-              <h2>Authors</h2>
-              <ul>
-                {authors.map((author) => (
-                  <li
-                    key={author}
-                    onClick={() => handleAuthorClick(author)}
-                    className={selectedAuthor === author ? 'selected' : ''}
-                  >
-                    {author}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Sider>
-          <Content
-            style={{
-              padding: '0 24px',
-              minHeight: 280,
+              borderRadius: borderRadiusLG,
             }}
           >
-            <div className="main-content">
-              <div className="search-bar">
-                <input
-                  type="text"
-                  placeholder="Search by title"
-                  value={searchQuery}
-                  onChange={handleSearch}
-                />
+            <Sider
+              style={{
+                background: theme === 'dark' ? '#1f1f1f' : colorBgContainer,
+              }}
+              width={200}
+            >
+              <div className={`sidebar ${theme}`}>
+                <h2>Genres</h2>
+                <ul>
+                  {genres.map((genre) => (
+                    <li
+                      key={genre.id}
+                      onClick={() => handleGenreClick(genre.id)}
+                      className={selectedGenre === genre.id ? 'selected' : ''}
+                    >
+                      {genre.name}
+                    </li>
+                  ))}
+                </ul>
+                <h2>Authors</h2>
+                <ul>
+                  {authors.map((author) => (
+                    <li
+                      key={author}
+                      onClick={() => handleAuthorClick(author)}
+                      className={selectedAuthor === author ? 'selected' : ''}
+                    >
+                      {author}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="books-container">
-                {filteredBooks.map((book) => (
-                  <BookCard
-                    key={book.id}
-                    book={book}
-                    theme={theme}
-                    handleAddToList={handleAddToList}
-                    isInList={userBookList.includes(book.id)}
+            </Sider>
+            <Content
+              style={{
+                padding: '0 24px',
+                minHeight: 280,
+              }}
+            >
+              <div className="main-content">
+                <div className="search-bar">
+                  <input
+                    type="text"
+                    placeholder="Search by title"
+                    value={searchQuery}
+                    onChange={handleSearch}
                   />
-                ))}
+                </div>
+                <div className="books-container">
+                  {filteredBooks.map((book) => (
+                    <BookCard
+                      key={book.id}
+                      book={book}
+                      theme={theme}
+                      handleAddToList={handleAddToList}
+                      isInList={userBookList.includes(book.id)}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          </Content>
-        </Layout>
-      </Content>
-    </Layout>
+            </Content>
+          </Layout>
+        </Content>
+      </Layout>
     </div>
   );  
 }

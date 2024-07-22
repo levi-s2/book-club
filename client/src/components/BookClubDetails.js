@@ -4,6 +4,7 @@ import { AuthContext } from './context/AuthContext';
 import { BookClubsContext } from './context/BookClubsContext';
 import NavBar from './NavBar';
 import { Card, Button } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import { ThemeContext } from './context/ThemeContext';
 import './css/BookClubDetails.css';
 import Posts from './Posts';
@@ -115,6 +116,7 @@ const BookClubDetails = () => {
               <ul>
                 {clubDetails.members.map((member) => (
                   <li key={member.id}>
+                    <UserOutlined />
                     <Link to={`/users/${member.id}`} className="profile-link">
                       {member.username}
                     </Link>

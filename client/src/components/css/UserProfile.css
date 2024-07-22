@@ -14,11 +14,13 @@
 .user-profile-page.light {
   --page-background-color: #f4f4f9;
   --text-color: #000;
+  --card-background-color: #fff; /* Ensure the card background is white in light mode */
 }
 
 .user-profile-page.dark {
   --page-background-color: #121212;
   --text-color: #e0e0e0;
+  --card-background-color: #1f1f1f; /* Ensure the card background is dark in dark mode */
 }
 
 .profile-container {
@@ -34,6 +36,7 @@
 
 .profile-card {
   text-align: center;
+  background-color: var(--card-background-color); /* Use the variable for the card background */
 }
 
 .profile-image {
@@ -60,5 +63,16 @@
 }
 
 .ant-list-item-meta-description {
+  color: var(--text-color);
+}
+
+/* Ensure the book cards are fully white in light mode */
+.book-card.light {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.book-card.dark {
+  background-color: var(--card-background-color);
   color: var(--text-color);
 }

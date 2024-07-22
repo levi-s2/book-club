@@ -94,31 +94,25 @@
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
+  margin-top: 20px; /* Add some margin to separate it from other buttons */
 }
 
 .delete-button:hover {
   background-color: darkred;
 }
 
-.update-button {
-  background-color: rgb(31, 31, 175);
-  color: var(--button-text-color);
+.update-button, .manage-section button {
+  background-color: #5b8cde;
+  color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
 }
 
-.manage-section button {
-  background-color: rgb(31, 31, 175);
-  color: var(--button-text-color);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
+.update-button:hover, .manage-section button:hover {
+  background-color: #3c6fb1;
 }
-
-
 
 .manage-section ul {
   list-style-type: none;
@@ -136,16 +130,10 @@
 .dark-theme {
   --column-background-color: #1f1f1f;
   --heading-color: #bb86fc;
-  --button-background-color: #bb86fc;
-  --button-text-color: #121212;
-  --button-hover-background-color: #3700b3;
 }
 
 /* Light Theme Variables */
 .light-theme {
   --column-background-color: #fff;
   --heading-color: #3b5998;
-  --button-background-color: #3b5998;
-  --button-text-color: white;
-  --button-hover-background-color: #2a4378;
 }
