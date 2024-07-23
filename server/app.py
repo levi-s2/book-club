@@ -89,7 +89,7 @@ class Register(Resource):
             print(f"Error during registration: {e}")
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
-        
+       
 
 class UserDetail(Resource):
     @jwt_required()
@@ -113,20 +113,34 @@ class UserDetail(Resource):
 
             data = request.get_json()
             dark_mode = data.get('dark_mode')
+            username = data.get('username')
+            email = data.get('email')
+            password = data.get('password')
 
             if dark_mode is not None:
                 user.dark_mode = dark_mode
-                db.session.commit()
-                return {"message": "User theme preference updated"}, 200
-            else:
-                return {"message": "Invalid data"}, 400
+
+            if username:
+                user.username = username
+
+            if email:
+                user.email = email
+
+            if password:
+                if len(password) < 6:
+                    return {"message": "Password must be at least 6 characters long"}, 400
+                user.password_hash = password
+
+            db.session.commit()
+            return {"message": "User updated successfully"}, 200
 
         except Exception as e:
-            print(f"Error updating user theme preference: {e}")
+            print(f"Error updating user: {e}")
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
 
 api.add_resource(UserDetail, '/users/<int:user_id>', endpoint='user_detail_endpoint')
+
 
 
 class UserBooks(Resource):

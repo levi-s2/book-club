@@ -136,14 +136,11 @@ const ManageClub = () => {
       const response = await deleteClub(clubId);
       setMessage(response.message);
 
-      // Update user context
       const updatedClubs = user.created_clubs.filter((club) => club.id !== clubId);
       updateUserCreatedClubs(updatedClubs);
 
-      // Update book clubs context
       updateBookClub({ ...clubDetails, deleted: true });
 
-      // Redirect to book clubs or a different page
       history.push('/book-clubs');
     } catch (error) {
       setError('Error deleting book club.');

@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { UserDeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import './css/UserProfile.css';
 import defaultAvatar from './css/avatar-15.png'; 
+import UserUpdate from './UserUpdate'; // Import the UserUpdate component
 
 const UserProfile = () => {
   const { user, fetchUserDetailsById, removeFriend } = useContext(AuthContext); 
@@ -140,6 +141,10 @@ const UserProfile = () => {
               ) : (
                 <p>No friends added yet.</p>
               )}
+            </div>
+            <div className="right-column">
+              <h3>Update Profile</h3>
+              <UserUpdate user={userDetails} /> {/* Pass user details to UserUpdate */}
             </div>
           </div>
         ) : (

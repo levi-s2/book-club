@@ -227,8 +227,32 @@ const AuthProvider = ({ children }) => {
     }
   };
   
-  
+  const updateUser = async (userId, updates) => {
+    try {
+      const response = await axios.patch(`/users/${userId}`, updates, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw new Error('Failed to update user');
+    }
+  };
 
+  const updateUsername = async (userId, username) => {
+    return await updateUser(userId, { username });
+  };
+  
+  const updateEmail = async (userId, email) => {
+    return await updateUser(userId, { email });
+  };
+
+  const updatePassword = async (userId, password) => {
+    return await updateUser(userId, { password });
+  };
+  
   return (
     <AuthContext.Provider
       value={{
@@ -245,7 +269,11 @@ const AuthProvider = ({ children }) => {
         addFriend,
         removeFriend,
         fetchUserDetailsById,
-        updateUserThemePreference
+        updateUserThemePreference,
+        updateUser,
+        updateUsername,
+        updateEmail,
+        updatePassword
       }}
     >
       {children}
