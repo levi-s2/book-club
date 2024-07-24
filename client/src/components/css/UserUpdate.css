@@ -1,18 +1,31 @@
 .user-update-container {
-    margin-top: 20px;
-  }
-  
-  .user-update-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .user-update-form .ant-form-item {
-    margin-bottom: 15px;
-  }
-  
-  .error-message {
-    color: red;
-    margin-top: 5px;
-  }
-  
+  margin-top: 20px;
+}
+
+.user-update-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-update-form .ant-form-item {
+  margin-bottom: 15px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 5px;
+}
+
+.update-info-button {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.update-info-button:hover {
+  background-color: #0056b3;
+}

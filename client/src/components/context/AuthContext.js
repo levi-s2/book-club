@@ -98,6 +98,16 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const authenticateUser = async (email, password) => {
+    try {
+      const response = await axios.post('/authenticate', { email, password });
+      return response.data.authenticated;
+    } catch (error) {
+      console.error('Authentication error:', error);
+      return false;
+    }
+  };
+  
   const updateUserCreatedClubs = (updatedClubs) => {
     setUser((prevUser) => ({
       ...prevUser,
@@ -105,7 +115,6 @@ const AuthProvider = ({ children }) => {
     }));
   };
 
-  // New methods for friends
   const addFriend = async (userId) => {
     try {
       const response = await axios.post(`/users/${userId}/add-friend`, {}, {
@@ -134,7 +143,7 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // New methods for books
+
   const fetchUserBooks = async () => {
     try {
       const response = await axios.get('/user/books', {
@@ -257,6 +266,7 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         login,
         register,
         logout,
@@ -273,7 +283,8 @@ const AuthProvider = ({ children }) => {
         updateUser,
         updateUsername,
         updateEmail,
-        updatePassword
+        updatePassword,
+        authenticateUser
       }}
     >
       {children}

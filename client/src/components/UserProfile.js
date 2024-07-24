@@ -2,12 +2,12 @@ import React, { useEffect, useState, useContext } from 'react';
 import NavBar from './NavBar';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
-import { Card, Spin, List, Rate } from 'antd';
+import { Card, Spin, List, Rate, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { UserDeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import './css/UserProfile.css';
 import defaultAvatar from './css/avatar-15.png'; 
-import UserUpdate from './UserUpdate'; // Import the UserUpdate component
+import UserUpdate from './UserUpdate'; 
 
 const UserProfile = () => {
   const { user, fetchUserDetailsById, removeFriend } = useContext(AuthContext); 
@@ -15,6 +15,7 @@ const UserProfile = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showUpdateForm, setShowUpdateForm] = useState(false); // State to control visibility of UserUpdate component
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -48,6 +49,10 @@ const UserProfile = () => {
     }
   };
 
+  const toggleUpdateForm = () => {
+    setShowUpdateForm(!showUpdateForm); // Toggle visibility of UserUpdate component
+  };
+
   return (
     <div className={`user-profile-page ${theme}`}>
       <NavBar />
@@ -65,6 +70,8 @@ const UserProfile = () => {
                   <h2>{userDetails.username}</h2>
                 </div>
               </Card>
+              <Button onClick={toggleUpdateForm} className="update-info-button">Update Info</Button>
+              {showUpdateForm && <UserUpdate user={userDetails} />} {/* Conditionally render UserUpdate component */}
               {userDetails.created_clubs.length > 0 && (
                 <div className="created-clubs">
                   <h3>Created Club</h3>
@@ -141,10 +148,6 @@ const UserProfile = () => {
               ) : (
                 <p>No friends added yet.</p>
               )}
-            </div>
-            <div className="right-column">
-              <h3>Update Profile</h3>
-              <UserUpdate user={userDetails} /> {/* Pass user details to UserUpdate */}
             </div>
           </div>
         ) : (

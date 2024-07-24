@@ -62,35 +62,7 @@ api.add_resource(Books, '/books')
 api.add_resource(Genres, '/genres')
 api.add_resource(Authors, '/authors')
 
-
-class Register(Resource):
-    def post(self):
-        try:
-            data = request.get_json()
-            username = data.get('username')
-            email = data.get('email')
-            password = data.get('password')
-
-            if not username or not email or not password:
-                return {"message": "Username, email, and password are required"}, 400
-
-            existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
-            if existing_user:
-                return {"message": "User with provided username or email already exists"}, 400
-
-            new_user = User(username=username, email=email)
-            new_user.password_hash = password
-
-            db.session.add(new_user)
-            db.session.commit()
-
-            return {"message": "User created successfully"}, 201
-        except Exception as e:
-            print(f"Error during registration: {e}")
-            traceback.print_exc()
-            return {"message": "Internal Server Error"}, 500
        
-
 class UserDetail(Resource):
     @jwt_required()
     def get(self, user_id):
@@ -291,7 +263,33 @@ class RemoveFriend(Resource):
 api.add_resource(RemoveFriend, '/users/<int:friend_id>/remove-friend', endpoint='remove_friend_endpoint')
 
 
+class Register(Resource):
+    def post(self):
+        try:
+            data = request.get_json()
+            username = data.get('username')
+            email = data.get('email')
+            password = data.get('password')
 
+            if not username or not email or not password:
+                return {"message": "Username, email, and password are required"}, 400
+
+            existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+            if existing_user:
+                return {"message": "User with provided username or email already exists"}, 400
+
+            new_user = User(username=username, email=email)
+            new_user.password_hash = password
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            return {"message": "User created successfully"}, 201
+        except Exception as e:
+            print(f"Error during registration: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+        
 class Login(Resource):
     def post(self):
         try:
@@ -334,10 +332,35 @@ class Protected(Resource):
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
 
+
+class Authenticate(Resource):
+    @jwt_required()
+    def post(self):
+        try:
+            data = request.get_json()
+            password = data.get('password')
+            
+            if not password:
+                return {"message": "Password is required"}, 400
+
+            current_user_id = get_jwt_identity()
+            user = User.query.get(current_user_id)
+
+            if not user or not user.authenticate(password):
+                return {"message": "Invalid password"}, 401
+
+            return {"authenticated": True}, 200
+        except Exception as e:
+            print(f"Error during authentication: {e}")
+            traceback.print_exc()
+            return {"message": "Internal Server Error"}, 500
+
+
 api.add_resource(Register, '/register', endpoint='register_endpoint')
 api.add_resource(Login, '/login', endpoint='login_endpoint')
 api.add_resource(TokenRefresh, '/refresh', endpoint='refresh_endpoint')
 api.add_resource(Protected, '/protected', endpoint='protected_endpoint')
+api.add_resource(Authenticate, '/authenticate', endpoint='authenticate')
 
 
 class BookClubs(Resource):

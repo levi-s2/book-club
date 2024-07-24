@@ -29,7 +29,7 @@ const Posts = ({ clubId }) => {
 
     try {
       await addPost(clubId, values.content);
-      form.resetFields(); // Clear the input field
+      form.resetFields();
       message.success('Post added successfully');
     } catch (error) {
       setError('Error adding post.');
