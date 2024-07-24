@@ -1,118 +1,82 @@
-/* Landing Page Styles */
 .landing-page {
-  display: flex;
-  height: 100vh;
+  position: relative;
   width: 100%;
-  background-image: url('background.webp');
-  background-size: cover;
-  background-position: center;
-  margin: 0;
-  padding: 0;
+  height: 100vh;
+  background: url('background.webp') no-repeat center center/cover;
 }
 
-.left-section {
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.left-section, .right-section {
+  flex: 1;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 20px;
-  width: 50%;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 10px;
-  color: white;
-  margin: 20px;
 }
 
-.hero-section {
-  margin-bottom: 10px;
+.left-section {
+  color: #fff;
+  max-width: 50%;
 }
 
 .hero-section h1 {
-  font-size: 32px;
-  margin-bottom: 10px;
+  font-size: 2.5em;
+  margin-bottom: 20px;
 }
 
 .hero-section p {
-  font-size: 16px;
+  font-size: 1.2em;
 }
 
 .testimonials-section {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
-  padding: 10px;
-  color: black;
-  font-size: 14px;
-  margin-bottom: 10px;
+  margin-top: 20px;
 }
 
 .testimonial {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px;
   margin-bottom: 10px;
+  border-radius: 5px;
 }
 
-.testimonial p {
-  font-size: 14px;
-  font-style: italic;
+.right-section {
+  color: #fff;
+  max-width: 50%;
 }
 
 .features-section {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 10px;
 }
 
 .feature-card {
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 10px;
-  padding: 10px;
-  width: 100%;
-  max-width: 180px;
-  text-align: center;
-  margin: 5px;
-  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 15px;
+  border-radius: 5px;
+  flex: 1 1 calc(33.33% - 10px);
+  box-sizing: border-box;
 }
 
-.feature-card h3 {
-  font-size: 16px;
-  margin-bottom: 5px;
-}
-
-.feature-card p {
-  font-size: 14px;
-}
-
-.right-section {
+.forms-section {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 50%;
-  padding: 20px;
-  margin: 20px;
+  gap: 20px;
+  margin-top: 20px;
 }
 
 .form-container {
-  background: rgba(0, 0, 0, 0.7);
-  padding: 10px;
-  border-radius: 10px;
-  color: white;
-  width: 100%;
-  max-width: 300px;
-}
-
-.toggle-button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
+  flex: 1;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 20px;
   border-radius: 5px;
-  cursor: pointer;
-}
-
-.toggle-button:hover {
-  background-color: #0056b3;
 }
