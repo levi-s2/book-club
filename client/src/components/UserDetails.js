@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import NavBar from './NavBar';
 import { ThemeContext } from './context/ThemeContext';
@@ -11,42 +11,46 @@ import defaultAvatar from './css/avatar-15.png';
 const UserDetails = () => {
   const { userId } = useParams();
   const { theme } = useContext(ThemeContext);
-  const { user, loading: userLoading, fetchUserDetailsById, addFriend, removeFriend } = useContext(AuthContext);
+  const { user, loading: userLoading, fetchUserDetailsById, addFriend, removeFriend, setUser } = useContext(AuthContext);
   const history = useHistory();
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [friendsList, setFriendsList] = useState([]);
   const [isFriend, setIsFriend] = useState(false);
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      if (user && user.id === parseInt(userId)) {
-        history.push('/my-profile');
-      } else {
-        try {
-          const data = await fetchUserDetailsById(userId);
-          setUserDetails(data);
-          setLoading(false);
-          setIsFriend(user.friends.some((friend) => friend.id === parseInt(userId)));
-        } catch (error) {
-          setError('Error fetching user details.');
-          setLoading(false);
-        }
+  const fetchUserDetails = useCallback(async () => {
+    if (user && user.id === parseInt(userId)) {
+      history.push('/my-profile');
+    } else {
+      try {
+        const data = await fetchUserDetailsById(userId);
+        setUserDetails(data);
+        setFriendsList(data.friends);
+        setIsFriend(user.friends.some((friend) => friend.id === parseInt(userId)));
+        setLoading(false);
+      } catch (error) {
+        setError('Error fetching user details.');
+        setLoading(false);
       }
-    };
+    }
+  }, [userId, user, history, fetchUserDetailsById]);
 
+  useEffect(() => {
     if (!userLoading) {
       fetchUserDetails();
     }
-  }, [userId, user, userLoading, history, fetchUserDetailsById]);
+  }, [fetchUserDetails, userLoading]);
 
   const handleAddFriend = async () => {
     try {
-      await addFriend(userId);
+      const response = await addFriend(userId);
       setIsFriend(true);
-      setUserDetails((prevDetails) => ({
-        ...prevDetails,
-        friends: [...prevDetails.friends, { id: user.id, username: user.username }],
+      setFriendsList(response.friends);
+      // Update user context
+      setUser((prevUser) => ({
+        ...prevUser,
+        friends: response.friends,
       }));
     } catch (error) {
       setError('Error adding friend.');
@@ -55,11 +59,13 @@ const UserDetails = () => {
 
   const handleRemoveFriend = async () => {
     try {
-      await removeFriend(userId);
+      const response = await removeFriend(userId);
       setIsFriend(false);
-      setUserDetails((prevDetails) => ({
-        ...prevDetails,
-        friends: prevDetails.friends.filter((friend) => friend.id !== user.id),
+      setFriendsList(response.friends);
+      // Update user context
+      setUser((prevUser) => ({
+        ...prevUser,
+        friends: response.friends,
       }));
     } catch (error) {
       setError('Error removing friend.');
@@ -151,10 +157,10 @@ const UserDetails = () => {
             </div>
             <div className="right-column">
               <h3>Friends</h3>
-              {userDetails.friends.length > 0 ? (
+              {friendsList.length > 0 ? (
                 <List
                   itemLayout="horizontal"
-                  dataSource={userDetails.friends}
+                  dataSource={friendsList}
                   renderItem={(friend) => (
                     <List.Item>
                       <List.Item.Meta title={friend.username} />

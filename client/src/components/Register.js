@@ -36,7 +36,6 @@ const Register = ({ theme }) => {
       resetForm();
       history.push('/');
     } catch (error) {
-      setErrors({ general: 'Registration failed: ' + error.message });
       message.error('Registration failed. Please try again.');
     } finally {
       setSubmitting(false);

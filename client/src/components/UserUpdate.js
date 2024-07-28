@@ -44,7 +44,7 @@ const UserUpdate = ({ user }) => {
         await updatePassword(user.id, values.newPassword);
       }
 
-      setUser(updatedUser); // Update the context state with the new user info
+      setUser(updatedUser); 
       message.success('Profile updated successfully!');
       resetForm();
     } catch (error) {

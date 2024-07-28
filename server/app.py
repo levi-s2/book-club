@@ -35,12 +35,7 @@ api.add_resource(Home, '/')
 
 class Books(Resource):
     def get(self):
-        genre_ids = request.args.getlist('genre_ids')
-        if genre_ids:
-            books = Book.query.join(Book.genres).filter(Genre.id.in_(genre_ids)).all()
-        else:
-            books = Book.query.all()
-        response_dict_list = [book.to_dict() for book in books]
+        response_dict_list = [book.to_dict() for book in Book.query.all()]
         response = make_response(jsonify(response_dict_list), 200)
         return response
 
@@ -70,11 +65,13 @@ class UserDetail(Resource):
             user = User.query.get(user_id)
             if not user:
                 return {"message": "User not found"}, 404
-            return user.to_dict(), 200
+            user_dict = user.to_dict()
+            return user_dict, 200
         except Exception as e:
             print(f"Error fetching user: {e}")
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
+
 
     @jwt_required()
     def patch(self, user_id):
@@ -213,7 +210,7 @@ class UserBooks(Resource):
 api.add_resource(UserBooks, '/user/books', '/user/books/<int:book_id>')
 
 
-class AddFriend(Resource):
+class Friends(Resource):
     @jwt_required()
     def post(self, friend_id):
         try:
@@ -229,16 +226,14 @@ class AddFriend(Resource):
 
             user.friends.append(friend)
             db.session.commit()
-            return {"message": "Friend added successfully"}, 201
+
+            friends = [{'id': f.id, 'username': f.username} for f in user.friends]
+            return {"message": "Friend added successfully", "friends": friends}, 201
         except Exception as e:
             print(f"Error adding friend: {e}")
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
 
-api.add_resource(AddFriend, '/users/<int:friend_id>/add-friend', endpoint='add_friend_endpoint')
-
-
-class RemoveFriend(Resource):
     @jwt_required()
     def delete(self, friend_id):
         try:
@@ -254,13 +249,16 @@ class RemoveFriend(Resource):
 
             user.friends.remove(friend)
             db.session.commit()
-            return {"message": "Friend removed successfully"}, 200
+
+            friends = [{'id': f.id, 'username': f.username} for f in user.friends]
+            return {"message": "Friend removed successfully", "friends": friends}, 200
         except Exception as e:
             print(f"Error removing friend: {e}")
             traceback.print_exc()
             return {"message": "Internal Server Error"}, 500
 
-api.add_resource(RemoveFriend, '/users/<int:friend_id>/remove-friend', endpoint='remove_friend_endpoint')
+api.add_resource(Friends, '/users/<int:friend_id>/friends', endpoint='friends_endpoint')
+
 
 
 class Register(Resource):

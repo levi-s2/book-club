@@ -30,7 +30,7 @@ const Login = ({ theme }) => {
       message.success('Login successful!');
       history.push('/book-clubs');
     } catch (error) {
-      setErrors({ general: 'Login failed: ' + error.message });
+      setErrors('Email or Password don´t match');
       message.error('Login failed. Please try again.');
     } finally {
       setSubmitting(false);

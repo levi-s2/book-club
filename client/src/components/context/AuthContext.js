@@ -117,31 +117,40 @@ const AuthProvider = ({ children }) => {
 
   const addFriend = async (userId) => {
     try {
-      const response = await axios.post(`/users/${userId}/add-friend`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      return response.data;
+        const response = await axios.post(`/users/${userId}/friends`, {}, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        setUser((prevUser) => ({
+            ...prevUser,
+            friends: response.data.friends,
+        }));
+        return response.data;
     } catch (error) {
-      console.error('Error adding friend.', error);
-      throw error;
+        console.error('Error adding friend.', error);
+        throw error;
     }
-  };
+};
 
-  const removeFriend = async (userId) => {
+const removeFriend = async (userId) => {
     try {
-      const response = await axios.delete(`/users/${userId}/remove-friend`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      return response.data;
+        const response = await axios.delete(`/users/${userId}/friends`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        setUser((prevUser) => ({
+            ...prevUser,
+            friends: response.data.friends,
+        }));
+        return response.data;
     } catch (error) {
-      console.error('Error removing friend.', error);
-      throw error;
+        console.error('Error removing friend.', error);
+        throw error;
     }
-  };
+};
+  
 
 
   const fetchUserBooks = async () => {

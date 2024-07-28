@@ -47,7 +47,6 @@ class User(db.Model):
     memberships = relationship('Membership', back_populates='user')
     posts = relationship('Post', back_populates='user')
     post_votes = relationship('PostVotes', back_populates='user')
-
     books = db.relationship('Book', secondary='user_books', back_populates='users')
 
     @property
