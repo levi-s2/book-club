@@ -47,6 +47,7 @@ class User(db.Model):
     memberships = relationship('Membership', back_populates='user')
     posts = relationship('Post', back_populates='user')
     post_votes = relationship('PostVotes', back_populates='user')
+
     books = db.relationship('Book', secondary='user_books', back_populates='users')
 
     @property
@@ -307,4 +308,3 @@ class Post(db.Model):
     
     def __repr__(self):
         return f'<Post {self.id}. User: {self.user_id}, Book: {self.book_id}, BookClub: {self.book_club_id}>'
-
