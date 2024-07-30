@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: book-club-frontend
+    env: static
+    staticPublishPath: build
+    buildCommand: npm install && npm run build
+    startCommand: npm start
