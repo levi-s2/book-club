@@ -1,7 +1,7 @@
 -i https://pypi.org/simple
 alembic==1.13.1; python_version >= '3.8'
 aniso8601==9.0.1
-asttokens==2.4.1
+asttokens==2.4.1; python_version >= '3.5'
 attrs==23.2.0; python_version >= '3.7'
 backcall==0.2.0
 click==8.1.7; python_version >= '3.7'
@@ -9,6 +9,7 @@ decorator==5.1.1; python_version >= '3.7'
 executing==2.0.1; python_version >= '3.5'
 faker==14.2.0; python_version >= '3.6'
 flask==2.2.2; python_version >= '3.7'
+flask-bcrypt==1.0.1
 flask-migrate==3.1.0; python_version >= '3.6'
 flask-restful==0.3.10
 flask-sqlalchemy==3.0.3; python_version >= '3.7'
