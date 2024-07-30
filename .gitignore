@@ -73,4 +73,7 @@ temp/
 *.exe
 *.dllclient/node_modules/.cache/
 client/node_modules/.cache/
-server/app.db
+server/__pycache__/app.cpython-38.pyc
+server/__pycache__/models.cpython-38.pyc
+
+package-lock.json
