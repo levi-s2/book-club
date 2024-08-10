@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from .models import db, bcrypt, User, Book, BookClub, Genre, Membership, CurrentReading, Post, PostVotes, user_books
+from models import db, bcrypt, User, Book, BookClub, Genre, Membership, CurrentReading, Post, PostVotes, user_books
 from datetime import timedelta
 import os
 import traceback
@@ -24,7 +24,7 @@ bcrypt.init_app(app)
 api = Api(app)
 CORS(app, resources={r"*": {"origins": "*"}}, supports_credentials=True)
 jwt = JWTManager(app)
-port = int(os.environ.get("PORT", 5000))  # Default to port 5000 if PORT is not set
+
 
 class Home(Resource):
     def get(self):
@@ -633,5 +633,5 @@ class ManageClub(Resource):
 api.add_resource(ManageClub, '/manage-club/<int:club_id>')
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=port)
+if __name__ == '__main__':
+    app.run(debug=True)
