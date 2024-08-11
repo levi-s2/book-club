@@ -28,6 +28,13 @@ Welcome to the Book-Club application! The app was made for people who enjoy read
 https://youtu.be/_FLw_J9lM6A
 
 
+# Deployed Version
+- backend: 
+https://book-club-api-1hda.onrender.com
+
+-frontend: 
+https://book-club-platform.onrender.com
+
 ## Getting Started
 
 > **Note:** The `$` symbol indicates a command that should be run in your terminal. Do not include it when running commands.
@@ -64,7 +71,7 @@ https://youtu.be/_FLw_J9lM6A
 
 6. Run the backend server:
     ```s
-    $ flask run
+    $ gunicorn app:app
     ```
 
 6. Navigate to the /client folder
@@ -80,6 +87,9 @@ https://youtu.be/_FLw_J9lM6A
 8. Run the frontend development server
     ```s
     $ npm start
+Remember to change the base_url in the axiosConfig.js located in the /client/src/components to: 
+http://localhost:5000, as that is the proper url for using if you´re going to be running the backend
+locally as well. Feel free to use the deployed url, but keep in mind requests will be delayed, since it´s a free tier version.
 
 9. Mock Data(optional)
 if you want to view the application with mock data run the seed file in the server directory
